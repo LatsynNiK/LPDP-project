@@ -15,9 +15,23 @@ namespace LPDP
             Analysis NewAnalysis = new Analysis();
             NewAnalysis.AnalyzeText(LPDP_Data.CodeTxt);
 
+            if (NewAnalysis.Errors.Count > 0)
+            {
+                LPDP_Data.InfoTxt = "Не удалось построить модель\n";
+                foreach (Error e in NewAnalysis.Errors)
+                {
+                    LPDP_Data.InfoTxt += e.ErrorText + "\n";
+                }
+            }
+            else 
+            {
+                LPDP_Data.InfoTxt = "Модель построена успешно.";
+            }
+            
             // Конец Нового Анализа
 
-            LPDP_Data.InfoTxt = LPDP_Core.Build_POSP_Model(LPDP_Data.CodeTxt);
+            //LPDP_Data.InfoTxt = 
+            LPDP_Core.Build_POSP_Model(LPDP_Data.CodeTxt);
 
             if (LPDP_Core.Model_Is_Built == true)
             {

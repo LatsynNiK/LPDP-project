@@ -8,7 +8,7 @@ namespace LPDP.TextAnalysis
     public class Analysis
     {
         public string SourceText;
-        List<Error> Errors;
+        public List<Error> Errors;
         List<Lexeme> Lexemes;
         //List<Phrase> Phrases;
         Phrase ParsedText;
@@ -35,7 +35,7 @@ namespace LPDP.TextAnalysis
             this.ResultTxtCode = "";
         }
 
-        public void AnalyzeText(string SourceText)
+        public int AnalyzeText(string SourceText) // возвращает 1 если успешно
         {
             this.SourceText = SourceText;
             //this.Errors = new List<Error>();
@@ -47,6 +47,11 @@ namespace LPDP.TextAnalysis
             //}
 
             this.Lexemes = LexicalAnalysis(this.SourceText);
+            if (Errors.Count > 0)
+            {
+                return 0;
+            }
+
             //this.ParsedText = SyntacticalAnalysis_Preparation(this.Lexemes);
 
             //this.ParsedText = new List<Phrase>();
@@ -55,11 +60,19 @@ namespace LPDP.TextAnalysis
             //    this.ParsedText.Add(lex);
             //}
             this.ParsedText = SyntacticalAnalysis(this.Lexemes);
-
+            if (Errors.Count > 0)
+            {
+                return 0;
+            }
             this.ParsedText = MadeStruct(this.ParsedText);
+            if (Errors.Count > 0)
+            {
+                return 0;
+            }
 
             this.ResultTxtCode = "";
             this.ResultRTFCode = "";
+            return 1;
         }
 
         List<Lexeme> LexicalAnalysis(string Text)
@@ -608,8 +621,9 @@ namespace LPDP.TextAnalysis
 
             Response resp = FindTemplate(ModelTextRules.SyntacticalTemplates[0], Phrases);
 
-            return resp.BackPhrase;
 
+            this.Errors.AddRange(resp.Finded_Errors);
+            return resp.BackPhrase;
         }
 
         //******************
