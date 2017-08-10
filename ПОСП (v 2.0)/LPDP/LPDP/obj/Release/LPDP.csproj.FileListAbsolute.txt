@@ -1,0 +1,4 @@
+C:\Users\Николай\Desktop\ПОСП (v 2.0)\LPDP\LPDP\bin\Release\LPDP.dll
+C:\Users\Николай\Desktop\ПОСП (v 2.0)\LPDP\LPDP\bin\Release\LPDP.pdb
+C:\Users\Николай\Desktop\ПОСП (v 2.0)\LPDP\LPDP\obj\Release\LPDP.dll
+C:\Users\Николай\Desktop\ПОСП (v 2.0)\LPDP\LPDP\obj\Release\LPDP.pdb

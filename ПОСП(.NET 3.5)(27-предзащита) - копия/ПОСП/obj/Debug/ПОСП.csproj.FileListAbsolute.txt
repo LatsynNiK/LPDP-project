@@ -1,0 +1,123 @@
+C:\Users\user\Desktop\ПОСП\ПОСП\bin\Debug\ПОСП.exe.config
+C:\Users\user\Desktop\ПОСП\ПОСП\obj\Debug\ПОСП.csprojResolveAssemblyReference.cache
+C:\Users\user\Desktop\ПОСП\ПОСП\obj\Debug\ПОСП.Properties.Resources.resources
+C:\Users\user\Desktop\ПОСП\ПОСП\obj\Debug\ПОСП.csproj.GenerateResource.Cache
+C:\Users\user\Desktop\ПОСП\ПОСП\bin\Debug\ПОСП.exe
+C:\Users\user\Desktop\ПОСП\ПОСП\bin\Debug\ПОСП.pdb
+C:\Users\user\Desktop\ПОСП\ПОСП\obj\Debug\ПОСП.exe
+C:\Users\user\Desktop\ПОСП\ПОСП\obj\Debug\ПОСП.pdb
+C:\Users\user\Desktop\ПОСП(indUnit)\ПОСП\bin\Debug\ПОСП.exe.config
+C:\Users\user\Desktop\ПОСП(indUnit)\ПОСП\obj\Debug\ПОСП.exe
+C:\Users\user\Desktop\ПОСП(indUnit)\ПОСП\bin\Debug\ПОСП.exe
+C:\Users\user\Desktop\ПОСП(indUnit)\ПОСП\bin\Debug\ПОСП.pdb
+C:\Users\user\Desktop\ПОСП(indUnit)\ПОСП\obj\Debug\ПОСП.csprojResolveAssemblyReference.cache
+C:\Users\user\Desktop\ПОСП(indUnit)\ПОСП\obj\Debug\ПОСП.Form1.resources
+C:\Users\user\Desktop\ПОСП(indUnit)\ПОСП\obj\Debug\ПОСП.Properties.Resources.resources
+C:\Users\user\Desktop\ПОСП(indUnit)\ПОСП\obj\Debug\ПОСП.csproj.GenerateResource.Cache
+C:\Users\user\Desktop\ПОСП(indUnit)\ПОСП\obj\Debug\ПОСП.pdb
+C:\Users\user\Desktop\ПОСП\ПОСП\obj\Debug\ПОСП.POSP_Form.resources
+C:\Users\Николай\Desktop\ПОСП\ПОСП\bin\Debug\ПОСП.exe.config
+C:\Users\Николай\Desktop\ПОСП\ПОСП\obj\Debug\ПОСП.exe
+C:\Users\Николай\Desktop\ПОСП\ПОСП\obj\Debug\ПОСП.pdb
+C:\Users\Николай\Desktop\ПОСП\ПОСП\bin\Debug\ПОСП.exe
+C:\Users\Николай\Desktop\ПОСП\ПОСП\bin\Debug\ПОСП.pdb
+C:\Users\Николай\Desktop\ПОСП\ПОСП\obj\Debug\ПОСП.csprojResolveAssemblyReference.cache
+C:\Users\Николай\Desktop\ПОСП\ПОСП\obj\Debug\ПОСП.POSP_Form.resources
+C:\Users\Николай\Desktop\ПОСП\ПОСП\obj\Debug\ПОСП.Properties.Resources.resources
+C:\Users\Николай\Desktop\ПОСП\ПОСП\obj\Debug\ПОСП.csproj.GenerateResource.Cache
+C:\Users\user\Desktop\ПОСП\ПОСП\obj\Debug\ПОСП.Closing_Form.resources
+C:\Users\user\Desktop\ПОСП - копия\ПОСП\bin\Debug\ПОСП.exe.config
+C:\Users\user\Desktop\ПОСП - копия\ПОСП\obj\Debug\ПОСП.exe
+C:\Users\user\Desktop\ПОСП - копия\ПОСП\obj\Debug\ПОСП.pdb
+C:\Users\user\Desktop\ПОСП - копия\ПОСП\obj\Debug\ПОСП.csprojResolveAssemblyReference.cache
+C:\Users\user\Desktop\ПОСП - копия\ПОСП\obj\Debug\ПОСП.Closing_Form.resources
+C:\Users\user\Desktop\ПОСП - копия\ПОСП\obj\Debug\ПОСП.POSP_Form.resources
+C:\Users\user\Desktop\ПОСП - копия\ПОСП\obj\Debug\ПОСП.Properties.Resources.resources
+C:\Users\user\Desktop\ПОСП - копия\ПОСП\obj\Debug\ПОСП.csproj.GenerateResource.Cache
+C:\Users\user\Desktop\ПОСП - копия\ПОСП\bin\Debug\ПОСП.exe
+C:\Users\user\Desktop\ПОСП - копия\ПОСП\bin\Debug\ПОСП.pdb
+C:\Users\Николай\Desktop\ИУ5\Дипломная работа\ПОСП(.NET 3.5)(23)\ПОСП\bin\Debug\ПОСП.exe.config
+C:\Users\Николай\Desktop\ИУ5\Дипломная работа\ПОСП(.NET 3.5)(23)\ПОСП\obj\Debug\ПОСП.exe
+C:\Users\Николай\Desktop\ИУ5\Дипломная работа\ПОСП(.NET 3.5)(23)\ПОСП\obj\Debug\ПОСП.pdb
+C:\Users\Николай\Desktop\ИУ5\Дипломная работа\ПОСП(.NET 3.5)(23)\ПОСП\bin\Debug\ПОСП.exe
+C:\Users\Николай\Desktop\ИУ5\Дипломная работа\ПОСП(.NET 3.5)(23)\ПОСП\bin\Debug\ПОСП.pdb
+C:\Users\Николай\Desktop\ИУ5\Дипломная работа\ПОСП(.NET 3.5)(23)\ПОСП\obj\Debug\ПОСП.csprojResolveAssemblyReference.cache
+C:\Users\Николай\Desktop\ИУ5\Дипломная работа\ПОСП(.NET 3.5)(23)\ПОСП\obj\Debug\ПОСП.Closing_Form.resources
+C:\Users\Николай\Desktop\ИУ5\Дипломная работа\ПОСП(.NET 3.5)(23)\ПОСП\obj\Debug\ПОСП.POSP_Form.resources
+C:\Users\Николай\Desktop\ИУ5\Дипломная работа\ПОСП(.NET 3.5)(23)\ПОСП\obj\Debug\ПОСП.Properties.Resources.resources
+C:\Users\Николай\Desktop\ИУ5\Дипломная работа\ПОСП(.NET 3.5)(23)\ПОСП\obj\Debug\ПОСП.csproj.GenerateResource.Cache
+D:\Все версии ПОСП\ПОСП(.NET 3.5)(24 тестировано на умном доме)\ПОСП\bin\Debug\ПОСП.exe.config
+D:\Все версии ПОСП\ПОСП(.NET 3.5)(24 тестировано на умном доме)\ПОСП\obj\Debug\ПОСП.exe
+D:\Все версии ПОСП\ПОСП(.NET 3.5)(24 тестировано на умном доме)\ПОСП\obj\Debug\ПОСП.pdb
+C:\Users\Николай\Desktop\ИУ5\Дипломная работа\ПОСП(.NET 3.5)(24 тестировано на умном доме)\ПОСП\bin\Debug\ПОСП.exe.config
+C:\Users\Николай\Desktop\ИУ5\Дипломная работа\ПОСП(.NET 3.5)(24 тестировано на умном доме)\ПОСП\obj\Debug\ПОСП.exe
+C:\Users\Николай\Desktop\ИУ5\Дипломная работа\ПОСП(.NET 3.5)(24 тестировано на умном доме)\ПОСП\obj\Debug\ПОСП.pdb
+C:\Users\Николай\Desktop\ИУ5\Дипломная работа\ПОСП(.NET 3.5)(24 тестировано на умном доме)\ПОСП\bin\Debug\ПОСП.exe
+C:\Users\Николай\Desktop\ИУ5\Дипломная работа\ПОСП(.NET 3.5)(24 тестировано на умном доме)\ПОСП\bin\Debug\ПОСП.pdb
+C:\Users\Николай\Desktop\ИУ5\Дипломная работа\ПОСП(.NET 3.5)(24 тестировано на умном доме)\ПОСП\obj\Debug\ПОСП.csprojResolveAssemblyReference.cache
+C:\Users\Николай\Desktop\ИУ5\Дипломная работа\ПОСП(.NET 3.5)(24 тестировано на умном доме)\ПОСП\obj\Debug\ПОСП.Closing_Form.resources
+C:\Users\Николай\Desktop\ИУ5\Дипломная работа\ПОСП(.NET 3.5)(24 тестировано на умном доме)\ПОСП\obj\Debug\ПОСП.POSP_Form.resources
+C:\Users\Николай\Desktop\ИУ5\Дипломная работа\ПОСП(.NET 3.5)(24 тестировано на умном доме)\ПОСП\obj\Debug\ПОСП.Properties.Resources.resources
+C:\Users\Николай\Desktop\ИУ5\Дипломная работа\ПОСП(.NET 3.5)(24 тестировано на умном доме)\ПОСП\obj\Debug\ПОСП.csproj.GenerateResource.Cache
+C:\Users\user\Desktop\ПОСП(.NET 3.5)(25 исправлено после умного дома)\ПОСП\bin\Debug\ПОСП.exe.config
+C:\Users\user\Desktop\ПОСП(.NET 3.5)(25 исправлено после умного дома)\ПОСП\obj\Debug\ПОСП.exe
+C:\Users\user\Desktop\ПОСП(.NET 3.5)(25 исправлено после умного дома)\ПОСП\obj\Debug\ПОСП.pdb
+C:\Users\user\Desktop\ПОСП(.NET 3.5)(26)\ПОСП\bin\Debug\ПОСП.exe.config
+C:\Users\user\Desktop\ПОСП(.NET 3.5)(26)\ПОСП\obj\Debug\ПОСП.exe
+C:\Users\user\Desktop\ПОСП(.NET 3.5)(26)\ПОСП\obj\Debug\ПОСП.pdb
+C:\Users\user\Desktop\ПОСП(.NET 3.5)(26)\ПОСП\bin\Debug\ПОСП.exe
+C:\Users\user\Desktop\ПОСП(.NET 3.5)(26)\ПОСП\bin\Debug\ПОСП.pdb
+C:\Users\user\Desktop\ПОСП(.NET 3.5)(26)\ПОСП\obj\Debug\ПОСП.csprojResolveAssemblyReference.cache
+C:\Users\user\Desktop\ПОСП(.NET 3.5)(26)\ПОСП\obj\Debug\ПОСП.Closing_Form.resources
+C:\Users\user\Desktop\ПОСП(.NET 3.5)(26)\ПОСП\obj\Debug\ПОСП.POSP_Form.resources
+C:\Users\user\Desktop\ПОСП(.NET 3.5)(26)\ПОСП\obj\Debug\ПОСП.Properties.Resources.resources
+C:\Users\user\Desktop\ПОСП(.NET 3.5)(26)\ПОСП\obj\Debug\ПОСП.csproj.GenerateResource.Cache
+C:\Users\user\Desktop\ПОСП(.NET 3.5)(27-предзащита)\ПОСП\bin\Debug\ПОСП.exe.config
+C:\Users\user\Desktop\ПОСП(.NET 3.5)(27-предзащита)\ПОСП\obj\Debug\ПОСП.exe
+C:\Users\user\Desktop\ПОСП(.NET 3.5)(27-предзащита)\ПОСП\obj\Debug\ПОСП.pdb
+C:\Users\user\Desktop\ПОСП(.NET 3.5)(27-предзащита)\ПОСП\bin\Debug\ПОСП.exe
+C:\Users\user\Desktop\ПОСП(.NET 3.5)(27-предзащита)\ПОСП\bin\Debug\ПОСП.pdb
+C:\Users\user\Desktop\ПОСП(.NET 3.5)(27-предзащита)\ПОСП\obj\Debug\ПОСП.csprojResolveAssemblyReference.cache
+C:\Users\user\Desktop\ПОСП(.NET 3.5)(27-предзащита)\ПОСП\obj\Debug\ПОСП.Closing_Form.resources
+C:\Users\user\Desktop\ПОСП(.NET 3.5)(27-предзащита)\ПОСП\obj\Debug\ПОСП.POSP_Form.resources
+C:\Users\user\Desktop\ПОСП(.NET 3.5)(27-предзащита)\ПОСП\obj\Debug\ПОСП.Properties.Resources.resources
+C:\Users\user\Desktop\ПОСП(.NET 3.5)(27-предзащита)\ПОСП\obj\Debug\ПОСП.csproj.GenerateResource.Cache
+C:\Users\Николай\Desktop\ПОСП(.NET 3.5)(27-предзащита)\ПОСП\bin\Debug\ПОСП.exe.config
+C:\Users\Николай\Desktop\ПОСП(.NET 3.5)(27-предзащита)\ПОСП\obj\Debug\ПОСП.exe
+C:\Users\Николай\Desktop\ПОСП(.NET 3.5)(27-предзащита)\ПОСП\obj\Debug\ПОСП.pdb
+C:\Users\Николай\Desktop\ПОСП(.NET 3.5)(27-предзащита) - копия\ПОСП\bin\Debug\ПОСП.exe.config
+C:\Users\Николай\Desktop\ПОСП(.NET 3.5)(27-предзащита) - копия\ПОСП\obj\Debug\ПОСП.exe
+C:\Users\Николай\Desktop\ПОСП(.NET 3.5)(27-предзащита) - копия\ПОСП\obj\Debug\ПОСП.pdb
+C:\Users\Николай\Desktop\ПОСП(.NET 3.5)(27-предзащита) - копия\ПОСП\obj\Debug\ПОСП.csprojResolveAssemblyReference.cache
+C:\Users\Николай\Desktop\ПОСП(.NET 3.5)(27-предзащита) - копия\ПОСП\obj\Debug\ПОСП.Closing_Form.resources
+C:\Users\Николай\Desktop\ПОСП(.NET 3.5)(27-предзащита) - копия\ПОСП\obj\Debug\ПОСП.POSP_Form.resources
+C:\Users\Николай\Desktop\ПОСП(.NET 3.5)(27-предзащита) - копия\ПОСП\obj\Debug\ПОСП.Properties.Resources.resources
+C:\Users\Николай\Desktop\ПОСП(.NET 3.5)(27-предзащита) - копия\ПОСП\obj\Debug\ПОСП.csproj.GenerateResource.Cache
+C:\Users\Николай\Desktop\ПОСП(.NET 3.5)(27-предзащита) - копия\ПОСП\bin\Debug\ПОСП.exe
+C:\Users\Николай\Desktop\ПОСП(.NET 3.5)(27-предзащита) - копия\ПОСП\bin\Debug\ПОСП.pdb
+C:\Users\Николай\Desktop\ПОСП(.NET 3.5)(27-предзащита) - копия\ПОСП\bin\Debug\LPDP.pdb
+C:\Users\Николай\Desktop\ПОСП(.NET 3.5)(27-предзащита) - копия\ПОСП\bin\Debug\LPDP.dll
+C:\Users\user\Desktop\библиотека ПОСП и др\ПОСП(.NET 3.5)(27-предзащита) - копия\ПОСП\bin\Debug\ПОСП.exe.config
+C:\Users\user\Desktop\библиотека ПОСП и др\ПОСП(.NET 3.5)(27-предзащита) - копия\ПОСП\obj\Debug\ПОСП.exe
+C:\Users\user\Desktop\библиотека ПОСП и др\ПОСП(.NET 3.5)(27-предзащита) - копия\ПОСП\obj\Debug\ПОСП.pdb
+C:\Users\user\Desktop\библиотека ПОСП и др\ПОСП(.NET 3.5)(27-предзащита) - копия\ПОСП\bin\Debug\ПОСП.exe
+C:\Users\user\Desktop\библиотека ПОСП и др\ПОСП(.NET 3.5)(27-предзащита) - копия\ПОСП\bin\Debug\ПОСП.pdb
+C:\Users\user\Desktop\библиотека ПОСП и др\ПОСП(.NET 3.5)(27-предзащита) - копия\ПОСП\bin\Debug\LPDP.dll
+C:\Users\user\Desktop\библиотека ПОСП и др\ПОСП(.NET 3.5)(27-предзащита) - копия\ПОСП\bin\Debug\LPDP.pdb
+C:\Users\user\Desktop\библиотека ПОСП и др\ПОСП(.NET 3.5)(27-предзащита) - копия\ПОСП\obj\Debug\ПОСП.csprojResolveAssemblyReference.cache
+C:\Users\user\Desktop\библиотека ПОСП и др\ПОСП(.NET 3.5)(27-предзащита) - копия\ПОСП\obj\Debug\ПОСП.Closing_Form.resources
+C:\Users\user\Desktop\библиотека ПОСП и др\ПОСП(.NET 3.5)(27-предзащита) - копия\ПОСП\obj\Debug\ПОСП.POSP_Form.resources
+C:\Users\user\Desktop\библиотека ПОСП и др\ПОСП(.NET 3.5)(27-предзащита) - копия\ПОСП\obj\Debug\ПОСП.Properties.Resources.resources
+C:\Users\user\Desktop\библиотека ПОСП и др\ПОСП(.NET 3.5)(27-предзащита) - копия\ПОСП\obj\Debug\ПОСП.csproj.GenerateResource.Cache
+C:\Users\Николай\Desktop\библиотека ПОСП и др\ПОСП(.NET 3.5)(27-предзащита) - копия\ПОСП\bin\Debug\ПОСП.exe.config
+C:\Users\Николай\Desktop\библиотека ПОСП и др\ПОСП(.NET 3.5)(27-предзащита) - копия\ПОСП\obj\Debug\ПОСП.exe
+C:\Users\Николай\Desktop\библиотека ПОСП и др\ПОСП(.NET 3.5)(27-предзащита) - копия\ПОСП\obj\Debug\ПОСП.pdb
+C:\Users\Николай\Desktop\библиотека ПОСП и др\ПОСП(.NET 3.5)(27-предзащита) - копия\ПОСП\bin\Debug\ПОСП.exe
+C:\Users\Николай\Desktop\библиотека ПОСП и др\ПОСП(.NET 3.5)(27-предзащита) - копия\ПОСП\bin\Debug\ПОСП.pdb
+C:\Users\Николай\Desktop\библиотека ПОСП и др\ПОСП(.NET 3.5)(27-предзащита) - копия\ПОСП\bin\Debug\LPDP.dll
+C:\Users\Николай\Desktop\библиотека ПОСП и др\ПОСП(.NET 3.5)(27-предзащита) - копия\ПОСП\bin\Debug\LPDP.pdb
+C:\Users\Николай\Desktop\библиотека ПОСП и др\ПОСП(.NET 3.5)(27-предзащита) - копия\ПОСП\obj\Debug\ПОСП.csprojResolveAssemblyReference.cache
+C:\Users\Николай\Desktop\библиотека ПОСП и др\ПОСП(.NET 3.5)(27-предзащита) - копия\ПОСП\obj\Debug\ПОСП.Closing_Form.resources
+C:\Users\Николай\Desktop\библиотека ПОСП и др\ПОСП(.NET 3.5)(27-предзащита) - копия\ПОСП\obj\Debug\ПОСП.POSP_Form.resources
+C:\Users\Николай\Desktop\библиотека ПОСП и др\ПОСП(.NET 3.5)(27-предзащита) - копия\ПОСП\obj\Debug\ПОСП.Properties.Resources.resources
+C:\Users\Николай\Desktop\библиотека ПОСП и др\ПОСП(.NET 3.5)(27-предзащита) - копия\ПОСП\obj\Debug\ПОСП.csproj.GenerateResource.Cache
