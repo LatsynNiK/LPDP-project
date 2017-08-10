@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
+using LPDP.TextAnalysis;
+
 namespace LPDP
 {
     public static class LPDP_Actions
@@ -17,7 +19,7 @@ namespace LPDP
             // Новый Анализ текста
             //LPDP_TextAnalysis.InitializeErrorTypes();
             //LPDP_TextAnalysis.LexicalAnalysis(LPDP_Data.CodeTxt);
-            TextAnalysis NewAnalysis = new TextAnalysis(LPDP_Data.CodeTxt);
+            Analysis NewAnalysis = new Analysis(LPDP_Data.CodeTxt);
 
             // Конец Нового Анализа
 
@@ -142,17 +144,17 @@ namespace LPDP
         public static void Initialize_LPDP_ModelTextRules()
         {
             
-            LPDP_ModelTextRules.InitializeLexicalTemplates();
+            ModelTextRules.InitializeLexicalTemplates();
             //LPDP_ModelTextRules.InitializeLexicalRules();
 
-            LPDP_ModelTextRules.InitializeWordTypes();
+            ModelTextRules.InitializeWordTypes();
             //LPDP_ModelTextRules.InitializeBracketRules();
-            LPDP_ModelTextRules.InitializePrimaryPhraseTypes();
+            ModelTextRules.InitializePrimaryPhraseTypes();
 
-            LPDP_ModelTextRules.InitializeSyntacticalTemplates();
+            ModelTextRules.InitializeSyntacticalTemplates();
 
 
-            LPDP_ModelTextRules.InitializeErrorTypes();
+            ModelTextRules.InitializeErrorTypes();
         }
     }
 }

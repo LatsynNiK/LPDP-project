@@ -52,15 +52,21 @@
     <Compile Include="LPDP_Core.cs" />
     <Compile Include="LPDP_Data.cs" />
     <Compile Include="LPDP_Graphics.cs" />
-    <Compile Include="LPDP_ModelTextRules.cs" />
     <Compile Include="LPDP_Objects.cs" />
-    <Compile Include="LPDP_TextAnalysis.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="TextAnalysis\Error.cs" />
+    <Compile Include="TextAnalysis\Lexeme.cs" />
+    <Compile Include="TextAnalysis\LexemeTypeTemplate.cs" />
+    <Compile Include="TextAnalysis\ModelTextRules.cs" />
+    <Compile Include="TextAnalysis\Phrase.cs" />
+    <Compile Include="TextAnalysis\PhraseTypeTemplate.cs" />
+    <Compile Include="TextAnalysis\Analysis.cs" />
+    <Compile Include="TextAnalysis\Word.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Properties\Resources.resx">
@@ -68,6 +74,7 @@
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

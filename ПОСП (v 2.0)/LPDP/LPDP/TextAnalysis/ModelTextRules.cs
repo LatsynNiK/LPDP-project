@@ -3,72 +3,220 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace LPDP
+namespace LPDP.TextAnalysis
 {
-    static class LPDP_ModelTextRules
+    /// <summary>
+    /// Типы лексем
+    /// </summary>
+    public enum LexemeType
     {
-        //public delegate List<Lexeme> LexicalRule(List<Lexeme> OldText);
+        Anything,
 
+        Word,
+        AssignOperator_Word,    // :=
+        Number,
+
+        Enter,                  // \n
+        Empty,                  // " " \t
+        EoL,                    // End of Line ";"
+
+        Round_Bracket_Open,     // (
+        Round_Bracket_Close,    // )
+        //Square_Bracket_Open,    // [
+        //Square_Bracket_Close,   // ]
+
+        Digit_Point,            // .
+        Comma,                  // ,
+
+        MarkSeparator,          // :
+        TypeSeparator,          // --
+        Quotes,                 // "
+        Star,                   // *
+
+        Slash,                  // /
+        Back_Slash,             // \
+
+        Exclamation_Point,      // !
+        Minus,                  // -
+        Equality,               // =
+        Comparison,             // > <
+
+        Arithmetic_Operator_1lvl,    // ^
+        Arithmetic_Operator_2lvl,    // * /
+        Arithmetic_Operator_3lvl,    // + -
+
+        Arithmetic_Function,    // log lg ln ЦЕЛОЕ
+        Logic_Operator,         //  /\ \/ 
+        Comparison_Operator,    //= != > < >= <=
+        Ref_Operator,           // ->
+
+        Comment_Bracket_Open,   // /*
+        Comment_Bracket_Close,  // */
+        Comment_Slash,           // //
+
+        Comment,
+        StringValue,
+
+        Unknown_Symbol
+
+
+    }
+
+    public enum PhraseType
+    {
+        // Неопределенная лексема
+        UnknownLexeme,
+        Anything,
+
+        //незначимые
+        Comment,
+        Empty,                  // " " \t \т
+
+        // 0 LEVEL
+        Name,
+        Number,
+
+        ModelBracketOpen_Word,
+        UnitBracketOpen_Word,
+        UnitType_Word,
+        DescriptionBracketOpen_Word,
+        AlgorithmBracketOpen_Word,
+        ThatIsAll_Word,
+
+        ScalarVarType_Word,
+        VectorVarType_Word,
+        LinkVarType_Word,
+        MacroVarType_Word,
+        RefToUnit_Word,
+
+        MarkSeparator,          // :
+        TypeSeparator,          // --
+
+        Round_Bracket_Open,     // (
+        Round_Bracket_Close,    // )
+        //Square_Bracket_Open,    // [
+        //Square_Bracket_Close,   // ]
+
+        EoL,                    // End of Line ";"
+        Comma,                  // ,
+
+        //Word       
+        AssignOperator_Word,
+        StringValue,
+        ArithmeticOperator_1lvl,    // ^
+        ArithmeticOperator_2lvl,    // * /
+        ArithmeticOperator_3lvl,    // + -
+
+        Time_Word,
+        Rand_Word,
+        Initiator_Word,
+        Ref_Operator,           // ->
+
+
+        TransferOperator_Word,
+        InitiatorOperator_Word,
+        ToOperator_Word,
+        MarkOperator_Word,
+
+        CreateOperator_Word,
+        ObjectOperator_Word,
+        RefToTypeOperator_Word,
+        ActivateOperator_Word,
+        FromOperator_Word,
+        PassivateOperator_Word,
+        IntoOperator_Word,
+        TerminateOperator_Word,
+        IfOperator_Word,
+        ThenOperator_Word,
+        ElseOperator_Word,
+        WaitOperator_Word,
+
+        ArithmeticFunction_Word,    // log lg ln ЦЕЛОЕ
+        LogicOperator,         // /\ \/ 
+        ComparisonOperator,     // = != > < >= <=
+
+        // Составные
+        Model,
+        ModelEnding,
+
+        Units,
+        Unit,
+        UnitHeader,
+        UnitEnding,
+
+        Description,
+        DescriptionEnding,
+        DescriptionLine,
+        DescriptionLines,
+        Vars,
+        Var,
+        VarDescription,
+        RefToUnit,
+        VarType,
+        Names,
+
+        Algorithm,
+        AlgorithmEnding,
+        AlgorithmLine,
+        AlgorithmLines,
+        Mark,
+        Operator,
+
+        TerminateOperator,
+        IfOperator,
+        ActivateOperator,
+        PassivateOperator,
+        WaitOperator,
+        TransferOperator,
+        CreateOperator,
+        AssignOperator,
+
+        Value,
+        ArithmeticExpression_1lvl,
+        ArithmeticExpression_2lvl,
+        ArithmeticExpression_3lvl,
+        DigitalValue,
+        ValueFromLink,
+        Path,
+        VectorNode,
+        ArithmeticFunction,
+        Parameters,
+
+        Destination,
+        IfConditions,
+        IfCondition,
+        AlternativeCondition,
+        LogicExpression,
+        WaitConditions,
+        WaitUntil,
+        WaitTime,
+        WaitCondition
+    }
+    public enum WordType
+    {
+        KeyWord,
+        SystemVar,
+        ArithmeticFunction,
+        Name
+    }
+    public enum ErrorType
+    {
+        EmptyText,
+        UnknownSimbol,
+        UnknownLexeme,
+
+        ExpectedPhrase,
+
+        Replacing,
+
+
+        //UnknownPhrase
+    }
+
+    class ModelTextRules
+    {
         //ЛЕКСИЧЕСКИЙ АНАЛИЗ
         #region Lexis
-        
-        /// <summary>
-        /// Типы лексем
-        /// </summary>
-        public enum LexemeType
-        {
-            Anything,
-
-            Word,                   
-            AssignOperator_Word,    // :=
-            Number,
-            
-            Enter,                  // \n
-            Empty,                  // " " \t
-            EoL,                    // End of Line ";"
-
-            Round_Bracket_Open,     // (
-            Round_Bracket_Close,    // )
-            //Square_Bracket_Open,    // [
-            //Square_Bracket_Close,   // ]
-
-            Digit_Point,            // .
-            Comma,                  // ,
-
-            MarkSeparator,          // :
-            TypeSeparator,          // --
-            Quotes,                 // "
-            Star,                   // *
-
-            Slash,                  // /
-            Back_Slash,             // \
-
-            Exclamation_Point,      // !
-            Minus,                  // -
-            Equality,               // =
-            Comparison,             // > <
-
-            Arithmetic_Operator_1lvl,    // ^
-            Arithmetic_Operator_2lvl,    // * /
-            Arithmetic_Operator_3lvl,    // + -
-
-            Arithmetic_Function,    // log lg ln ЦЕЛОЕ
-            Logic_Operator,         //  /\ \/ 
-            Comparison_Operator,    //= != > < >= <=
-            Ref_Operator,           // ->
-            
-            Comment_Bracket_Open,   // /*
-            Comment_Bracket_Close,  // */
-            Comment_Slash,           // //
-
-            Comment,
-            StringValue,
-
-            Unknown_Symbol
-            
-            
-        }
-
         /// <summary>
         /// Определяет символ как лексему
         /// </summary>
@@ -77,74 +225,72 @@ namespace LPDP
         public static LexemeType DetermineSymbol(char ch)
         {
             if (Char.IsLetter(ch))
-                return LPDP_ModelTextRules.LexemeType.Word;
+                return LexemeType.Word;
             if (Char.IsNumber(ch))
-                return LPDP_ModelTextRules.LexemeType.Number;
+                return LexemeType.Number;
             if ((ch == ' ') || (ch == '\t'))
-                return LPDP_ModelTextRules.LexemeType.Empty;
+                return LexemeType.Empty;
             if (ch == ';')
-                return LPDP_ModelTextRules.LexemeType.EoL;
+                return LexemeType.EoL;
             if (ch == '\n')
-                return LPDP_ModelTextRules.LexemeType.Enter;
+                return LexemeType.Enter;
 
             if (ch == '(')
-                return LPDP_ModelTextRules.LexemeType.Round_Bracket_Open;
+                return LexemeType.Round_Bracket_Open;
             if (ch == ')')
-                return LPDP_ModelTextRules.LexemeType.Round_Bracket_Close;
+                return LexemeType.Round_Bracket_Close;
             //if (ch == '[')
-            //    return LPDP_ModelTextRules.LexemeType.Square_Bracket_Open;
+            //    return LexemeType.Square_Bracket_Open;
             //if (ch == ']')
-            //    return LPDP_ModelTextRules.LexemeType.Square_Bracket_Close;
+            //    return LexemeType.Square_Bracket_Close;
 
             if (ch == '.')
-                return LPDP_ModelTextRules.LexemeType.Digit_Point;
+                return LexemeType.Digit_Point;
             if (ch == ',')
-                return LPDP_ModelTextRules.LexemeType.Comma;
+                return LexemeType.Comma;
 
             if (ch == '-')
-                return LPDP_ModelTextRules.LexemeType.Minus;
+                return LexemeType.Minus;
             if (ch == ':')
-                return LPDP_ModelTextRules.LexemeType.MarkSeparator;
+                return LexemeType.MarkSeparator;
             if (ch == '"')
-                return LPDP_ModelTextRules.LexemeType.Quotes;
+                return LexemeType.Quotes;
             if (ch == '*')
-                return LPDP_ModelTextRules.LexemeType.Star;
+                return LexemeType.Star;
             if (ch == '!')
-                return LPDP_ModelTextRules.LexemeType.Exclamation_Point;
+                return LexemeType.Exclamation_Point;
             if (ch == '/')
-                return LPDP_ModelTextRules.LexemeType.Slash;
+                return LexemeType.Slash;
             if (ch == '\\')
-                return LPDP_ModelTextRules.LexemeType.Back_Slash;
+                return LexemeType.Back_Slash;
             if (ch == '=')
-                return LPDP_ModelTextRules.LexemeType.Equality;
+                return LexemeType.Equality;
             if ((ch == '<') || (ch == '>'))
-                return LPDP_ModelTextRules.LexemeType.Comparison;
+                return LexemeType.Comparison;
 
             if (ch == '+')
-                return LPDP_ModelTextRules.LexemeType.Arithmetic_Operator_3lvl;
+                return LexemeType.Arithmetic_Operator_3lvl;
             if (ch == '^')
-                return LPDP_ModelTextRules.LexemeType.Arithmetic_Operator_1lvl;
+                return LexemeType.Arithmetic_Operator_1lvl;
 
-            return LPDP_ModelTextRules.LexemeType.Unknown_Symbol;
+            return LexemeType.Unknown_Symbol;
         }
 
         /// <summary>
         /// Список лексических шаблонов объединения
         /// </summary>
         public static List<LexemeTypeTemplate> LexicalTemplates;
-        //public static List<LexicalRule> LexicalRules;
-        
         public static void InitializeLexicalTemplates()
         {
             LexicalTemplates = new List<LexemeTypeTemplate>();
 
-            LexicalTemplates.Add(new LexemeTypeTemplate(LPDP_ModelTextRules.LexemeType.Word, LPDP_ModelTextRules.LexemeType.Word, LPDP_ModelTextRules.LexemeType.Word));
-            LexicalTemplates.Add(new LexemeTypeTemplate(LPDP_ModelTextRules.LexemeType.Word, LPDP_ModelTextRules.LexemeType.Word, LPDP_ModelTextRules.LexemeType.Number));
-            LexicalTemplates.Add(new LexemeTypeTemplate(LPDP_ModelTextRules.LexemeType.Word, LPDP_ModelTextRules.LexemeType.Number, LPDP_ModelTextRules.LexemeType.Word));
+            LexicalTemplates.Add(new LexemeTypeTemplate(LexemeType.Word, LexemeType.Word, LexemeType.Word));
+            LexicalTemplates.Add(new LexemeTypeTemplate(LexemeType.Word, LexemeType.Word, LexemeType.Number));
+            LexicalTemplates.Add(new LexemeTypeTemplate(LexemeType.Word, LexemeType.Number, LexemeType.Word));
 
-            LexicalTemplates.Add(new LexemeTypeTemplate(LPDP_ModelTextRules.LexemeType.Number, LPDP_ModelTextRules.LexemeType.Number, LPDP_ModelTextRules.LexemeType.Number));
-            LexicalTemplates.Add(new LexemeTypeTemplate(LPDP_ModelTextRules.LexemeType.Number, LPDP_ModelTextRules.LexemeType.Number, LPDP_ModelTextRules.LexemeType.Digit_Point, LPDP_ModelTextRules.LexemeType.Number));
-            LexicalTemplates.Add(new LexemeTypeTemplate(LPDP_ModelTextRules.LexemeType.Empty, LPDP_ModelTextRules.LexemeType.Empty, LPDP_ModelTextRules.LexemeType.Empty));
+            LexicalTemplates.Add(new LexemeTypeTemplate(LexemeType.Number, LexemeType.Number, LexemeType.Number));
+            LexicalTemplates.Add(new LexemeTypeTemplate(LexemeType.Number, LexemeType.Number, LexemeType.Digit_Point, LexemeType.Number));
+            LexicalTemplates.Add(new LexemeTypeTemplate(LexemeType.Empty, LexemeType.Empty, LexemeType.Empty));
 
 
             LexicalTemplates.Add(new LexemeTypeTemplate(LexemeType.Comment, LexemeType.Comment_Slash, LexemeType.Enter));
@@ -153,213 +299,46 @@ namespace LPDP
             LexicalTemplates.Add(new LexemeTypeTemplate(LexemeType.Comment, LexemeType.Comment_Bracket_Open, LexemeType.Comment_Bracket_Close));
             LexicalTemplates.Add(new LexemeTypeTemplate(LexemeType.StringValue, LexemeType.Quotes, LexemeType.Quotes));
             LexicalTemplates.Add(new LexemeTypeTemplate(LexemeType.Quotes, LexemeType.Quotes, LexemeType.Anything));
-            
+
 
             LexicalTemplates.Add(new LexemeTypeTemplate(LexemeType.Empty, LexemeType.Enter));
 
 
-            LexicalTemplates.Add(new LexemeTypeTemplate(LPDP_ModelTextRules.LexemeType.AssignOperator_Word, LPDP_ModelTextRules.LexemeType.MarkSeparator, LPDP_ModelTextRules.LexemeType.Equality)); //:=
-            LexicalTemplates.Add(new LexemeTypeTemplate(LPDP_ModelTextRules.LexemeType.TypeSeparator, LPDP_ModelTextRules.LexemeType.Minus, LPDP_ModelTextRules.LexemeType.Minus)); //--
-            LexicalTemplates.Add(new LexemeTypeTemplate(LPDP_ModelTextRules.LexemeType.Comparison_Operator, LPDP_ModelTextRules.LexemeType.Exclamation_Point, LPDP_ModelTextRules.LexemeType.Equality)); //!=
-            LexicalTemplates.Add(new LexemeTypeTemplate(LPDP_ModelTextRules.LexemeType.Comparison_Operator, LPDP_ModelTextRules.LexemeType.Comparison, LPDP_ModelTextRules.LexemeType.Equality)); //>=
-            LexicalTemplates.Add(new LexemeTypeTemplate(LPDP_ModelTextRules.LexemeType.Ref_Operator, LPDP_ModelTextRules.LexemeType.Minus, LPDP_ModelTextRules.LexemeType.Comparison)); //->
+            LexicalTemplates.Add(new LexemeTypeTemplate(LexemeType.AssignOperator_Word, LexemeType.MarkSeparator, LexemeType.Equality)); //:=
+            LexicalTemplates.Add(new LexemeTypeTemplate(LexemeType.TypeSeparator, LexemeType.Minus, LexemeType.Minus)); //--
+            LexicalTemplates.Add(new LexemeTypeTemplate(LexemeType.Comparison_Operator, LexemeType.Exclamation_Point, LexemeType.Equality)); //!=
+            LexicalTemplates.Add(new LexemeTypeTemplate(LexemeType.Comparison_Operator, LexemeType.Comparison, LexemeType.Equality)); //>=
+            LexicalTemplates.Add(new LexemeTypeTemplate(LexemeType.Ref_Operator, LexemeType.Minus, LexemeType.Comparison)); //->
 
-            LexicalTemplates.Add(new LexemeTypeTemplate(LPDP_ModelTextRules.LexemeType.Logic_Operator, LPDP_ModelTextRules.LexemeType.Slash, LPDP_ModelTextRules.LexemeType.Back_Slash)); // /\
-            LexicalTemplates.Add(new LexemeTypeTemplate(LPDP_ModelTextRules.LexemeType.Logic_Operator, LPDP_ModelTextRules.LexemeType.Back_Slash, LPDP_ModelTextRules.LexemeType.Slash)); // \/
+            LexicalTemplates.Add(new LexemeTypeTemplate(LexemeType.Logic_Operator, LexemeType.Slash, LexemeType.Back_Slash)); // /\
+            LexicalTemplates.Add(new LexemeTypeTemplate(LexemeType.Logic_Operator, LexemeType.Back_Slash, LexemeType.Slash)); // \/
 
-            LexicalTemplates.Add(new LexemeTypeTemplate(LPDP_ModelTextRules.LexemeType.Comment_Bracket_Open, LPDP_ModelTextRules.LexemeType.Slash, LPDP_ModelTextRules.LexemeType.Star)); // /*
-            LexicalTemplates.Add(new LexemeTypeTemplate(LPDP_ModelTextRules.LexemeType.Comment_Bracket_Close, LPDP_ModelTextRules.LexemeType.Star, LPDP_ModelTextRules.LexemeType.Slash)); // */
-            LexicalTemplates.Add(new LexemeTypeTemplate(LPDP_ModelTextRules.LexemeType.Comment_Slash, LPDP_ModelTextRules.LexemeType.Slash, LPDP_ModelTextRules.LexemeType.Slash)); // //
+            LexicalTemplates.Add(new LexemeTypeTemplate(LexemeType.Comment_Bracket_Open, LexemeType.Slash, LexemeType.Star)); // /*
+            LexicalTemplates.Add(new LexemeTypeTemplate(LexemeType.Comment_Bracket_Close, LexemeType.Star, LexemeType.Slash)); // */
+            LexicalTemplates.Add(new LexemeTypeTemplate(LexemeType.Comment_Slash, LexemeType.Slash, LexemeType.Slash)); // //
 
-            //LexicalTemplates.Add(new LexemeTypeTemplate(LPDP_ModelTextRules.LexemeType.Arithmetic_Operator_2lvl, LPDP_ModelTextRules.LexemeType.Star)); // *
-            //LexicalTemplates.Add(new LexemeTypeTemplate(LPDP_ModelTextRules.LexemeType.Arithmetic_Operator_2lvl, LPDP_ModelTextRules.LexemeType.Slash)); // /
-            ////LexicalTemplates.Add(new LexemeTypeTemplate(LPDP_ModelTextRules.LexemeType.Arithmetic_Operator_3lvl, LPDP_ModelTextRules.LexemeType.Minus)); // -
-            //LexicalTemplates.Add(new LexemeTypeTemplate(LPDP_ModelTextRules.LexemeType.Comparison_Operator, LPDP_ModelTextRules.LexemeType.Comparison)); //> or <
-            //LexicalTemplates.Add(new LexemeTypeTemplate(LPDP_ModelTextRules.LexemeType.Comparison_Operator, LPDP_ModelTextRules.LexemeType.Equality)); // =
+            //LexicalTemplates.Add(new LexemeTypeTemplate(LexemeType.Arithmetic_Operator_2lvl, LexemeType.Star)); // *
+            //LexicalTemplates.Add(new LexemeTypeTemplate(LexemeType.Arithmetic_Operator_2lvl, LexemeType.Slash)); // /
+            ////LexicalTemplates.Add(new LexemeTypeTemplate(LexemeType.Arithmetic_Operator_3lvl, LexemeType.Minus)); // -
+            //LexicalTemplates.Add(new LexemeTypeTemplate(LexemeType.Comparison_Operator, LexemeType.Comparison)); //> or <
+            //LexicalTemplates.Add(new LexemeTypeTemplate(LexemeType.Comparison_Operator, LexemeType.Equality)); // =
         }
-        //public static void InitializeLexicalRules()
-        //{
-        //    LexicalRules = new List<LexicalRule>();
-            
-        //    // замена ВСЕ на ВСЁ
-        //    LexicalRules.Add(
-        //        delegate(List<Lexeme> Text)
-        //        {
-        //            foreach (Lexeme lex in Text)
-        //            {
-        //                if ((lex.LType == LPDP_ModelTextRules.LexemeType.Word) && (lex.LValue == "все"))
-        //                {
-        //                    lex.LValue = "всё";
-        //                }
-        //            }
-        //            return Text;
-        //        });
-
-        //    // выделение log ln lg ЦЕЛОЕ
-        //    //LexicalRules.Add(
-        //    //    delegate(List<Lexeme> Text)
-        //    //    {
-        //    //        foreach (Lexeme lex in Text)
-        //    //        {
-        //    //            if ((lex.LType == LPDP_ModelTextRules.LexemeType.Word) && ((lex.Value == "log") || (lex.Value == "lg") || (lex.Value == "ln") || (lex.Value == "ЦЕЛОЕ")))
-        //    //            {
-        //    //                lex.LType = LPDP_ModelTextRules.LexemeType.Arithmetic_Function;
-        //    //            }
-        //    //        }
-        //    //        return Text;
-        //    //    });
-        //}
         #endregion
 
         //СИНТАКСИЧЕСКИЙ АНАЛИЗ
-        public enum PhraseType
-        {
-            // Неопределенная лексема
-            UnknownLexeme, 
-            Anything,
-            
-            //незначимые
-            Comment,
-            Empty,                  // " " \t \т
-
-            // 0 LEVEL
-            Name,
-            Number,
-
-            ModelBracketOpen_Word,
-            UnitBracketOpen_Word,
-            UnitType_Word,
-            DescriptionBracketOpen_Word,
-            AlgorithmBracketOpen_Word,
-            ThatIsAll_Word,
-
-            ScalarVarType_Word,
-            VectorVarType_Word,
-            LinkVarType_Word,
-            MacroVarType_Word,
-            RefToUnit_Word,
-
-            MarkSeparator,          // :
-            TypeSeparator,          // --
-
-            Round_Bracket_Open,     // (
-            Round_Bracket_Close,    // )
-            //Square_Bracket_Open,    // [
-            //Square_Bracket_Close,   // ]
-
-            EoL,                    // End of Line ";"
-            Comma,                  // ,
-
-            //Word       
-            AssignOperator_Word,   
-            StringValue,
-            ArithmeticOperator_1lvl,    // ^
-            ArithmeticOperator_2lvl,    // * /
-            ArithmeticOperator_3lvl,    // + -
-
-            Time_Word,
-            Rand_Word,
-            Initiator_Word,
-            Ref_Operator,           // ->
-            
-            
-            TransferOperator_Word,
-            InitiatorOperator_Word,
-            ToOperator_Word,
-            MarkOperator_Word,
-
-            CreateOperator_Word,
-            ObjectOperator_Word,
-            RefToTypeOperator_Word,
-            ActivateOperator_Word,
-            FromOperator_Word,
-            PassivateOperator_Word,
-            IntoOperator_Word,
-            TerminateOperator_Word,
-            IfOperator_Word,
-            ThenOperator_Word,
-            ElseOperator_Word,
-            WaitOperator_Word,
-
-            ArithmeticFunction_Word,    // log lg ln ЦЕЛОЕ
-            LogicOperator,         // /\ \/ 
-            ComparisonOperator,     // = != > < >= <=
-                      
-            // Составные
-            Model,
-            ModelEnding,
-
-            Units,
-            Unit,
-            UnitHeader,
-            UnitEnding,
-
-            Description,
-            DescriptionEnding,
-            DescriptionLine,
-            DescriptionLines,
-            Vars,
-            Var,
-            VarDescription,
-            RefToUnit,
-            VarType,
-            Names,
-
-            Algorithm,
-            AlgorithmEnding,
-            AlgorithmLine,
-            AlgorithmLines,
-            Mark,
-            Operator,
-            
-            TerminateOperator,
-            IfOperator,
-            ActivateOperator,
-            PassivateOperator,
-            WaitOperator,
-            TransferOperator,
-            CreateOperator,
-            AssignOperator,
-
-            Value,
-            ArithmeticExpression_1lvl,
-            ArithmeticExpression_2lvl,
-            ArithmeticExpression_3lvl,
-            DigitalValue,
-            ValueFromLink,
-            Path,
-            VectorNode,
-            ArithmeticFunction,
-            Parameters,
-
-            Destination,
-            IfConditions,
-            IfCondition,
-            AlternativeCondition,
-            LogicExpression,
-            WaitConditions,
-            WaitUntil,
-            WaitTime,
-            WaitCondition            
-        }
-        public enum WordType
-        {
-            KeyWord,
-            SystemVar,
-            ArithmeticFunction,
-            Name
-        }
+        #region Syntax
+        
 
         /// <summary>
         /// Типы слов
         /// </summary>
-        public static Dictionary<string,PhraseType> WordTypes;
+        public static Dictionary<string, PhraseType> WordTypes;
         /// <summary>
         /// Инициализация словаря ключевых слов
         /// </summary>
         public static void InitializeWordTypes()
         {
-            WordTypes = new Dictionary<string,PhraseType>()
+            WordTypes = new Dictionary<string, PhraseType>()
             {
                 {"модель",PhraseType.ModelBracketOpen_Word},
                 {"блок",PhraseType.UnitBracketOpen_Word},
@@ -550,7 +529,7 @@ namespace LPDP
             };
 
         }
-        
+
         public static PhraseType DeterminePhrase(Lexeme lexeme)
         {
             switch (lexeme.LType)
@@ -630,14 +609,14 @@ namespace LPDP
             SyntacticalTemplates = new List<PhraseTypeTemplate>();
 
             //заголовки и хвосты
-            SyntacticalTemplates.Add(new PhraseTypeTemplate(PhraseType.Model,PhraseType.ModelBracketOpen_Word, PhraseType.Name, PhraseType.Units));
+            SyntacticalTemplates.Add(new PhraseTypeTemplate(PhraseType.Model, PhraseType.ModelBracketOpen_Word, PhraseType.Name, PhraseType.Units));
 
             //блок
-            SyntacticalTemplates.Add(new PhraseTypeTemplate(PhraseType.Units, PhraseType.Unit,PhraseType.Units));
+            SyntacticalTemplates.Add(new PhraseTypeTemplate(PhraseType.Units, PhraseType.Unit, PhraseType.Units));
             SyntacticalTemplates.Add(new PhraseTypeTemplate(PhraseType.Units, PhraseType.ModelEnding));
             SyntacticalTemplates.Add(new PhraseTypeTemplate(PhraseType.Unit, PhraseType.UnitHeader, PhraseType.Description, PhraseType.Algorithm, PhraseType.UnitEnding));
             SyntacticalTemplates.Add(new PhraseTypeTemplate(PhraseType.UnitHeader, PhraseType.UnitBracketOpen_Word, PhraseType.UnitType_Word, PhraseType.Name));
-            SyntacticalTemplates.Add(new PhraseTypeTemplate(PhraseType.UnitEnding,PhraseType.ThatIsAll_Word, PhraseType.UnitBracketOpen_Word));
+            SyntacticalTemplates.Add(new PhraseTypeTemplate(PhraseType.UnitEnding, PhraseType.ThatIsAll_Word, PhraseType.UnitBracketOpen_Word));
             SyntacticalTemplates.Add(new PhraseTypeTemplate(PhraseType.ModelEnding, PhraseType.ThatIsAll_Word, PhraseType.ModelBracketOpen_Word));
 
             //описание
@@ -651,13 +630,13 @@ namespace LPDP
             //SyntacticalTemplates.Add(new PhraseTypeTemplate(PhraseType.DescriptionLine, PhraseType.Vars, PhraseType.TypeSeparator, PhraseType.VarDescription));
 
             //Var
-            SyntacticalTemplates.Add(new PhraseTypeTemplate(PhraseType.Vars, PhraseType.Var,PhraseType.Comma, PhraseType.Vars));
+            SyntacticalTemplates.Add(new PhraseTypeTemplate(PhraseType.Vars, PhraseType.Var, PhraseType.Comma, PhraseType.Vars));
             SyntacticalTemplates.Add(new PhraseTypeTemplate(PhraseType.Vars, PhraseType.Var));
             SyntacticalTemplates.Add(new PhraseTypeTemplate(PhraseType.Var, PhraseType.AssignOperator));
             SyntacticalTemplates.Add(new PhraseTypeTemplate(PhraseType.Var, PhraseType.Name));
 
             //VarDescription
-            SyntacticalTemplates.Add(new PhraseTypeTemplate(PhraseType.VarDescription, PhraseType.VarType,PhraseType.RefToUnit));
+            SyntacticalTemplates.Add(new PhraseTypeTemplate(PhraseType.VarDescription, PhraseType.VarType, PhraseType.RefToUnit));
             SyntacticalTemplates.Add(new PhraseTypeTemplate(PhraseType.VarDescription, PhraseType.VarType));
             SyntacticalTemplates.Add(new PhraseTypeTemplate(PhraseType.RefToUnit, PhraseType.RefToUnit_Word, PhraseType.Name));
             SyntacticalTemplates.Add(new PhraseTypeTemplate(PhraseType.VarType, PhraseType.VectorVarType_Word, PhraseType.Round_Bracket_Open, PhraseType.DescriptionLine, PhraseType.Round_Bracket_Close));
@@ -669,7 +648,7 @@ namespace LPDP
             SyntacticalTemplates.Add(new PhraseTypeTemplate(PhraseType.Names, PhraseType.Name));
 
             //алгоритм
-            SyntacticalTemplates.Add(new PhraseTypeTemplate(PhraseType.Algorithm, PhraseType.AlgorithmBracketOpen_Word,PhraseType.AlgorithmLines));
+            SyntacticalTemplates.Add(new PhraseTypeTemplate(PhraseType.Algorithm, PhraseType.AlgorithmBracketOpen_Word, PhraseType.AlgorithmLines));
             SyntacticalTemplates.Add(new PhraseTypeTemplate(PhraseType.AlgorithmEnding, PhraseType.ThatIsAll_Word, PhraseType.AlgorithmBracketOpen_Word));
 
             //строка алгоритма
@@ -708,10 +687,10 @@ namespace LPDP
             SyntacticalTemplates.Add(new PhraseTypeTemplate(PhraseType.ArithmeticExpression_1lvl, PhraseType.DigitalValue, PhraseType.ArithmeticOperator_1lvl, PhraseType.ArithmeticExpression_1lvl));
             SyntacticalTemplates.Add(new PhraseTypeTemplate(PhraseType.ArithmeticExpression_1lvl, PhraseType.DigitalValue));
 
-            SyntacticalTemplates.Add(new PhraseTypeTemplate(PhraseType.ArithmeticExpression_3lvl, PhraseType.Round_Bracket_Open,PhraseType.ArithmeticExpression_3lvl, PhraseType.Round_Bracket_Close));
+            SyntacticalTemplates.Add(new PhraseTypeTemplate(PhraseType.ArithmeticExpression_3lvl, PhraseType.Round_Bracket_Open, PhraseType.ArithmeticExpression_3lvl, PhraseType.Round_Bracket_Close));
             SyntacticalTemplates.Add(new PhraseTypeTemplate(PhraseType.ArithmeticExpression_2lvl, PhraseType.Round_Bracket_Open, PhraseType.ArithmeticExpression_3lvl, PhraseType.Round_Bracket_Close));
             SyntacticalTemplates.Add(new PhraseTypeTemplate(PhraseType.ArithmeticExpression_1lvl, PhraseType.Round_Bracket_Open, PhraseType.ArithmeticExpression_3lvl, PhraseType.Round_Bracket_Close));
-            
+
             //функции
             SyntacticalTemplates.Add(new PhraseTypeTemplate(PhraseType.ArithmeticExpression_1lvl, PhraseType.ArithmeticFunction));
             SyntacticalTemplates.Add(new PhraseTypeTemplate(PhraseType.ArithmeticFunction, PhraseType.ArithmeticFunction_Word, PhraseType.Round_Bracket_Open, PhraseType.Parameters, PhraseType.Round_Bracket_Close));
@@ -721,7 +700,7 @@ namespace LPDP
             //ссылки
             SyntacticalTemplates.Add(new PhraseTypeTemplate(PhraseType.DigitalValue, PhraseType.ValueFromLink));
             SyntacticalTemplates.Add(new PhraseTypeTemplate(PhraseType.DigitalValue, PhraseType.LinkVarType_Word, PhraseType.ToOperator_Word, PhraseType.Name));
-            SyntacticalTemplates.Add(new PhraseTypeTemplate(PhraseType.ValueFromLink, PhraseType.Initiator_Word, PhraseType.Ref_Operator,PhraseType.Path));
+            SyntacticalTemplates.Add(new PhraseTypeTemplate(PhraseType.ValueFromLink, PhraseType.Initiator_Word, PhraseType.Ref_Operator, PhraseType.Path));
             SyntacticalTemplates.Add(new PhraseTypeTemplate(PhraseType.ValueFromLink, PhraseType.Name, PhraseType.Ref_Operator, PhraseType.Path));
 
             SyntacticalTemplates.Add(new PhraseTypeTemplate(PhraseType.Path, PhraseType.VectorVarType_Word, PhraseType.Round_Bracket_Open, PhraseType.VectorNode, PhraseType.Round_Bracket_Close));
@@ -729,7 +708,7 @@ namespace LPDP
 
             SyntacticalTemplates.Add(new PhraseTypeTemplate(PhraseType.VectorNode, PhraseType.Name, PhraseType.Round_Bracket_Open, PhraseType.VectorNode, PhraseType.Round_Bracket_Close));
             SyntacticalTemplates.Add(new PhraseTypeTemplate(PhraseType.VectorNode, PhraseType.Name));
-            
+
 
 
             SyntacticalTemplates.Add(new PhraseTypeTemplate(PhraseType.DigitalValue, PhraseType.Rand_Word));
@@ -743,7 +722,7 @@ namespace LPDP
             SyntacticalTemplates.Add(new PhraseTypeTemplate(PhraseType.Destination, PhraseType.MarkOperator_Word, PhraseType.Name));
 
             //CreateOperator
-            SyntacticalTemplates.Add(new PhraseTypeTemplate(PhraseType.CreateOperator, PhraseType.CreateOperator_Word,PhraseType.ObjectOperator_Word, PhraseType.Name,PhraseType.RefToTypeOperator_Word, PhraseType.VarType));
+            SyntacticalTemplates.Add(new PhraseTypeTemplate(PhraseType.CreateOperator, PhraseType.CreateOperator_Word, PhraseType.ObjectOperator_Word, PhraseType.Name, PhraseType.RefToTypeOperator_Word, PhraseType.VarType));
 
             //IfOperator
             SyntacticalTemplates.Add(new PhraseTypeTemplate(PhraseType.IfOperator, PhraseType.IfConditions/*, PhraseType.AlternativeCondition*/));
@@ -752,15 +731,15 @@ namespace LPDP
             SyntacticalTemplates.Add(new PhraseTypeTemplate(PhraseType.AlternativeCondition, PhraseType.ElseOperator_Word, PhraseType.TransferOperator));
 
             SyntacticalTemplates.Add(new PhraseTypeTemplate(PhraseType.IfCondition, PhraseType.IfOperator_Word, PhraseType.LogicExpression, PhraseType.ThenOperator_Word, PhraseType.TransferOperator));
-            SyntacticalTemplates.Add(new PhraseTypeTemplate(PhraseType.LogicExpression,PhraseType.Round_Bracket_Open, PhraseType.Value, PhraseType.ComparisonOperator, PhraseType.Value, PhraseType.Round_Bracket_Close));
-            SyntacticalTemplates.Add(new PhraseTypeTemplate(PhraseType.LogicExpression,PhraseType.Round_Bracket_Open, PhraseType.LogicExpression, PhraseType.LogicOperator, PhraseType.LogicExpression, PhraseType.Round_Bracket_Close));
+            SyntacticalTemplates.Add(new PhraseTypeTemplate(PhraseType.LogicExpression, PhraseType.Round_Bracket_Open, PhraseType.Value, PhraseType.ComparisonOperator, PhraseType.Value, PhraseType.Round_Bracket_Close));
+            SyntacticalTemplates.Add(new PhraseTypeTemplate(PhraseType.LogicExpression, PhraseType.Round_Bracket_Open, PhraseType.LogicExpression, PhraseType.LogicOperator, PhraseType.LogicExpression, PhraseType.Round_Bracket_Close));
             SyntacticalTemplates.Add(new PhraseTypeTemplate(PhraseType.LogicExpression, PhraseType.Round_Bracket_Open, PhraseType.LogicExpression, PhraseType.Round_Bracket_Close));
 
             //WaitOperator
             SyntacticalTemplates.Add(new PhraseTypeTemplate(PhraseType.WaitOperator, PhraseType.WaitCondition, PhraseType.WaitConditions));
             SyntacticalTemplates.Add(new PhraseTypeTemplate(PhraseType.WaitOperator, PhraseType.WaitTime, PhraseType.EoL));
             SyntacticalTemplates.Add(new PhraseTypeTemplate(PhraseType.WaitOperator, PhraseType.WaitUntil, PhraseType.EoL));
-            
+
 
             SyntacticalTemplates.Add(new PhraseTypeTemplate(PhraseType.WaitTime, PhraseType.WaitOperator_Word, PhraseType.Time_Word, PhraseType.ComparisonOperator, PhraseType.ArithmeticExpression_3lvl));
             SyntacticalTemplates.Add(new PhraseTypeTemplate(PhraseType.WaitUntil, PhraseType.WaitOperator_Word, PhraseType.LogicExpression));
@@ -777,23 +756,10 @@ namespace LPDP
             SyntacticalTemplates.Add(new PhraseTypeTemplate(PhraseType.TerminateOperator, PhraseType.TerminateOperator_Word, PhraseType.Name));
             SyntacticalTemplates.Add(new PhraseTypeTemplate(PhraseType.TerminateOperator, PhraseType.TerminateOperator_Word, PhraseType.Initiator_Word));
         }
+        #endregion
 
         //ОШИБКИ
         #region Errors
-        public enum ErrorType
-        {
-            EmptyText,
-            UnknownSimbol,
-            UnknownLexeme,
-
-            ExpectedPhrase,
-
-            Replacing,
-
-
-            //UnknownPhrase
-        }
-
         /// <summary>
         /// Типы ошибок
         /// </summary>
@@ -805,7 +771,7 @@ namespace LPDP
         {
             ErrorTypes = new Dictionary<ErrorType, string>()
             {
-                {ErrorType.EmptyText, "Не найден текст модели."},
+                {ErrorType.EmptyText, "Не найден текст модели.///"},
                 {ErrorType.UnknownSimbol, "Неизвестный символ: "},
                 {ErrorType.UnknownLexeme, "Неизвестнная лексема: "},
 

@@ -121,3 +121,15 @@ C:\Users\Николай\Desktop\библиотека ПОСП и др\ПОСП(.
 C:\Users\Николай\Desktop\библиотека ПОСП и др\ПОСП(.NET 3.5)(27-предзащита) - копия\ПОСП\obj\Debug\ПОСП.POSP_Form.resources
 C:\Users\Николай\Desktop\библиотека ПОСП и др\ПОСП(.NET 3.5)(27-предзащита) - копия\ПОСП\obj\Debug\ПОСП.Properties.Resources.resources
 C:\Users\Николай\Desktop\библиотека ПОСП и др\ПОСП(.NET 3.5)(27-предзащита) - копия\ПОСП\obj\Debug\ПОСП.csproj.GenerateResource.Cache
+C:\Users\Николай\Desktop\LPDP-project\ПОСП(.NET 3.5)(27-предзащита) - копия\ПОСП\bin\Debug\ПОСП.exe.config
+C:\Users\Николай\Desktop\LPDP-project\ПОСП(.NET 3.5)(27-предзащита) - копия\ПОСП\obj\Debug\ПОСП.exe
+C:\Users\Николай\Desktop\LPDP-project\ПОСП(.NET 3.5)(27-предзащита) - копия\ПОСП\obj\Debug\ПОСП.pdb
+C:\Users\Николай\Desktop\LPDP-project\ПОСП(.NET 3.5)(27-предзащита) - копия\ПОСП\bin\Debug\ПОСП.exe
+C:\Users\Николай\Desktop\LPDP-project\ПОСП(.NET 3.5)(27-предзащита) - копия\ПОСП\bin\Debug\ПОСП.pdb
+C:\Users\Николай\Desktop\LPDP-project\ПОСП(.NET 3.5)(27-предзащита) - копия\ПОСП\bin\Debug\LPDP.dll
+C:\Users\Николай\Desktop\LPDP-project\ПОСП(.NET 3.5)(27-предзащита) - копия\ПОСП\bin\Debug\LPDP.pdb
+C:\Users\Николай\Desktop\LPDP-project\ПОСП(.NET 3.5)(27-предзащита) - копия\ПОСП\obj\Debug\ПОСП.csprojResolveAssemblyReference.cache
+C:\Users\Николай\Desktop\LPDP-project\ПОСП(.NET 3.5)(27-предзащита) - копия\ПОСП\obj\Debug\ПОСП.Closing_Form.resources
+C:\Users\Николай\Desktop\LPDP-project\ПОСП(.NET 3.5)(27-предзащита) - копия\ПОСП\obj\Debug\ПОСП.POSP_Form.resources
+C:\Users\Николай\Desktop\LPDP-project\ПОСП(.NET 3.5)(27-предзащита) - копия\ПОСП\obj\Debug\ПОСП.Properties.Resources.resources
+C:\Users\Николай\Desktop\LPDP-project\ПОСП(.NET 3.5)(27-предзащита) - копия\ПОСП\obj\Debug\ПОСП.csproj.GenerateResource.Cache
