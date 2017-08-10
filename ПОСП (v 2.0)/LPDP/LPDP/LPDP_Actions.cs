@@ -12,14 +12,8 @@ namespace LPDP
         public static void Building(/*string CodeTxt, bool ShowSysMark, bool ShowNextOperatar, bool ShowQueues*/)
         {
             LPDP_Core.RESET();
-            //LPDP_Data.CodeTxt = "Выполняется построение модели...";
-            //CodeField.Rtf = LPDP_Code.ClearFromPointer_RTF(CodeField.Rtf);
-            //LPDP_Data.CodeTxt = LPDP_Data.CodeTxt;
-
-            // Новый Анализ текста
-            //LPDP_TextAnalysis.InitializeErrorTypes();
-            //LPDP_TextAnalysis.LexicalAnalysis(LPDP_Data.CodeTxt);
-            Analysis NewAnalysis = new Analysis(LPDP_Data.CodeTxt);
+            Analysis NewAnalysis = new Analysis();
+            NewAnalysis.AnalyzeText(LPDP_Data.CodeTxt);
 
             // Конец Нового Анализа
 

@@ -25,9 +25,18 @@ namespace LPDP.TextAnalysis
 
         Error CurrentError;
 
-        public Analysis(string SourceText)
+        public Analysis()
         {
+            this.SourceText = "";
             this.Errors = new List<Error>();
+            this.Lexemes = new List<Lexeme>();
+            this.ParsedText = new Phrase();
+            this.ResultRTFCode = "";
+            this.ResultTxtCode = "";
+        }
+
+        public void AnalyzeText(string SourceText)
+        {
             this.SourceText = SourceText;
             //this.Errors = new List<Error>();
 
