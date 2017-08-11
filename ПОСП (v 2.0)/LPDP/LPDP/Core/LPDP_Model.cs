@@ -10,10 +10,12 @@ namespace LPDP.Core
     {
         FutureTimesTable FTT;
         ConditionsTable CT;
+        TimeAndConditionController TC_Controller;
+
         LabelsTable LT;
         GlobalVarsTable GVT;
 
-        TimeAndConditionController TC_Controller;
+        
 
 
 
@@ -21,7 +23,7 @@ namespace LPDP.Core
 
         InitiatorsTable IT;
         
-        int RecordCounter;
+
         int ObjectCounter;
         
         double TIME;
@@ -32,7 +34,6 @@ namespace LPDP.Core
 
         public LPDP_Model ()
         {
-            RecordCounter = 0;
             ObjectCounter = 0;
             TIME = 0;
             RAND = new Random();

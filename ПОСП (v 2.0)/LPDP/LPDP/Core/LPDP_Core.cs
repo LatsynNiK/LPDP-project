@@ -23,13 +23,13 @@ namespace LPDP
             public int Initiator;
             public int Subprogram_Index;
         }
-
         public struct record_MARK
         {
             public string Name;
             public string Unit;
             public int Subprogram_Index;
         }
+
         public struct record_Queue
         {
             public enum condition { True, False, Time };
