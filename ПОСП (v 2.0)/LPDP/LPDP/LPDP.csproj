@@ -49,7 +49,7 @@
   <ItemGroup>
     <Compile Include="LPDP_Actions.cs" />
     <Compile Include="LPDP_Code.cs" />
-    <Compile Include="LPDP_Core.cs" />
+    <Compile Include="Core\LPDP_Core.cs" />
     <Compile Include="LPDP_Data.cs" />
     <Compile Include="LPDP_Graphics.cs" />
     <Compile Include="LPDP_Objects.cs" />
