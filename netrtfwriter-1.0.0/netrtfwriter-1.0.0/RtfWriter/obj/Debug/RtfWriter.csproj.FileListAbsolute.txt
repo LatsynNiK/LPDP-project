@@ -1,0 +1,5 @@
+C:\Users\Николай\Desktop\LPDP-project\netrtfwriter-1.0.0\netrtfwriter-1.0.0\RtfWriter\bin\Debug\RtfWriter.dll
+C:\Users\Николай\Desktop\LPDP-project\netrtfwriter-1.0.0\netrtfwriter-1.0.0\RtfWriter\bin\Debug\RtfWriter.pdb
+C:\Users\Николай\Desktop\LPDP-project\netrtfwriter-1.0.0\netrtfwriter-1.0.0\RtfWriter\obj\Debug\RtfWriter.csprojResolveAssemblyReference.cache
+C:\Users\Николай\Desktop\LPDP-project\netrtfwriter-1.0.0\netrtfwriter-1.0.0\RtfWriter\obj\Debug\RtfWriter.dll
+C:\Users\Николай\Desktop\LPDP-project\netrtfwriter-1.0.0\netrtfwriter-1.0.0\RtfWriter\obj\Debug\RtfWriter.pdb
