@@ -29,9 +29,9 @@ namespace LPDP
             }
             
             // Конец Нового Анализа
-
+            LPDP_Core.TIME = 100;
             //LPDP_Data.InfoTxt = 
-            LPDP_Core.Build_POSP_Model(LPDP_Data.CodeTxt);
+            //LPDP_Core.Build_POSP_Model(LPDP_Data.CodeTxt);
 
             if (LPDP_Core.Model_Is_Built == true)
             {
