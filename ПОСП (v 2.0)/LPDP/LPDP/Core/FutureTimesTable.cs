@@ -7,22 +7,27 @@ namespace LPDP.Core
 {
     class FutureTimesTable
     {
-        List<RecordFTT> TimesTable;
-
+        public List<RecordFTT> TimesTable;
 
         public FutureTimesTable()
         {
-            TimesTable = new List<RecordFTT>();
+            this.TimesTable = new List<RecordFTT>();
         }
 
         public void Add(RecordFTT rec)
         {
-            TimesTable.Add(rec);
+            this.TimesTable.Add(rec);
         }
+
+        //public void Add(double time, int init, int lable, bool islast)
+        //{
+        //    RecordFTT NewRec = new RecordFTT(
+        //}
+
         public void Delete(int id_rec)
         {
-            RecordFTT rec = TimesTable.Find(r => r.ID == id_rec);
-            TimesTable.Remove(rec);
+            RecordFTT rec = this.TimesTable.Find(r => r.ID == id_rec);
+            this.TimesTable.Remove(rec);
         }
     }
 }
