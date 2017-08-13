@@ -8,7 +8,7 @@ namespace LPDP.Core
     class RecordLabel
     {
         public int ID;
-        public int Subprogram;
+        public int SubprogramID;
         public string Name;
         public string Unit;
         public bool Visible;
@@ -16,7 +16,7 @@ namespace LPDP.Core
         public RecordLabel(int id, int subp, string name, string unit, bool visible)
         {
             this.ID = id;
-            this.Subprogram = subp;
+            this.SubprogramID = subp;
             this.Name = name;
             this.Unit = unit;
             this.Visible = visible;

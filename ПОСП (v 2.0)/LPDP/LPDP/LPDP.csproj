@@ -49,13 +49,19 @@
   <ItemGroup>
     <Compile Include="Core\ConditionsTable.cs" />
     <Compile Include="Core\FutureTimesTable.cs" />
+    <Compile Include="Core\LableTable.cs" />
     <Compile Include="Core\LPDP_Model.cs" />
+    <Compile Include="Core\Operator.cs" />
+    <Compile Include="Core\Parameter.cs" />
     <Compile Include="Core\RecordCT.cs" />
     <Compile Include="Core\RecordFTT.cs" />
+    <Compile Include="Core\RecordLabel.cs" />
+    <Compile Include="Core\StructureController.cs" />
+    <Compile Include="Core\Subprogram.cs" />
     <Compile Include="Core\TimeAndConditionController.cs" />
     <Compile Include="LPDP_Actions.cs" />
     <Compile Include="LPDP_Code.cs" />
-    <Compile Include="Core\LPDP_Core.cs" />
+    <Compile Include="Core\LPDP_Core%28old%29.cs" />
     <Compile Include="LPDP_Data.cs" />
     <Compile Include="LPDP_Graphics.cs" />
     <Compile Include="LPDP_Objects.cs" />

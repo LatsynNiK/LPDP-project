@@ -61,7 +61,6 @@ namespace LPDP.TextAnalysis
 
 
     }
-
     public enum PhraseType
     {
         // Неопределенная лексема

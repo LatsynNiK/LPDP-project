@@ -12,6 +12,9 @@ namespace LPDP.Core
         ConditionsTable CT;
         TimeAndConditionController TC_Controller;
 
+        public List<Subprogram> Tracks;
+        StructureController ST_Controller;
+
         LabelsTable LT;
         GlobalVarsTable GVT;
 
@@ -34,12 +37,13 @@ namespace LPDP.Core
 
         public LPDP_Model ()
         {
-            ObjectCounter = 0;
-            TIME = 0;
-            RAND = new Random();
+            this.ObjectCounter = 0;
+            this.TIME = 0;
+            this.RAND = new Random();
 
-            TC_Controller = new TimeAndConditionController();
-
+            this.TC_Controller = new TimeAndConditionController();
+            this.ST_Controller = new StructureController();
+            this.Tracks = new List<Subprogram>();
         }
     }
 }
