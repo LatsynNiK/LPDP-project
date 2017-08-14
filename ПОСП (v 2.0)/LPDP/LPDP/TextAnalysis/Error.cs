@@ -5,7 +5,7 @@ using System.Text;
 
 namespace LPDP.TextAnalysis
 {
-    class Error
+    public class Error
     {
         public ErrorType Type;
         public string ErrorText;

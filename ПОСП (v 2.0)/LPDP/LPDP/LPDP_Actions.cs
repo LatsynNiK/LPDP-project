@@ -12,18 +12,26 @@ namespace LPDP
         public static void Building(/*string CodeTxt, bool ShowSysMark, bool ShowNextOperatar, bool ShowQueues*/)
         {
             LPDP_Core.RESET();
-            //LPDP_Data.CodeTxt = "Выполняется построение модели...";
-            //CodeField.Rtf = LPDP_Code.ClearFromPointer_RTF(CodeField.Rtf);
-            //LPDP_Data.CodeTxt = LPDP_Data.CodeTxt;
+            Analysis NewAnalysis = new Analysis();
+            NewAnalysis.AnalyzeText(LPDP_Data.CodeTxt);
 
-            // Новый Анализ текста
-            //LPDP_TextAnalysis.InitializeErrorTypes();
-            //LPDP_TextAnalysis.LexicalAnalysis(LPDP_Data.CodeTxt);
-            Analysis NewAnalysis = new Analysis(LPDP_Data.CodeTxt);
-
+            if (NewAnalysis.Errors.Count > 0)
+            {
+                LPDP_Data.InfoTxt = "Не удалось построить модель\n";
+                foreach (Error e in NewAnalysis.Errors)
+                {
+                    LPDP_Data.InfoTxt += e.ErrorText + "\n";
+                }
+            }
+            else 
+            {
+                LPDP_Data.InfoTxt = "Модель построена успешно.";
+            }
+            
             // Конец Нового Анализа
-
-            LPDP_Data.InfoTxt = LPDP_Core.Build_POSP_Model(LPDP_Data.CodeTxt);
+            LPDP_Core.TIME = 100;
+            //LPDP_Data.InfoTxt = 
+            //LPDP_Core.Build_POSP_Model(LPDP_Data.CodeTxt);
 
             if (LPDP_Core.Model_Is_Built == true)
             {

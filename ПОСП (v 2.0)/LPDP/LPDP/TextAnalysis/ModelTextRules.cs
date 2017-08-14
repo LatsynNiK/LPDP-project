@@ -770,7 +770,7 @@ namespace LPDP.TextAnalysis
         {
             ErrorTypes = new Dictionary<ErrorType, string>()
             {
-                {ErrorType.EmptyText, "Не найден текст модели.///"},
+                {ErrorType.EmptyText, "Не найден текст модели."},
                 {ErrorType.UnknownSimbol, "Неизвестный символ: "},
                 {ErrorType.UnknownLexeme, "Неизвестнная лексема: "},
 
