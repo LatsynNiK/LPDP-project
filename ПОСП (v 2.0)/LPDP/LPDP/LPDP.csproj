@@ -67,6 +67,7 @@
     <Compile Include="Objects\InitiatorsTable.cs" />
     <Compile Include="Objects\Link.cs" />
     <Compile Include="Objects\LPDP_Objects%28old%29.cs" />
+    <Compile Include="Objects\Macro.cs" />
     <Compile Include="Objects\Memory.cs" />
     <Compile Include="Objects\Object.cs" />
     <Compile Include="Objects\ObjectController.cs" />
