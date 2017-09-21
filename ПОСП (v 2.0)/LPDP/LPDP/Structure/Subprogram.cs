@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace LPDP.Core
+namespace LPDP.Structure
 {
-    class Subprogram
+    public class Subprogram
     {
         int ID;
         List<Operator> Operators;

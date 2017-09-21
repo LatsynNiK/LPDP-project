@@ -5,9 +5,9 @@ using System.Text;
 
 using LPDP.TextAnalysis;
 
-namespace LPDP.Core
+namespace LPDP.Dynamics
 {
-    class RecordCT
+    public class RecordCT
     {
         public int ID;
         public Phrase Condition;

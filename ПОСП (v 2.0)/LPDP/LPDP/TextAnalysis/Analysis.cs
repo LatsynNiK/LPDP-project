@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
+using LPDP.Structure;
+using LPDP.Objects;
+
 namespace LPDP.TextAnalysis
 {
     public class Analysis
@@ -11,7 +14,7 @@ namespace LPDP.TextAnalysis
         public List<Error> Errors;
         List<Lexeme> Lexemes;
         //List<Phrase> Phrases;
-        Phrase ParsedText;
+        public Phrase ParsedText;
         public string ResultTxtCode;
         public string ResultRTFCode;
 
@@ -24,6 +27,8 @@ namespace LPDP.TextAnalysis
         }
 
         Error CurrentError;
+
+        public Model ResultModel;
 
         public Analysis()
         {
@@ -72,6 +77,78 @@ namespace LPDP.TextAnalysis
 
             this.ResultTxtCode = "";
             this.ResultRTFCode = "";
+            return 1;
+        }
+
+        public int AnalyzeStructure(Phrase source_phrase)
+        {
+            //Phrase name_ph;
+            //Word name_w;
+            //string name_s;
+
+            switch (source_phrase.PhType)
+            {
+                //Создание пустой модели
+                case PhraseType.Model:
+                    //name_ph = source_phrase.Value.Find(ph => ph.PhType == PhraseType.Name);
+                    //name_w = (Word) name_ph;
+                    //name_s = name_w.LValue;
+                    this.ResultModel = new Model(EjectStringName(source_phrase));
+
+                    Phrase units_ph = source_phrase.Value.Find(ph => ph.PhType == PhraseType.Units);
+                    foreach (Phrase unit_ph in units_ph.Value)
+                    {
+                        AnalyzeStructure(unit_ph);
+                    }
+                    break;
+
+                case PhraseType.Unit:
+                    this.ResultModel.ST_Cont.CreateUnit();
+                    foreach (Phrase unit_part_ph in source_phrase.Value)
+                    {
+                        AnalyzeStructure(unit_part_ph);
+                    }
+                    break;
+
+                case PhraseType.UnitHeader:
+                    Phrase unit_type_ph = source_phrase.Value.Find(ph => ph.PhType == PhraseType.UnitType_Word);
+                    Word unit_type_w = (Word) unit_type_ph;
+                    string unit_type_s = unit_type_w.LValue;
+                    UnitType u_type;
+                    switch (unit_type_s)
+                    {
+                        case "контроллер":
+                            u_type = UnitType.Controller;
+                            break;    
+                        case "процессор":
+                            u_type = UnitType.Processor;
+                            break;
+                        case "агрегат":
+                            u_type = UnitType.Aggregate;
+                            break;
+                        default:
+                            u_type = UnitType.Processor;
+                            break;
+                    }
+                    this.ResultModel.ST_Cont.SetUnitHeader(EjectStringName(source_phrase), u_type);
+                    break;
+
+                case PhraseType.Description:
+                    Phrase descriptionlines_ph = source_phrase.Value.Find(ph => ph.PhType == PhraseType.DescriptionLines);
+                    foreach (Phrase descriptionline_ph in descriptionlines_ph.Value)
+                    {
+                        AnalyzeStructure(descriptionline_ph);
+                    }
+                    break;
+
+                case PhraseType.DescriptionLine:
+                    List<Objects.Object> list_obj = this.CreateObjectsFromDesciptionLine(source_phrase);
+                    foreach (Objects.Object o in list_obj)
+                    {
+                        this.ResultModel.O_Cont.AddObject(o);
+                    }
+                    break;
+            }
             return 1;
         }
 
@@ -645,6 +722,108 @@ namespace LPDP.TextAnalysis
                 }
             }
             return InitialPhrase;
+        }
+
+        //******************
+
+        string EjectStringName(Phrase ph)
+        {
+            Phrase name_ph = ph.Value.Find(p => p.PhType == PhraseType.Name);
+            Word name_w = (Word)name_ph;
+            string name_s = name_w.LValue;
+            return name_s;
+        }
+
+        List<LPDP.Objects.Object> CreateObjectsFromDesciptionLine(Phrase desc_line)
+        {
+            List<LPDP.Objects.Object> list = new List<Objects.Object>();
+
+            Phrase vars_ph = desc_line.Value.Find(ph => ph.PhType == PhraseType.Vars);
+            Dictionary<string,Phrase> vars_dictionary = new Dictionary<string,Phrase>();
+            foreach (Phrase var_ph in vars_ph.Value)
+            {
+                if (var_ph.PhType == PhraseType.Comma)
+                {
+                    continue;
+                }
+                if (var_ph.PhType == PhraseType.Var)
+                {
+                    if (var_ph.Value.Exists(p => p.PhType == PhraseType.AssignOperator))
+                    {
+                        Phrase assign_op_ph = var_ph.Value.Find(p => p.PhType == PhraseType.AssignOperator);
+                        string name = this.EjectStringName(assign_op_ph);
+                        Phrase val = assign_op_ph.Value.Find(p => p.PhType == PhraseType.Value);
+                        vars_dictionary.Add(name, val);
+                        continue;
+                    }
+                    if (var_ph.Value.Exists(p => p.PhType == PhraseType.Name))
+                    {
+                        string name = this.EjectStringName(var_ph);
+                        vars_dictionary.Add(name, null);
+                        continue;
+                    }
+                }
+            }
+
+            string varunit = this.ResultModel.ST_Cont.CurrentUnit.Name;
+
+
+            Phrase vardescription_ph = desc_line.Value.Find(ph => ph.PhType == PhraseType.VarDescription);
+            Phrase vartype_ph = vardescription_ph.Value.Find(ph => ph.PhType == PhraseType.VarType);
+
+            foreach (var v in vars_dictionary)
+            {
+                //для скаляра
+                if (vartype_ph.Value.Exists(ph => ph.PhType == PhraseType.ScalarVarType_Word))
+                {
+                    if (v.Value == null)
+                    {
+                        list.Add(new Objects.Scalar(v.Key, varunit));
+                    }
+                    else
+                    {
+                        //если выражение
+                        //list.Add(new Scalar(v.Key., varunit,v.Value);
+                    }
+                }
+                //для вектора
+                if (vartype_ph.Value.Exists(ph => ph.PhType == PhraseType.VectorVarType_Word))
+                {
+                    Objects.Vector NewVector = new Objects.Vector(v.Key, varunit, CreateObjectsFromDesciptionLine(v.Value));
+                }   
+                //для ссылки
+                if (vartype_ph.Value.Exists(ph => ph.PhType == PhraseType.LinkVarType_Word))
+                {
+                    if (v.Value == null)
+                    {
+                        list.Add(new Objects.Link(v.Key, varunit));
+                    }
+                    else
+                    {
+                        //если выражение
+                        //list.Add(new Scalar(v.Key., varunit,v.Value);
+                    }
+                }
+                //для макроса
+                if (vartype_ph.Value.Exists(ph => ph.PhType == PhraseType.MacroVarType_Word))
+                {
+                    Phrase names_ph = vartype_ph.Value.Find(ph => ph.PhType == PhraseType.Names);
+                    List<string> names = new List<string>();
+                    foreach(Phrase ph in names_ph.Value)
+                    {
+                        if (ph.PhType == PhraseType.Name)
+                        {
+                            Word name_w = (Word)ph;
+                            names.Add(name_w.LValue);
+                        }
+                    }
+
+                    list.Add(new Macro(v.Key,varunit,v.Value, names));
+                }
+
+            }//конец перебора переменных
+
+            return list;
         }
     }
 }

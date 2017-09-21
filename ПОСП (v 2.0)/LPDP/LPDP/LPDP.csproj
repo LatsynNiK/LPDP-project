@@ -47,27 +47,29 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Core\ConditionsTable.cs" />
-    <Compile Include="Core\FutureTimesTable.cs" />
-    <Compile Include="Core\LableTable.cs" />
-    <Compile Include="Core\LPDP_Model.cs" />
-    <Compile Include="Core\Operator.cs" />
-    <Compile Include="Core\Parameter.cs" />
-    <Compile Include="Core\RecordCT.cs" />
-    <Compile Include="Core\RecordFTT.cs" />
-    <Compile Include="Core\RecordLabel.cs" />
-    <Compile Include="Core\StructureController.cs" />
-    <Compile Include="Core\Subprogram.cs" />
-    <Compile Include="Core\TimeAndConditionController.cs" />
+    <Compile Include="Dynamics\ConditionsTable.cs" />
+    <Compile Include="Dynamics\FutureTimesTable.cs" />
+    <Compile Include="Objects\InitiatorsTable.cs" />
+    <Compile Include="Structure\LabelsTable.cs" />
+    <Compile Include="Objects\Macro.cs" />
+    <Compile Include="Objects\MacrosTable.cs" />
+    <Compile Include="Structure\Model.cs" />
+    <Compile Include="Structure\Operator.cs" />
+    <Compile Include="Structure\Parameter.cs" />
+    <Compile Include="Dynamics\RecordCT.cs" />
+    <Compile Include="Dynamics\RecordFTT.cs" />
+    <Compile Include="Structure\Label.cs" />
+    <Compile Include="Structure\StructureController.cs" />
+    <Compile Include="Structure\Subprogram.cs" />
+    <Compile Include="Dynamics\TimeAndConditionController.cs" />
     <Compile Include="LPDP_Actions.cs" />
     <Compile Include="LPDP_Code.cs" />
-    <Compile Include="Core\LPDP_Core%28old%29.cs" />
+    <Compile Include="Structure\LPDP_Core%28old%29.cs" />
     <Compile Include="LPDP_Data.cs" />
     <Compile Include="LPDP_Graphics.cs" />
-    <Compile Include="Objects\InitiatorsTable.cs" />
+    <Compile Include="Objects\Initiator.cs" />
     <Compile Include="Objects\Link.cs" />
     <Compile Include="Objects\LPDP_Objects%28old%29.cs" />
-    <Compile Include="Objects\Macro.cs" />
     <Compile Include="Objects\Memory.cs" />
     <Compile Include="Objects\Object.cs" />
     <Compile Include="Objects\ObjectController.cs" />
@@ -80,6 +82,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="Structure\Unit.cs" />
     <Compile Include="TextAnalysis\Error.cs" />
     <Compile Include="TextAnalysis\Lexeme.cs" />
     <Compile Include="TextAnalysis\LexemeTypeTemplate.cs" />

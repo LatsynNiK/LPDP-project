@@ -9,11 +9,48 @@ namespace LPDP.Objects
     {
         string Value;
 
+        public Scalar(string name, string unit)
+            : base(name, unit)
+        {
+            base.Type = ObjectType.Scalar;
+            this.Value = "";
+        }
+
+        public Scalar(string name, string unit, string value)
+            : base(name, unit)
+        {
+            base.Type = ObjectType.Scalar;
+            this.Value = value;
+        }
+
         public Scalar(int id, string name, string unit)
             : base(id, name, unit)
         {
             base.Type = ObjectType.Scalar;
             this.Value = "";
         }
+
+        public Scalar(int id, string name, string unit, string value)
+            : base(id, name, unit)
+        {
+            base.Type = ObjectType.Scalar;
+            this.Value = value;
+        }
+
+        public Scalar(int id)
+            : base(id)
+        {
+            base.Type = ObjectType.Scalar;
+            this.Value = "";
+        }
+
+        //Parent
+        public Scalar(int id, string name, string unit, int parent)
+            : base(id, name, unit, parent)
+        {
+            base.Type = ObjectType.Scalar;
+            this.Value = "";
+        }
+
     }
 }

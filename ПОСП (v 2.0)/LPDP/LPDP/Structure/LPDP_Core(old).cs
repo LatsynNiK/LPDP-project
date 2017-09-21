@@ -1170,7 +1170,7 @@ namespace LPDP
         }
 
         //построение модели из введенного текста
-        public static bool Model_Is_Built = false; 
+        public static bool Model_Is_Built = false;
 
         public static string Build_POSP_Model(string code)
         {

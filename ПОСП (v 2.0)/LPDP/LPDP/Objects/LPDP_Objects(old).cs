@@ -40,7 +40,7 @@ namespace LPDP
 
     class Scalar : LPDP_Object
     {
-         string Value;
+        string Value;
 
         //конструкторы
         public Scalar(string Name, string Unit, string Value)
@@ -160,7 +160,7 @@ namespace LPDP
                 else Tree = Tree.Substring(end_flag + 1);
             }
         }
-        
+
         override public string GetValue(string Tree)
         {
             string result = "\"Ошибка!\"";

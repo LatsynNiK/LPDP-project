@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace LPDP.Core
+namespace LPDP.Dynamics
 {
-    class RecordFTT
+    public class RecordFTT
     {
         public int ID;
         public double ActiveTime;

@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace LPDP.Core
+namespace LPDP.Dynamics
 {
-    class FutureTimesTable
+    public class FutureTimesTable
     {
         public List<RecordFTT> TimesTable;
 

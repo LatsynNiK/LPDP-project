@@ -5,9 +5,9 @@ using System.Text;
 
 using LPDP.TextAnalysis;
 
-namespace LPDP.Core
+namespace LPDP.Structure
 {
-    class Parameter
+    public class Parameter
     {
         public string Name;
         public Phrase Value;

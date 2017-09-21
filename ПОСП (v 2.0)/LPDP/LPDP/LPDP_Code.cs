@@ -963,7 +963,7 @@ namespace LPDP //
             return result;
         }
 
-        public  static string ClearFromBackcolor_RTF(string RTF_Code)
+        public static string ClearFromBackcolor_RTF(string RTF_Code)
         {
             RichTextBox NewRTB = new RichTextBox();
             NewRTB.Font = new Font("Microsoft Sans Serif", 12);

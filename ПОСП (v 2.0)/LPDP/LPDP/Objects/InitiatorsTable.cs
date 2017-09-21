@@ -5,18 +5,13 @@ using System.Text;
 
 namespace LPDP.Objects
 {
-    public enum InitiatorType {Aggregate, Flow}
-    class InitiatorsTable
+    public class InitiatorsTable
     {
-        int Number; 
-        int ID_of_MemoryCell;
-        InitiatorType Type;
+        List<Initiator> Initiators;
 
-        public InitiatorsTable(int number, int id, InitiatorType type)
+        public InitiatorsTable()
         {
-            this.Number = number;
-            this.ID_of_MemoryCell = id;
-            this.Type = type;
+            this.Initiators = new List<Initiator>();
         }
     }
 }

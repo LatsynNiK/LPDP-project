@@ -5,14 +5,17 @@ using System.Text;
 
 using LPDP.TextAnalysis;
 
-namespace LPDP.Core
+namespace LPDP.Dynamics
 {
-    class TimeAndConditionController
+    public class TimeAndConditionController
     {
         int ID_Counter;
 
-        public TimeAndConditionController()
+        LPDP.Structure.Model ParentModel;
+
+        public TimeAndConditionController(LPDP.Structure.Model model)
         {
+            this.ParentModel = model;
             ID_Counter = 0;
         }
 

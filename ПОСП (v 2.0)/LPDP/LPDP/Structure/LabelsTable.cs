@@ -3,26 +3,26 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace LPDP.Core
+namespace LPDP.Structure
 {
-    class LableTable
+    public class LabelsTable
     {
-        List<RecordLabel> Table;
+        List<Label> Table;
 
-        public LableTable()
+        public LabelsTable()
         {
-            this.Table = new List<RecordLabel>();
+            this.Table = new List<Label>();
         }
 
         //???
-        public void Add(RecordLabel rec)
+        public void Add(Label rec)
         {
             this.Table.Add(rec);
         }
 
         public void Delete(int id_rec)
         {
-            RecordLabel rec = this.Table.Find(r => r.ID == id_rec);
+            Label rec = this.Table.Find(r => r.ID == id_rec);
             this.Table.Remove(rec);
         }
     }

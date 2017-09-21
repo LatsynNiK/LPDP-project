@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 
 using LPDP.TextAnalysis;
+using LPDP.Structure;
 
 namespace LPDP
 {
@@ -13,8 +14,11 @@ namespace LPDP
         {
             LPDP_Core.RESET();
             Analysis NewAnalysis = new Analysis();
+
             NewAnalysis.AnalyzeText(LPDP_Data.CodeTxt);
 
+            NewAnalysis.AnalyzeStructure(NewAnalysis.ParsedText);
+            
             if (NewAnalysis.Errors.Count > 0)
             {
                 LPDP_Data.InfoTxt = "Не удалось построить модель\n";

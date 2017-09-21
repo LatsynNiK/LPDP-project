@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace LPDP.Core
+namespace LPDP.Structure
 {
-    class RecordLabel
+    public class Label
     {
         public int ID;
         public int SubprogramID;
@@ -13,7 +13,7 @@ namespace LPDP.Core
         public string Unit;
         public bool Visible;
 
-        public RecordLabel(int id, int subp, string name, string unit, bool visible)
+        public Label(int id, int subp, string name, string unit, bool visible)
         {
             this.ID = id;
             this.SubprogramID = subp;
