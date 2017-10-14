@@ -7,8 +7,8 @@ namespace LPDP.Structure
 {
     public class StructureController
     {
-        int SubprogramID_Counter;
-        //int OperatorID_Counter;
+        //int SubprogramID_Counter;
+        int OperatorID_Counter;
 
         //*************
         Model ParentModel;
@@ -18,15 +18,29 @@ namespace LPDP.Structure
         public StructureController(Model model)
         {
             this.ParentModel = model;
-            SubprogramID_Counter = 0;
+            //SubprogramID_Counter = 0;
         }
 
-        public void CreateSubprogram()
+        //public void CreateSubprogram()
+        //{
+        //    Subprogram NewSubp = new Subprogram(SubprogramID_Counter);
+        //    //model.Tracks.Add(NewSubp);
+        //    this.SubprogramID_Counter++;
+        //    this.CurrentSubprogram = NewSubp;
+        //}
+
+
+        public void AddSubprogram(Subprogram subp)
         {
-            Subprogram NewSubp = new Subprogram(SubprogramID_Counter);
-            //model.Tracks.Add(NewSubp);
-            this.SubprogramID_Counter++;
-            this.CurrentSubprogram = NewSubp;
+            this.ParentModel.Tracks.Add(subp);
+            this.CurrentSubprogram = subp;
+        }
+
+        public void AddOperator(Operator oper)
+        {
+            oper.ID = this.OperatorID_Counter;
+            this.OperatorID_Counter++;
+            this.CurrentSubprogram.AddOperator(oper); 
         }
 
         //UNIT
@@ -40,6 +54,12 @@ namespace LPDP.Structure
         {
             this.CurrentUnit.SetHeader(name, type);
             this.ParentModel.GVT.AddUnit(name);
+        }
+
+        public void AddLabel(Label label)
+        {
+            label.SubprogramID = this.CurrentSubprogram.ID;
+            label.Unit = this.CurrentUnit.Name;
         }
 
         //public int GetOperatorID()

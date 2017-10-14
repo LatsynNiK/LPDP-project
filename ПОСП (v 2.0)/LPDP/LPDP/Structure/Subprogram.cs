@@ -7,13 +7,20 @@ namespace LPDP.Structure
 {
     public class Subprogram
     {
-        int ID;
+        public int ID;
         List<Operator> Operators;
         int OperatorIndexCounter;
 
         public Subprogram(int id)
         {
             this.ID = id;
+            this.OperatorIndexCounter = 0;
+            this.Operators = new List<Operator>();
+        }
+
+        public Subprogram()
+        {
+            //this.ID = id;
             this.OperatorIndexCounter = 0;
             this.Operators = new List<Operator>();
         }
@@ -27,6 +34,18 @@ namespace LPDP.Structure
             Operator NewOperator = new Operator(id_op, OperatorIndexCounter, name, Params);
             this.Operators.Add(NewOperator);
             OperatorIndexCounter++;
+        }
+
+        public void AddOperator(Operator oper)
+        {
+            //if (islast)
+            //{
+            //    OperatorIndexCounter--;
+            //}
+            oper.Index = this.OperatorIndexCounter;
+            this.OperatorIndexCounter++;
+            this.Operators.Add(oper);
+            
         }
     }
 }

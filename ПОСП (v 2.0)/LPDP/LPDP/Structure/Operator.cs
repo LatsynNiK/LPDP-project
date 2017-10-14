@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
+using LPDP.TextAnalysis;
+
 namespace LPDP.Structure
 {
     public enum OperatorName
@@ -20,19 +22,26 @@ namespace LPDP.Structure
         //WaitConditions,
         Execute
     }
-    class Operator
+    public class Operator
     {
-        int ID;
-        int Index;
-        OperatorName Name;
-        List<Parameter> Params;
+        public int ID;
+        public int Index;
+        public OperatorName Name;
+        //List<Parameter> Params;
+        public Dictionary<string, object> Params;
+
+        public Operator() 
+        {
+            this.Params = new Dictionary<string, object>();
+        }
 
         public Operator(int id, int ind, OperatorName name, List<Parameter> param_list )
         {
             this.ID = id;
             this.Index = ind;
             this.Name = name;
-            this.Params = param_list;
+            //this.Params = param_list;
         }
+        
     }
 }

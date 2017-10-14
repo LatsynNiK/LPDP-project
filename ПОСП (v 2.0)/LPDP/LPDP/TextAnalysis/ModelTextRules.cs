@@ -28,7 +28,7 @@ namespace LPDP.TextAnalysis
         Digit_Point,            // .
         Comma,                  // ,
 
-        MarkSeparator,          // :
+        LabelSeparator,          // :
         TypeSeparator,          // --
         Quotes,                 // "
         Star,                   // *
@@ -88,7 +88,7 @@ namespace LPDP.TextAnalysis
         MacroVarType_Word,
         RefToUnit_Word,
 
-        MarkSeparator,          // :
+        LabelSeparator,          // :
         TypeSeparator,          // --
 
         Round_Bracket_Open,     // (
@@ -115,7 +115,7 @@ namespace LPDP.TextAnalysis
         TransferOperator_Word,
         InitiatorOperator_Word,
         ToOperator_Word,
-        MarkOperator_Word,
+        LabelOperator_Word,
 
         CreateOperator_Word,
         ObjectOperator_Word,
@@ -158,7 +158,7 @@ namespace LPDP.TextAnalysis
         AlgorithmEnding,
         AlgorithmLine,
         AlgorithmLines,
-        Mark,
+        Label,
         Operator,
 
         TerminateOperator,
@@ -251,7 +251,7 @@ namespace LPDP.TextAnalysis
             if (ch == '-')
                 return LexemeType.Minus;
             if (ch == ':')
-                return LexemeType.MarkSeparator;
+                return LexemeType.LabelSeparator;
             if (ch == '"')
                 return LexemeType.Quotes;
             if (ch == '*')
@@ -303,7 +303,7 @@ namespace LPDP.TextAnalysis
             LexicalTemplates.Add(new LexemeTypeTemplate(LexemeType.Empty, LexemeType.Enter));
 
 
-            LexicalTemplates.Add(new LexemeTypeTemplate(LexemeType.AssignOperator_Word, LexemeType.MarkSeparator, LexemeType.Equality)); //:=
+            LexicalTemplates.Add(new LexemeTypeTemplate(LexemeType.AssignOperator_Word, LexemeType.LabelSeparator, LexemeType.Equality)); //:=
             LexicalTemplates.Add(new LexemeTypeTemplate(LexemeType.TypeSeparator, LexemeType.Minus, LexemeType.Minus)); //--
             LexicalTemplates.Add(new LexemeTypeTemplate(LexemeType.Comparison_Operator, LexemeType.Exclamation_Point, LexemeType.Equality)); //!=
             LexicalTemplates.Add(new LexemeTypeTemplate(LexemeType.Comparison_Operator, LexemeType.Comparison, LexemeType.Equality)); //>=
@@ -371,7 +371,7 @@ namespace LPDP.TextAnalysis
                 {"иначе",PhraseType.ElseOperator_Word},
                 {"направить",PhraseType.TransferOperator_Word},
                 {"на",PhraseType.ToOperator_Word},
-                {"метку",PhraseType.MarkOperator_Word},
+                {"метку",PhraseType.LabelOperator_Word},
                 {"ждать",PhraseType.WaitOperator_Word},
                 {"уничтожить",PhraseType.TerminateOperator_Word},
 
@@ -424,7 +424,7 @@ namespace LPDP.TextAnalysis
                 {PhraseType.MacroVarType_Word,true},
                 {PhraseType.RefToUnit_Word,true},
                 
-                {PhraseType.MarkSeparator,true},          // :
+                {PhraseType.LabelSeparator,true},          // :
                 {PhraseType.TypeSeparator,true},          // --
                 
                 {PhraseType.Round_Bracket_Open, true},    // (
@@ -449,7 +449,7 @@ namespace LPDP.TextAnalysis
                 {PhraseType.TransferOperator_Word,true},
                 {PhraseType.InitiatorOperator_Word,true},
                 {PhraseType.ToOperator_Word,true},
-                {PhraseType.MarkOperator_Word,true},
+                {PhraseType.LabelOperator_Word,true},
                 
                 {PhraseType.CreateOperator_Word,true},
                 {PhraseType.ObjectOperator_Word,true},
@@ -493,7 +493,7 @@ namespace LPDP.TextAnalysis
                 {PhraseType.AlgorithmEnding,false},
                 {PhraseType.AlgorithmLine,false},
                 {PhraseType.AlgorithmLines,false},
-                {PhraseType.Mark,false},
+                {PhraseType.Label,false},
                 {PhraseType.Operator,false},
                 
                 {PhraseType.TerminateOperator,false},
@@ -559,8 +559,8 @@ namespace LPDP.TextAnalysis
                 case LexemeType.Comma:
                     return PhraseType.Comma;
 
-                case LexemeType.MarkSeparator:
-                    return PhraseType.MarkSeparator;
+                case LexemeType.LabelSeparator:
+                    return PhraseType.LabelSeparator;
                 case LexemeType.TypeSeparator:
                     return PhraseType.TypeSeparator;
                 case LexemeType.StringValue:
@@ -653,11 +653,11 @@ namespace LPDP.TextAnalysis
             //строка алгоритма
             SyntacticalTemplates.Add(new PhraseTypeTemplate(PhraseType.AlgorithmLines, PhraseType.AlgorithmLine, PhraseType.AlgorithmLines));
             SyntacticalTemplates.Add(new PhraseTypeTemplate(PhraseType.AlgorithmLines, PhraseType.AlgorithmEnding));
-            SyntacticalTemplates.Add(new PhraseTypeTemplate(PhraseType.AlgorithmLine, PhraseType.Mark, PhraseType.Operator/*, PhraseType.EoL*/));
+            SyntacticalTemplates.Add(new PhraseTypeTemplate(PhraseType.AlgorithmLine, PhraseType.Label, PhraseType.Operator/*, PhraseType.EoL*/));
             SyntacticalTemplates.Add(new PhraseTypeTemplate(PhraseType.AlgorithmLine, PhraseType.Operator/*, PhraseType.EoL*/));
 
             //метка
-            SyntacticalTemplates.Add(new PhraseTypeTemplate(PhraseType.Mark, PhraseType.Name, PhraseType.MarkSeparator));
+            SyntacticalTemplates.Add(new PhraseTypeTemplate(PhraseType.Label, PhraseType.Name, PhraseType.LabelSeparator));
 
             //ОПЕРАТОРЫ
             SyntacticalTemplates.Add(new PhraseTypeTemplate(PhraseType.Operator, PhraseType.TransferOperator, PhraseType.EoL));
@@ -670,12 +670,12 @@ namespace LPDP.TextAnalysis
             SyntacticalTemplates.Add(new PhraseTypeTemplate(PhraseType.Operator, PhraseType.WaitOperator));
 
             //AssignOperator
-            SyntacticalTemplates.Add(new PhraseTypeTemplate(PhraseType.AssignOperator, PhraseType.Name, PhraseType.Round_Bracket_Open, PhraseType.VectorNode, PhraseType.Round_Bracket_Close, PhraseType.AssignOperator_Word, PhraseType.Value));
-            SyntacticalTemplates.Add(new PhraseTypeTemplate(PhraseType.AssignOperator, PhraseType.ValueFromLink, PhraseType.AssignOperator_Word, PhraseType.Value));
-            SyntacticalTemplates.Add(new PhraseTypeTemplate(PhraseType.VectorNode, PhraseType.Name, PhraseType.Round_Bracket_Open, PhraseType.VectorNode, PhraseType.Round_Bracket_Close));
-            SyntacticalTemplates.Add(new PhraseTypeTemplate(PhraseType.VectorNode, PhraseType.Name));
             SyntacticalTemplates.Add(new PhraseTypeTemplate(PhraseType.AssignOperator, PhraseType.Name, PhraseType.AssignOperator_Word, PhraseType.Value));
+            SyntacticalTemplates.Add(new PhraseTypeTemplate(PhraseType.AssignOperator, PhraseType.VectorNode, PhraseType.AssignOperator_Word, PhraseType.Value));
+            SyntacticalTemplates.Add(new PhraseTypeTemplate(PhraseType.AssignOperator, PhraseType.ValueFromLink, PhraseType.AssignOperator_Word, PhraseType.Value));
             SyntacticalTemplates.Add(new PhraseTypeTemplate(PhraseType.AssignOperator, PhraseType.Name, PhraseType.AssignOperator_Word, PhraseType.Algorithm));
+            SyntacticalTemplates.Add(new PhraseTypeTemplate(PhraseType.VectorNode, PhraseType.Name, PhraseType.Round_Bracket_Open, PhraseType.Name, PhraseType.Round_Bracket_Close));
+            SyntacticalTemplates.Add(new PhraseTypeTemplate(PhraseType.VectorNode, PhraseType.Name, PhraseType.Round_Bracket_Open, PhraseType.VectorNode, PhraseType.Round_Bracket_Close));
             SyntacticalTemplates.Add(new PhraseTypeTemplate(PhraseType.Value, PhraseType.StringValue));
             SyntacticalTemplates.Add(new PhraseTypeTemplate(PhraseType.Value, PhraseType.ArithmeticExpression_3lvl));
 
@@ -718,8 +718,8 @@ namespace LPDP.TextAnalysis
 
             //TransferOperator
             SyntacticalTemplates.Add(new PhraseTypeTemplate(PhraseType.TransferOperator, PhraseType.TransferOperator_Word, PhraseType.InitiatorOperator_Word, PhraseType.ToOperator_Word, PhraseType.Destination));
-            SyntacticalTemplates.Add(new PhraseTypeTemplate(PhraseType.Destination, PhraseType.MarkOperator_Word, PhraseType.Name, PhraseType.RefToUnit));
-            SyntacticalTemplates.Add(new PhraseTypeTemplate(PhraseType.Destination, PhraseType.MarkOperator_Word, PhraseType.Name));
+            SyntacticalTemplates.Add(new PhraseTypeTemplate(PhraseType.Destination, PhraseType.LabelOperator_Word, PhraseType.Name, PhraseType.RefToUnit));
+            SyntacticalTemplates.Add(new PhraseTypeTemplate(PhraseType.Destination, PhraseType.LabelOperator_Word, PhraseType.Name));
 
             //CreateOperator
             SyntacticalTemplates.Add(new PhraseTypeTemplate(PhraseType.CreateOperator, PhraseType.CreateOperator_Word, PhraseType.ObjectOperator_Word, PhraseType.Name, PhraseType.RefToTypeOperator_Word, PhraseType.VarType));

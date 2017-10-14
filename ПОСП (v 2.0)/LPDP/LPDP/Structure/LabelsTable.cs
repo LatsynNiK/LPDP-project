@@ -15,14 +15,14 @@ namespace LPDP.Structure
         }
 
         //???
-        public void Add(Label rec)
+        public void Add(Label label)
         {
-            this.Table.Add(rec);
+            this.Table.Add(label);
         }
 
         public void Delete(int id_rec)
         {
-            Label rec = this.Table.Find(r => r.ID == id_rec);
+            Label rec = this.Table.Find(r => r.SubprogramID == id_rec);
             this.Table.Remove(rec);
         }
     }
