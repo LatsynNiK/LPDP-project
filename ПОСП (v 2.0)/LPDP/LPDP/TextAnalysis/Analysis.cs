@@ -162,11 +162,8 @@ namespace LPDP.TextAnalysis
 
                     Phrase operator_ph = source_phrase.Value.Find(ph => ph.PhType == PhraseType.Operator);
 
-                    List<Operator> oper_list = create_operators_from_phrase(operator_ph.Value[0]);
-                    foreach (Operator op in oper_list)
-                    {
-                        this.ResultModel.ST_Cont.AddOperator(op);
-                    }
+                    Operator oper = create_operator_from_phrase(operator_ph.Value[0]);
+                    this.ResultModel.ST_Cont.AddOperator(oper);
                     break;
 
 
@@ -850,86 +847,146 @@ namespace LPDP.TextAnalysis
             return list;
         }
 
-        List<Operator> create_operators_from_phrase(Phrase concret_operator_ph)
+        Operator create_operator_from_phrase(Phrase concret_operator_ph)
         {
-            List<Operator> list_oper = new List<Operator>();
+            Operator result_oper = new Operator();
 
             //Phrase concret_operator_ph = operator_ph.Value[0];
             switch (concret_operator_ph.PhType)
             {
                 case PhraseType.AssignOperator:
-                    Operator assign_oper = new Operator();
-                    assign_oper.Name = OperatorName.Assign;
+                    //Operator result_oper = new Operator();
+                    result_oper.Name = OperatorName.Assign;
                     Phrase concrete_var = concret_operator_ph.Value[0];
                     switch (concrete_var.PhType)
                     {
                         case PhraseType.Name:
-                            assign_oper.Params.Add("var_name", EjectStringName(concret_operator_ph));
+                            result_oper.Params.Add("var_name", EjectStringName(concret_operator_ph));
                             break;
                         case PhraseType.VectorNode:
-                            assign_oper.Params.Add("var_name", concrete_var);
+                            result_oper.Params.Add("var_name", concrete_var);
                             break;
                         case PhraseType.ValueFromLink:
-                            assign_oper.Params.Add("var_name", concrete_var);
+                            result_oper.Params.Add("var_name", concrete_var);
                             break;
                     }
-                    assign_oper.Params.Add("value", concret_operator_ph.Value.Find(ph => ph.PhType == PhraseType.Value));
-                    list_oper.Add(assign_oper);
+                    result_oper.Params.Add("value", concret_operator_ph.Value.Find(ph => ph.PhType == PhraseType.Value));
+                    //list_oper.Add(assign_oper);
                     break;
                 case PhraseType.TransferOperator:
-                    Operator transfer_oper = new Operator();
-                    transfer_oper.Name = OperatorName.Transfer;
+                    //Operator transfer_oper = new Operator();
+                    result_oper.Name = OperatorName.Transfer;
                     Phrase destination_ph = concret_operator_ph.Value.Find(ph => ph.PhType == PhraseType.Destination);
-                    transfer_oper.Params.Add("lable_name", EjectStringName(destination_ph));
+                    result_oper.Params.Add("lable_name", EjectStringName(destination_ph));
                     if (destination_ph.Value.Exists(ph => ph.PhType == PhraseType.RefToUnit_Word))
                     {
-                        transfer_oper.Params.Add("unit_name", destination_ph.Value.FindLast(ph => ph.PhType == PhraseType.Name));
+                        result_oper.Params.Add("unit_name", destination_ph.Value.FindLast(ph => ph.PhType == PhraseType.Name));
                     }
-                    else 
-                    {
-                        transfer_oper.Params.Add("unit_name", this.ResultModel.ST_Cont.CurrentUnit.Name);
-                    }
-                    list_oper.Add(transfer_oper);
+                    //else 
+                    //{
+                    //    transfer_oper.Params.Add("unit_name", this.ResultModel.ST_Cont.CurrentUnit.Name);
+                    //}
+                    //list_oper.Add(transfer_oper);
                     break;
                 case PhraseType.CreateOperator:
-                    Operator create_oper = new Operator();
-                    create_oper.Name = OperatorName.Create;
-                    create_oper.Params.Add("var_name", EjectStringName(concret_operator_ph));
-                    create_oper.Params.Add("var_type", concret_operator_ph.Value.Find(ph => ph.PhType == PhraseType.VarType));
-                    list_oper.Add(create_oper);
+                    //Operator create_oper = new Operator();
+                    result_oper.Name = OperatorName.Create;
+                    result_oper.Params.Add("var_name", EjectStringName(concret_operator_ph));
+                    result_oper.Params.Add("var_type", concret_operator_ph.Value.Find(ph => ph.PhType == PhraseType.VarType));
+                    //list_oper.Add(create_oper);
                     break;
                 case PhraseType.ActivateOperator:
-                    Operator activate_oper = new Operator();
-                    activate_oper.Name = OperatorName.Activate;
-                    activate_oper.Params.Add("link_name", EjectStringName(concret_operator_ph));
+                    //Operator activate_oper = new Operator();
+                    result_oper.Name = OperatorName.Activate;
+                    result_oper.Params.Add("link_name", EjectStringName(concret_operator_ph));
                     Phrase transfer_oper_in_activ_ph = concret_operator_ph.Value.Find(ph => ph.PhType == PhraseType.TransferOperator);
-                    Operator transfer_oper_in_activ = create_operators_from_phrase(transfer_oper_in_activ_ph)[0];
+                    Operator transfer_oper_in_activ = create_operator_from_phrase(transfer_oper_in_activ_ph);
                     foreach (KeyValuePair<string, object> par in transfer_oper_in_activ.Params)
                     {
-                        activate_oper.Params.Add(par.Key,par.Value);
+                        result_oper.Params.Add(par.Key, par.Value);
                     }
-                    list_oper.Add(activate_oper);
+                    //list_oper.Add(activate_oper);
                     break;
                 case  PhraseType.PassivateOperator:
-                    Operator passivate_oper = new Operator();
-                    passivate_oper.Name = OperatorName.Passivate;
-                    passivate_oper.Params.Add("link_name", EjectStringName(concret_operator_ph));
-                    passivate_oper.Params.Add("unit_name", this.ResultModel.ST_Cont.CurrentUnit.Name);
-                    list_oper.Add(passivate_oper);
+                    //Operator passivate_oper = new Operator();
+                    result_oper.Name = OperatorName.Passivate;
+                    result_oper.Params.Add("link_name", EjectStringName(concret_operator_ph));
+                    //passivate_oper.Params.Add("unit_name", this.ResultModel.ST_Cont.CurrentUnit.Name);
+                    //list_oper.Add(passivate_oper);
                     break;
                 case PhraseType.TerminateOperator:
-                    Operator terminate_oper = new Operator();
-                    terminate_oper.Name = OperatorName.Terminate;
+                    //Operator terminate_oper = new Operator();
+                    result_oper.Name = OperatorName.Terminate;
                     if (concret_operator_ph.Value.Exists(ph => ph.PhType == PhraseType.Name))
                     {
-                        terminate_oper.Params.Add("var_name", EjectStringName(concret_operator_ph));
-                        terminate_oper.Params.Add("unit_name", this.ResultModel.ST_Cont.CurrentUnit.Name);
+                        result_oper.Params.Add("var_name", EjectStringName(concret_operator_ph));
+                        //terminate_oper.Params.Add("unit_name", this.ResultModel.ST_Cont.CurrentUnit.Name);
                     }
-                    list_oper.Add(terminate_oper);
+                    //list_oper.Add(terminate_oper);
+                    break;
+                case PhraseType.IfOperator:
+                    //Operator if_oper = new Operator();
+                    result_oper.Name = OperatorName.If;
+
+                    Phrase if_conditions_ph = concret_operator_ph.Value.Find(ph => ph.PhType == PhraseType.IfConditions);
+
+                    int i = 1;
+
+                    foreach (Phrase if_condition_ph in if_conditions_ph.Value)
+                    {
+                        if (if_condition_ph.PhType == PhraseType.EoL)
+                        {
+                            break;
+                        }
+                        //result_oper.Params.Add("condition_line_"+i, new Dictionary<string, object>());
+
+                        //Phrase else_condition_ph = concret_operator_ph.Value.Find(ph => ph.PhType == PhraseType.AlternativeCondition);
+                        //result_oper.Params.Add("logic_exp_" + i, true);
+                        //Phrase transfer_oper_in_else_ph = else_condition_ph.Value.Find(ph => ph.PhType == PhraseType.TransferOperator);
+                        //Operator transfer_oper_in_else = create_operator_from_phrase(transfer_oper_in_else_ph);
+                        //foreach (KeyValuePair<string, object> par in transfer_oper_in_else.Params)
+                        //{
+                        //    result_oper.Params.Add(par.Key + i, par.Value);
+                        //}
+
+
+                        Phrase logic_exp = if_condition_ph.Value.Find(ph => ph.PhType == PhraseType.LogicExpression);
+                        if (logic_exp != null)
+                        {
+                            result_oper.Params.Add("logic_exp_" + i, logic_exp);
+                        }
+                        else
+                        {
+                            result_oper.Params.Add("logic_exp_" + i, true); 
+                        }
+
+                        Phrase transfer_oper_in_if_ph = if_condition_ph.Value.Find(ph => ph.PhType == PhraseType.TransferOperator);
+                        Operator transfer_oper_in_if = create_operator_from_phrase(transfer_oper_in_if_ph);
+
+                        foreach (KeyValuePair<string, object> par in transfer_oper_in_if.Params)
+                        {
+                            result_oper.Params.Add(par.Key + i, par.Value);
+                        }
+                        i++;
+                    }
+                  
+                    //i++;
+                    
+
+
+                    //if (concret_operator_ph.Value.Exists(ph => ph.PhType == PhraseType.Name))
+                    //{
+                    //    terminate_oper.Params.Add("var_name", EjectStringName(concret_operator_ph));
+                    //    terminate_oper.Params.Add("unit_name", this.ResultModel.ST_Cont.CurrentUnit.Name);
+                    //}
+                    //list_oper.Add(terminate_oper);
+
+
                     break;
 
+
             }
-            return list_oper;
+            return result_oper;
         }
     }
 }

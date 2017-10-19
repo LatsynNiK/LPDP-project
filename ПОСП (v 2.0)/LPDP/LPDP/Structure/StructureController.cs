@@ -32,6 +32,7 @@ namespace LPDP.Structure
 
         public void AddSubprogram(Subprogram subp)
         {
+            subp.unit = this.CurrentUnit;
             this.ParentModel.Tracks.Add(subp);
             this.CurrentSubprogram = subp;
         }

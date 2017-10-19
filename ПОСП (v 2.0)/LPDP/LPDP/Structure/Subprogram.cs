@@ -10,6 +10,7 @@ namespace LPDP.Structure
         public int ID;
         List<Operator> Operators;
         int OperatorIndexCounter;
+        public Unit unit;
 
         public Subprogram(int id)
         {
