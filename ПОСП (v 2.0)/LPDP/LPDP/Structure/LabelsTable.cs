@@ -17,13 +17,24 @@ namespace LPDP.Structure
         //???
         public void Add(Label label)
         {
+            //if (this.Table.Exists(l => l.Subprogram == label.Subprogram))
+            //{
+            //    Label old_label = this.Table.Find(l => l.Subprogram == label.Subprogram);
+            //    if (old_label.Visible == false)
+            //    {
+            //    }
+            //    else
+            //    {
+            //        //error
+            //    }
+            //}
             this.Table.Add(label);
         }
 
-        public void Delete(int id_rec)
-        {
-            Label rec = this.Table.Find(r => r.SubprogramID == id_rec);
-            this.Table.Remove(rec);
-        }
+        //public void Delete(int id_rec)
+        //{
+        //    Label rec = this.Table.Find(r => r.SubprogramID == id_rec);
+        //    this.Table.Remove(rec);
+        //}
     }
 }

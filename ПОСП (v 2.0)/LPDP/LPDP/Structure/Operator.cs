@@ -15,8 +15,10 @@ namespace LPDP.Structure
         If,
         Activate,
         Terminate,
+        Delete,
         Passivate,
-        Wait,
+        SimpleWait,
+        ComplexWait,
         //WaitTime,
         //WaitUntil,
         //WaitConditions,
@@ -24,24 +26,31 @@ namespace LPDP.Structure
     }
     public class Operator
     {
-        public int ID;
-        public int Index;
+        //public int ID;
+        //public int Index;
         public OperatorName Name;
         //List<Parameter> Params;
-        public Dictionary<string, object> Params;
+        public List<Action> Actions;
+        //public Dictionary<string, object> Params;
 
         public Operator() 
         {
-            this.Params = new Dictionary<string, object>();
+            //this.Params = new Dictionary<string, object>();
+            this.Actions = new List<Action>();
         }
 
-        public Operator(int id, int ind, OperatorName name, List<Parameter> param_list )
-        {
-            this.ID = id;
-            this.Index = ind;
-            this.Name = name;
-            //this.Params = param_list;
-        }
+        //public void AddAction(Action act)
+        //{
+        //    this.Actions.Add(act);
+        //}
+
+        //public Operator(int id, int ind, OperatorName name, List<Parameter> param_list )
+        //{
+        //    this.ID = id;
+        //    this.Index = ind;
+        //    this.Name = name;
+        //    //this.Params = param_list;
+        //}
         
     }
 }

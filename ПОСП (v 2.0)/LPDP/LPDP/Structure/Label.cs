@@ -8,15 +8,15 @@ namespace LPDP.Structure
     public class Label
     {
         //public int ID;
-        public int SubprogramID;
+        public Subprogram Subprogram;
         public string Name;
         public string Unit;
         public bool Visible;
 
-        public Label(int id, int subp, string name, string unit, bool visible)
+        public Label(Subprogram subp, string name, string unit, bool visible)
         {
             //this.ID = id;
-            this.SubprogramID = subp;
+            this.Subprogram = subp;
             this.Name = name;
             this.Unit = unit;
             this.Visible = visible;
@@ -27,5 +27,6 @@ namespace LPDP.Structure
             this.Name = name;
             this.Visible = visible;
         }
+
     }
 }

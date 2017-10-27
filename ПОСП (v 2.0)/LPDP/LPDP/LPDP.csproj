@@ -50,6 +50,7 @@
     <Compile Include="Dynamics\ConditionsTable.cs" />
     <Compile Include="Dynamics\FutureTimesTable.cs" />
     <Compile Include="Objects\InitiatorsTable.cs" />
+    <Compile Include="Structure\Action.cs" />
     <Compile Include="Structure\LabelsTable.cs" />
     <Compile Include="Objects\Macro.cs" />
     <Compile Include="Objects\MacrosTable.cs" />

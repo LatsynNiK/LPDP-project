@@ -162,6 +162,7 @@ namespace LPDP.TextAnalysis
         Operator,
 
         TerminateOperator,
+        DeleteOperator,
         IfOperator,
         ActivateOperator,
         PassivateOperator,
@@ -653,7 +654,8 @@ namespace LPDP.TextAnalysis
             //строка алгоритма
             SyntacticalTemplates.Add(new PhraseTypeTemplate(PhraseType.AlgorithmLines, PhraseType.AlgorithmLine, PhraseType.AlgorithmLines));
             SyntacticalTemplates.Add(new PhraseTypeTemplate(PhraseType.AlgorithmLines, PhraseType.AlgorithmEnding));
-            SyntacticalTemplates.Add(new PhraseTypeTemplate(PhraseType.AlgorithmLine, PhraseType.Label, PhraseType.Operator/*, PhraseType.EoL*/));
+            //SyntacticalTemplates.Add(new PhraseTypeTemplate(PhraseType.AlgorithmLine, PhraseType.Label, PhraseType.Operator/*, PhraseType.EoL*/));
+            SyntacticalTemplates.Add(new PhraseTypeTemplate(PhraseType.AlgorithmLine, PhraseType.Label, PhraseType.AlgorithmLine/*, PhraseType.EoL*/));
             SyntacticalTemplates.Add(new PhraseTypeTemplate(PhraseType.AlgorithmLine, PhraseType.Operator/*, PhraseType.EoL*/));
 
             //метка
@@ -736,7 +738,8 @@ namespace LPDP.TextAnalysis
             SyntacticalTemplates.Add(new PhraseTypeTemplate(PhraseType.LogicExpression, PhraseType.Round_Bracket_Open, PhraseType.LogicExpression, PhraseType.Round_Bracket_Close));
 
             //WaitOperator
-            SyntacticalTemplates.Add(new PhraseTypeTemplate(PhraseType.WaitOperator, PhraseType.WaitCondition, PhraseType.WaitConditions));
+            //SyntacticalTemplates.Add(new PhraseTypeTemplate(PhraseType.WaitOperator, PhraseType.WaitCondition, PhraseType.WaitConditions));
+            SyntacticalTemplates.Add(new PhraseTypeTemplate(PhraseType.WaitOperator, PhraseType.WaitConditions));
             SyntacticalTemplates.Add(new PhraseTypeTemplate(PhraseType.WaitOperator, PhraseType.WaitTime, PhraseType.EoL));
             SyntacticalTemplates.Add(new PhraseTypeTemplate(PhraseType.WaitOperator, PhraseType.WaitUntil, PhraseType.EoL));
 
@@ -744,7 +747,7 @@ namespace LPDP.TextAnalysis
             SyntacticalTemplates.Add(new PhraseTypeTemplate(PhraseType.WaitTime, PhraseType.WaitOperator_Word, PhraseType.Time_Word, PhraseType.ComparisonOperator, PhraseType.ArithmeticExpression_3lvl));
             SyntacticalTemplates.Add(new PhraseTypeTemplate(PhraseType.WaitUntil, PhraseType.WaitOperator_Word, PhraseType.LogicExpression));
             SyntacticalTemplates.Add(new PhraseTypeTemplate(PhraseType.WaitConditions, PhraseType.WaitCondition, PhraseType.WaitConditions));
-            SyntacticalTemplates.Add(new PhraseTypeTemplate(PhraseType.WaitConditions, PhraseType.EoL));
+            SyntacticalTemplates.Add(new PhraseTypeTemplate(PhraseType.WaitConditions, PhraseType.WaitCondition, PhraseType.EoL));
             SyntacticalTemplates.Add(new PhraseTypeTemplate(PhraseType.WaitCondition, PhraseType.WaitTime, PhraseType.ThenOperator_Word, PhraseType.TransferOperator));
             SyntacticalTemplates.Add(new PhraseTypeTemplate(PhraseType.WaitCondition, PhraseType.WaitUntil, PhraseType.ThenOperator_Word, PhraseType.TransferOperator));
 
@@ -753,7 +756,7 @@ namespace LPDP.TextAnalysis
             //PassivateOperator
             SyntacticalTemplates.Add(new PhraseTypeTemplate(PhraseType.PassivateOperator, PhraseType.PassivateOperator_Word, PhraseType.InitiatorOperator_Word, PhraseType.IntoOperator_Word, PhraseType.Name));
             //TerminateOperator
-            SyntacticalTemplates.Add(new PhraseTypeTemplate(PhraseType.TerminateOperator, PhraseType.TerminateOperator_Word, PhraseType.Name));
+            SyntacticalTemplates.Add(new PhraseTypeTemplate(PhraseType.DeleteOperator, PhraseType.TerminateOperator_Word, PhraseType.Name));
             SyntacticalTemplates.Add(new PhraseTypeTemplate(PhraseType.TerminateOperator, PhraseType.TerminateOperator_Word, PhraseType.Initiator_Word));
         }
         #endregion
