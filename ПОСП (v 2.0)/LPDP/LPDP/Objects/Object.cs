@@ -10,11 +10,11 @@ namespace LPDP.Objects
     {
         public int ID;
         
-        string Name;
-        string Unit;
+        public string Name;
+        public string Unit;
         public ObjectType Type;
 
-        int ParentID;
+        //int ParentID;
 
         public Object(int id, string name, string unit)
         {
@@ -24,14 +24,14 @@ namespace LPDP.Objects
             //this.Type = type;
         }
 
-        public Object(int id, string name, string unit, int parent)
-        {
-            this.ID = id;
-            this.Name = name;
-            this.Unit = unit;
-            this.ParentID = parent;
-            //this.Type = type;
-        }
+        //public Object(int id, string name, string unit, int parent)
+        //{
+        //    this.ID = id;
+        //    this.Name = name;
+        //    this.Unit = unit;
+        //    //this.ParentID = parent;
+        //    //this.Type = type;
+        //}
 
         public Object(int id)
         {
@@ -46,5 +46,11 @@ namespace LPDP.Objects
             this.Name = name;
             this.Unit = unit;
         }
+
+        public abstract void SetValue(object value);
+        public abstract object GetValue();
+
+        //public abstract object GetValue();
+        
     }
 }

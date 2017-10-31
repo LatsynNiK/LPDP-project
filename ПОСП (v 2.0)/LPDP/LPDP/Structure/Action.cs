@@ -11,7 +11,7 @@ namespace LPDP.Structure
     {
         Write_to_FTT,//time, to label, to unit
         Write_to_CT,//condition, link name ("true" if initiator),to the begining ("true" or "false"), to label, to unit
-        Assign,
+        Assign,//var, value
         Create,
         Delete
     }
@@ -20,6 +20,7 @@ namespace LPDP.Structure
     {
         public ActionName Name;
         public List<object> Parameters;
+        public Operator ParentOperator;
 
         public Action()
         {

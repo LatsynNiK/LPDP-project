@@ -5,7 +5,7 @@ using System.Text;
 
 namespace LPDP.Objects
 {
-    class Scalar:Object
+    public class Scalar:Object
     {
         string Value;
 
@@ -45,11 +45,23 @@ namespace LPDP.Objects
         }
 
         //Parent
-        public Scalar(int id, string name, string unit, int parent)
-            : base(id, name, unit, parent)
+        //public Scalar(int id, string name, string unit, int parent)
+        //    : base(id, name, unit, parent)
+        //{
+        //    base.Type = ObjectType.Scalar;
+        //    this.Value = "";
+        //}
+
+        ///////////////////////////////
+
+        public override void SetValue(object value)
         {
-            base.Type = ObjectType.Scalar;
-            this.Value = "";
+            this.Value = Convert.ToString(value);
+        }
+
+        public override string GetValue()
+        {
+            return this.Value;
         }
 
     }

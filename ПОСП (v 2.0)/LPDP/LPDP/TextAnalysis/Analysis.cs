@@ -868,7 +868,7 @@ namespace LPDP.TextAnalysis
                     Phrase concrete_var = concret_operator_ph.Value[0];
                     action.Parameters.Add(concrete_var);//var
                     action.Parameters.Add(concret_operator_ph.Value.Find(ph => ph.PhType == PhraseType.Value));//value
-                    result_oper.Actions.Add(action);
+                    result_oper.AddAction(action);
                     break;
 
                 case PhraseType.TransferOperator:
@@ -882,7 +882,7 @@ namespace LPDP.TextAnalysis
                     destination_str = EjectStringDestination(destination_ph);
                     action.Parameters.Add(destination_str.Key);
                     action.Parameters.Add(destination_str.Value);
-                    result_oper.Actions.Add(action);
+                    result_oper.AddAction(action);
                     break;
 
                 case PhraseType.CreateOperator:
@@ -891,7 +891,7 @@ namespace LPDP.TextAnalysis
                     action.Name = ActionName.Create;
                     action.Parameters.Add(EjectStringName(concret_operator_ph));//name
                     action.Parameters.Add(concret_operator_ph.Value.Find(ph => ph.PhType == PhraseType.VarType));//type
-                    result_oper.Actions.Add(action);
+                    result_oper.AddAction(action);
                     break;
 
                 case PhraseType.ActivateOperator:
@@ -906,7 +906,7 @@ namespace LPDP.TextAnalysis
                     destination_str = EjectStringDestination(destination_ph);
                     action.Parameters.Add(destination_str.Key);
                     action.Parameters.Add(destination_str.Value);
-                    result_oper.Actions.Add(action);
+                    result_oper.AddAction(action);
                     break;
 
                 case  PhraseType.PassivateOperator:                    
@@ -915,7 +915,7 @@ namespace LPDP.TextAnalysis
                     action.Name = ActionName.Assign;
                     action.Parameters.Add(EjectStringName(concret_operator_ph)); //var (link name)
                     action.Parameters.Add(true);//value (true - initiator)
-                    result_oper.Actions.Add(action);
+                    result_oper.AddAction(action);
                     break;
 
                 case PhraseType.TerminateOperator:
@@ -923,7 +923,7 @@ namespace LPDP.TextAnalysis
                     action = new Structure.Action();
                     action.Name = ActionName.Delete;
                     action.Parameters.Add(true); //self initiator
-                    result_oper.Actions.Add(action);
+                    result_oper.AddAction(action);
                     break;
 
                 case PhraseType.DeleteOperator:
@@ -931,7 +931,7 @@ namespace LPDP.TextAnalysis
                     action = new Structure.Action();
                     action.Name = ActionName.Delete;
                     action.Parameters.Add(EjectStringName(concret_operator_ph));
-                    result_oper.Actions.Add(action);
+                    result_oper.AddAction(action);
                     break;
 
                 case PhraseType.IfOperator:
@@ -962,7 +962,7 @@ namespace LPDP.TextAnalysis
                         destination_str = EjectStringDestination(destination_ph);
                         action.Parameters.Add(destination_str.Key);
                         action.Parameters.Add(destination_str.Value);
-                        result_oper.Actions.Add(action);
+                        result_oper.AddAction(action);
                     }
                     break;
 
@@ -977,7 +977,7 @@ namespace LPDP.TextAnalysis
                         action.Parameters.Add(wait_time_value_ph);
                         action.Parameters.Add("$L_" + this.ResultModel.ST_Cont.NextWaitLabelNumber);
                         action.Parameters.Add(this.ResultModel.ST_Cont.CurrentUnit.Name);
-                        result_oper.Actions.Add(action);
+                        result_oper.AddAction(action);
                     }
                     if (concret_operator_ph.Value.Exists(ph => ph.PhType == PhraseType.WaitUntil))
                     {
@@ -991,7 +991,7 @@ namespace LPDP.TextAnalysis
                         action.Parameters.Add(true);
                         action.Parameters.Add("$L_" + this.ResultModel.ST_Cont.NextWaitLabelNumber);
                         action.Parameters.Add(this.ResultModel.ST_Cont.CurrentUnit.Name);
-                        result_oper.Actions.Add(action);
+                        result_oper.AddAction(action);
                     }
                     if (concret_operator_ph.Value.Exists(ph => ph.PhType == PhraseType.WaitConditions))
                     {
@@ -1025,7 +1025,7 @@ namespace LPDP.TextAnalysis
                             destination_str = EjectStringDestination(destination_ph);
                             action.Parameters.Add(destination_str.Key);
                             action.Parameters.Add(destination_str.Value);
-                            result_oper.Actions.Add(action);
+                            result_oper.AddAction(action);
                         }
                     }
                     break;

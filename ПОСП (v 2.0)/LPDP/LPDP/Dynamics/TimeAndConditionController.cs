@@ -9,30 +9,44 @@ namespace LPDP.Dynamics
 {
     public class TimeAndConditionController
     {
-        int ID_Counter;
+        int ID_event_Counter;
 
-        LPDP.Structure.Model ParentModel;
+        Executor ParentExecutor;
+        FutureTimesTable FTT;
+        ConditionsTable CT;
+        
 
-        public TimeAndConditionController(LPDP.Structure.Model model)
+        public TimeAndConditionController(LPDP.Executor executor)
         {
-            this.ParentModel = model;
-            ID_Counter = 0;
+            this.ParentExecutor = executor;
+            ID_event_Counter = 0;
+
+            this.FTT = new FutureTimesTable();
+            this.CT = new ConditionsTable();
         }
 
-        public void AddTimeRecord(double time, int init, int lable, bool islast, FutureTimesTable FTT)
+        public void AddTimeRecord(double time, int init, int lable, bool islast)
         {
-            if (islast) { ID_Counter--; }
-            RecordFTT NewRec = new RecordFTT(ID_Counter, time, init, lable);
-            ID_Counter++;
+            if (islast) { ID_event_Counter--; }
+            RecordFTT NewRec = new RecordFTT(ID_event_Counter, time, init, lable);
+            ID_event_Counter++;
             FTT.Add(NewRec);
         }
 
-        public void AddConditionRecord(Phrase phrase, int init, int lable, bool islast, ConditionsTable CT)
+        public void AddConditionRecord(Phrase phrase, int init, int lable, bool islast)
         {
-            if (islast) { ID_Counter--; }
-            RecordCT NewRec = new RecordCT(ID_Counter, phrase, init, lable);
-            ID_Counter++;
+            if (islast) { ID_event_Counter--; }
+            RecordCT NewRec = new RecordCT(ID_event_Counter, phrase, init, lable);
+            ID_event_Counter++;
             CT.Add(NewRec);
+        }
+
+        public void InsertConditionRecord(Phrase phrase, int init, int lable, bool islast)
+        {
+            if (islast) { ID_event_Counter--; }
+            RecordCT NewRec = new RecordCT(ID_event_Counter, phrase, init, lable);
+            ID_event_Counter++;
+            CT.Insert(NewRec);
         }
 
         public void DeleteRecords(int deleted_id, FutureTimesTable FTT, ConditionsTable CT)
@@ -40,5 +54,10 @@ namespace LPDP.Dynamics
             CT.CondTable.RemoveAll(rec => rec.ID == deleted_id);
             FTT.TimesTable.RemoveAll(rec => rec.ID == deleted_id);
         }
+
+        //public int FindNextEvent()
+        //{
+        //    for
+        //}
     }
 }

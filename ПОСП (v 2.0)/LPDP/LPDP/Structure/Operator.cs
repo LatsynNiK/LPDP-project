@@ -31,6 +31,7 @@ namespace LPDP.Structure
         public OperatorName Name;
         //List<Parameter> Params;
         public List<Action> Actions;
+        public Subprogram ParentSubprogram;
         //public Dictionary<string, object> Params;
 
         public Operator() 
@@ -39,10 +40,11 @@ namespace LPDP.Structure
             this.Actions = new List<Action>();
         }
 
-        //public void AddAction(Action act)
-        //{
-        //    this.Actions.Add(act);
-        //}
+        public void AddAction(Action act)
+        {
+            act.ParentOperator = this;
+            this.Actions.Add(act);
+        }
 
         //public Operator(int id, int ind, OperatorName name, List<Parameter> param_list )
         //{

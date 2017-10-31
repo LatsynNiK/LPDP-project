@@ -53,6 +53,7 @@ namespace LPDP.Structure
             //}
             //oper.Index = this.OperatorIndexCounter;
             //this.OperatorIndexCounter++;
+            oper.ParentSubprogram = this;
             this.Operators.Add(oper);
             
         }

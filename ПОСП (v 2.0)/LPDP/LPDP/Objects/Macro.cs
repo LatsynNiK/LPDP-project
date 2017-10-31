@@ -21,6 +21,17 @@ namespace LPDP.Objects
             //this.Vars = new string[];
         }
 
+        public override void SetValue(object value)
+        {
+            //!!!ЗАГЛУШКА
+            this.Code = (Phrase)value;
+        }
+        public override Phrase GetValue()
+        {
+            //!!!ЗАГЛУШКА
+            return this.Code;
+        }
+
         //public Macro(int id, string name, string unit)
         //{
         //    this.ID = id;

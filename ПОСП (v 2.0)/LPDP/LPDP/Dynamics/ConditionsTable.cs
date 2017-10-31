@@ -19,6 +19,11 @@ namespace LPDP.Dynamics
             this.CondTable.Add(rec);
         }
 
+        public void Insert(RecordCT rec)
+        {
+            this.CondTable.Insert(0, rec);
+        }
+
         public void Delete(int id_rec)
         {
             RecordCT rec = this.CondTable.Find(r => r.ID == id_rec);

@@ -701,15 +701,19 @@ namespace LPDP.TextAnalysis
 
             //ссылки
             SyntacticalTemplates.Add(new PhraseTypeTemplate(PhraseType.DigitalValue, PhraseType.ValueFromLink));
+            SyntacticalTemplates.Add(new PhraseTypeTemplate(PhraseType.DigitalValue, PhraseType.VectorNode));
             SyntacticalTemplates.Add(new PhraseTypeTemplate(PhraseType.DigitalValue, PhraseType.LinkVarType_Word, PhraseType.ToOperator_Word, PhraseType.Name));
             SyntacticalTemplates.Add(new PhraseTypeTemplate(PhraseType.ValueFromLink, PhraseType.Initiator_Word, PhraseType.Ref_Operator, PhraseType.Path));
             SyntacticalTemplates.Add(new PhraseTypeTemplate(PhraseType.ValueFromLink, PhraseType.Name, PhraseType.Ref_Operator, PhraseType.Path));
 
-            SyntacticalTemplates.Add(new PhraseTypeTemplate(PhraseType.Path, PhraseType.VectorVarType_Word, PhraseType.Round_Bracket_Open, PhraseType.VectorNode, PhraseType.Round_Bracket_Close));
-            SyntacticalTemplates.Add(new PhraseTypeTemplate(PhraseType.Path, PhraseType.ScalarVarType_Word));
+            //SyntacticalTemplates.Add(new PhraseTypeTemplate(PhraseType.Path, PhraseType.VectorVarType_Word, PhraseType.Round_Bracket_Open, PhraseType.VectorNode, PhraseType.Round_Bracket_Close));
+            //SyntacticalTemplates.Add(new PhraseTypeTemplate(PhraseType.Path, PhraseType.ScalarVarType_Word));
 
-            SyntacticalTemplates.Add(new PhraseTypeTemplate(PhraseType.VectorNode, PhraseType.Name, PhraseType.Round_Bracket_Open, PhraseType.VectorNode, PhraseType.Round_Bracket_Close));
-            SyntacticalTemplates.Add(new PhraseTypeTemplate(PhraseType.VectorNode, PhraseType.Name));
+            SyntacticalTemplates.Add(new PhraseTypeTemplate(PhraseType.Path, PhraseType.VectorNode));
+            SyntacticalTemplates.Add(new PhraseTypeTemplate(PhraseType.Path, PhraseType.Name));
+
+            //SyntacticalTemplates.Add(new PhraseTypeTemplate(PhraseType.VectorNode, PhraseType.Name, PhraseType.Round_Bracket_Open, PhraseType.VectorNode, PhraseType.Round_Bracket_Close));
+            //SyntacticalTemplates.Add(new PhraseTypeTemplate(PhraseType.VectorNode, PhraseType.Name));
 
 
 

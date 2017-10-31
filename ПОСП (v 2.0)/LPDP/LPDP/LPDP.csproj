@@ -47,8 +47,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Calculating.cs" />
     <Compile Include="Dynamics\ConditionsTable.cs" />
     <Compile Include="Dynamics\FutureTimesTable.cs" />
+    <Compile Include="Executor.cs" />
     <Compile Include="Objects\InitiatorsTable.cs" />
     <Compile Include="Structure\Action.cs" />
     <Compile Include="Structure\LabelsTable.cs" />

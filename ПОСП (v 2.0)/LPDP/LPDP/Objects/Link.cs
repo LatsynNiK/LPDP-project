@@ -37,5 +37,18 @@ namespace LPDP.Objects
             base.Type = ObjectType.Link;
             this.Value = -1;
         }
+
+        //////////////////
+
+        public override void SetValue(object value)
+        {
+            this.Value = Convert.ToInt32(value);
+        }
+
+        public override int GetValue()
+        {
+            return this.Value;
+        }
+
     }
 }

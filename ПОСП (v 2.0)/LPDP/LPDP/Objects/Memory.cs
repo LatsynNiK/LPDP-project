@@ -26,6 +26,11 @@ namespace LPDP.Objects
             this.Cells.Add(o);
             this.ID_Object_Counter++;
         }
+        public Object GetObjectByID(int id)
+        {
+            Object result = this.Cells.Find(o => o.ID == id);
+            return result;
+        }
 
 
     }

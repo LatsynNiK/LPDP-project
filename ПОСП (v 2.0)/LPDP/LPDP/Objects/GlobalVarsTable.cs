@@ -7,7 +7,7 @@ namespace LPDP.Objects
 {
     public class GlobalVarsTable
     {
-        Dictionary<string, List<Object>> Vars;
+        public Dictionary<string, List<Object>> Vars;
 
         public GlobalVarsTable()
         {

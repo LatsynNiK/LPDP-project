@@ -18,5 +18,10 @@ namespace LPDP.Objects
             this.ID_of_MemoryCell = id;
             this.Type = type;
         }
+
+        public int GetID()
+        {
+            return this.ID_of_MemoryCell;
+        }
     }
 }
