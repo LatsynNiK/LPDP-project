@@ -50,7 +50,7 @@ namespace LPDP.Objects
             ////this.Value = Convert.ToString(value);
         }
 
-        public override List<Object> GetValue()
+        public override object GetValue()
         {
             return this.Value;
         }

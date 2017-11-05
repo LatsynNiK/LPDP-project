@@ -6,16 +6,16 @@ using System.Text;
 namespace LPDP.Objects
 {
     public enum InitiatorType {Aggregate, Flow}
-    class Initiator
+    public class Initiator
     {
-        int Number; 
-        int ID_of_MemoryCell;
+        public int Number; 
+        public int ID_of_MemoryCell;
         InitiatorType Type;
 
-        public Initiator(int number, int id, InitiatorType type)
+        public Initiator(InitiatorType type)
         {
-            this.Number = number;
-            this.ID_of_MemoryCell = id;
+            //this.Number = number;
+            //this.ID_of_MemoryCell = id;
             this.Type = type;
         }
 

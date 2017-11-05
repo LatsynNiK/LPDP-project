@@ -190,7 +190,11 @@ namespace LPDP.TextAnalysis
         WaitConditions,
         WaitUntil,
         WaitTime,
-        WaitCondition
+        WaitCondition,
+
+        //нет при построении
+        True,
+        False
     }
     public enum WordType
     {

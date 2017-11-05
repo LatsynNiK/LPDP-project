@@ -65,7 +65,7 @@ namespace LPDP.Structure
         public void SetUnitHeader(string name, UnitType type)
         {
             this.CurrentUnit.SetHeader(name, type);
-            this.ParentModel.GVT.AddUnit(name);
+            this.ParentModel.O_Cont.GVT.AddUnit(name);
         }
 
         public void AddLabel(Label label)

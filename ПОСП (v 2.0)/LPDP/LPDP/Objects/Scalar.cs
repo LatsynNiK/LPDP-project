@@ -59,7 +59,7 @@ namespace LPDP.Objects
             this.Value = Convert.ToString(value);
         }
 
-        public override string GetValue()
+        public override object GetValue()
         {
             return this.Value;
         }

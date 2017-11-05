@@ -5,6 +5,7 @@ using System.Text;
 
 using LPDP.TextAnalysis;
 using LPDP.Structure;
+using LPDP;
 
 namespace LPDP
 {
@@ -18,7 +19,11 @@ namespace LPDP
             NewAnalysis.AnalyzeText(LPDP_Data.CodeTxt);
 
             NewAnalysis.AnalyzeStructure(NewAnalysis.ParsedText);
+
+            NewAnalysis.LaunchPreparation();
+
             
+
             if (NewAnalysis.Errors.Count > 0)
             {
                 LPDP_Data.InfoTxt = "Не удалось построить модель\n";
@@ -33,6 +38,14 @@ namespace LPDP
             }
             
             // Конец Нового Анализа
+
+            Model model = NewAnalysis.ResultModel;
+            Phrase true_ph = new Phrase(PhraseType.True);
+            //model.Executor.TC_Cont.AddConditionRecord(true_ph,
+
+
+
+
             LPDP_Core.TIME = 100;
             //LPDP_Data.InfoTxt = 
             //LPDP_Core.Build_POSP_Model(LPDP_Data.CodeTxt);
@@ -102,6 +115,9 @@ namespace LPDP
 
         public static void StartStep()
         {
+
+            
+
             //BuildingField.Focus();
             //BuildingField.Text = "Выполняется элементарный оператор...";
             string NewStr = LPDP_Core.Launch_POSP_Model(0, LPDP_Core.Mode.step);

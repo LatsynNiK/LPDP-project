@@ -20,11 +20,18 @@ namespace LPDP.Objects
         //    this.Cells.Add()
         //}
 
-        public void Add(Object o) 
+        public Object AddSingletonObject(Object o) 
         {
+            Objects.Object finded = this.Cells.Find(c => ((c.Name == o.Name)&&(c.Unit == o.Unit)));
+            if (finded != null)
+            {
+                finded.SetValue(o.GetValue());
+                return finded;
+            }
             o.ID = this.ID_Object_Counter;
             this.Cells.Add(o);
             this.ID_Object_Counter++;
+            return o;
         }
         public Object GetObjectByID(int id)
         {

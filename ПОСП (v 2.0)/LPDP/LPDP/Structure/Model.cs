@@ -23,7 +23,7 @@ namespace LPDP.Structure
         public StructureController ST_Cont;
 
         public Memory Memory;
-        public GlobalVarsTable GVT;
+        //public GlobalVarsTable GVT;
         //public InitiatorsTable IT;
         public ObjectController O_Cont;
 
@@ -50,9 +50,10 @@ namespace LPDP.Structure
             this.ST_Cont = new StructureController(this);
 
             this.Memory = new Memory();
-            this.GVT = new GlobalVarsTable();
+            //this.GVT = new GlobalVarsTable();
             //this.IT = new InitiatorsTable();
             this.O_Cont = new ObjectController(this);
+            this.Executor = new Executor(this);
 
             //this.TIME = 0;
             //this.RAND = new Random();

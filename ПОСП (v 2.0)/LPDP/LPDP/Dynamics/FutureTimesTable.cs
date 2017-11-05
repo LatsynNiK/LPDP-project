@@ -29,5 +29,21 @@ namespace LPDP.Dynamics
             RecordFTT rec = this.TimesTable.Find(r => r.ID == id_rec);
             this.TimesTable.Remove(rec);
         }
+
+        public RecordFTT FindNextMinTimeRecord()
+        {
+            double time = this.TimesTable.Min(rec => rec.ActiveTime);
+            RecordFTT result = this.TimesTable.Find(rec => rec.ActiveTime == time);
+            return result;
+            //if (finded != null)
+            //{
+            //    return finded;
+            //}
+            //else
+            //{
+            //    return -1;
+            //}
+
+        }
     }
 }

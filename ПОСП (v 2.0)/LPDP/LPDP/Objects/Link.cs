@@ -45,7 +45,7 @@ namespace LPDP.Objects
             this.Value = Convert.ToInt32(value);
         }
 
-        public override int GetValue()
+        public override object GetValue()
         {
             return this.Value;
         }

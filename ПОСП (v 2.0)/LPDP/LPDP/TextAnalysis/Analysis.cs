@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
+using LPDP;
 using LPDP.Structure;
 using LPDP.Objects;
 
@@ -118,6 +119,7 @@ namespace LPDP.TextAnalysis
                             break;
                     }
                     this.ResultModel.ST_Cont.SetUnitHeader(EjectStringName(source_phrase), u_type);
+                    this.ResultModel.Executor.SetCurrentUnit(this.ResultModel.ST_Cont.CurrentUnit);
                     break;
 
                 case PhraseType.Description:
@@ -163,7 +165,7 @@ namespace LPDP.TextAnalysis
                     }
 
                     Phrase operator_ph = source_phrase.Value.Find(ph => ph.PhType == PhraseType.Operator);
-                    Operator oper = create_operator_from_phrase(operator_ph.Value[0]);
+                    Operator oper = CreateOperatorFromPhrase(operator_ph.Value[0]);
                     this.ResultModel.ST_Cont.AddOperator(oper);
                     if ((oper.Name == OperatorName.Transfer) ||
                         (oper.Name == OperatorName.ComplexWait) ||
@@ -183,6 +185,28 @@ namespace LPDP.TextAnalysis
                     }
                     break;
             }
+            return 1;
+        }
+
+        public int LaunchPreparation()
+        {
+            foreach (Unit unit in this.ResultModel.Units)
+            {
+                if ((unit.Type == UnitType.Aggregate) || (unit.Type == UnitType.Controller))
+                {
+                    Phrase true_ph = new Phrase(PhraseType.True);
+                    Initiator new_init = this.ResultModel.O_Cont.CreateInitiator();
+                    Subprogram to_subp = this.ResultModel.Tracks.Find(sp => sp.Unit == unit);
+
+                    this.ResultModel.Executor.TC_Cont.AddConditionRecord(true_ph, new_init, to_subp, false);
+                }
+            }
+            this.ResultModel.Executor.SetState();
+
+
+            //this.ResultModel.O_Cont.SetValueToScalar("L", "ГЕН", 100);
+
+
             return 1;
         }
 
@@ -791,38 +815,47 @@ namespace LPDP.TextAnalysis
                 }
             }
 
-            string varunit = this.ResultModel.ST_Cont.CurrentUnit.Name;
-
-
             Phrase vardescription_ph = desc_line.Value.Find(ph => ph.PhType == PhraseType.VarDescription);
             Phrase vartype_ph = vardescription_ph.Value.Find(ph => ph.PhType == PhraseType.VarType);
 
+            string varunit;
+            Phrase ref_to_unit_ph = vardescription_ph.Value.Find(ph => ph.PhType == PhraseType.RefToUnit);
+            if (ref_to_unit_ph != null)
+            {
+                varunit = this.EjectStringName(ref_to_unit_ph);
+            }
+            else
+            {
+                varunit = this.ResultModel.ST_Cont.CurrentUnit.Name;
+            }
+
             foreach (var v in vars_dictionary)
             {
+                Objects.Object new_obj = new Objects.Scalar("","");//заглушка
                 //для скаляра
                 if (vartype_ph.Value.Exists(ph => ph.PhType == PhraseType.ScalarVarType_Word))
                 {
-                    if (v.Value == null)
-                    {
-                        list.Add(new Objects.Scalar(v.Key, varunit));
-                    }
-                    else
+                    new_obj = new Objects.Scalar(v.Key, varunit);
+                    if (v.Value != null)
                     {
                         //если выражение
-                        //list.Add(new Scalar(v.Key., varunit,v.Value);
+                        object value_obj = this.ResultModel.Executor.ConvertValueToObject(v.Value);
+                        new_obj.SetValue(value_obj);
                     }
+                    //list.Add(new_scalar);
                 }
                 //для вектора
                 if (vartype_ph.Value.Exists(ph => ph.PhType == PhraseType.VectorVarType_Word))
                 {
-                    Objects.Vector NewVector = new Objects.Vector(v.Key, varunit, CreateObjectsFromDesciptionLine(v.Value));
+                    new_obj = new Objects.Vector(v.Key, varunit, CreateObjectsFromDesciptionLine(v.Value));
                 }   
                 //для ссылки
                 if (vartype_ph.Value.Exists(ph => ph.PhType == PhraseType.LinkVarType_Word))
                 {
                     if (v.Value == null)
                     {
-                        list.Add(new Objects.Link(v.Key, varunit));
+                        new_obj = new Objects.Link(v.Key, varunit); 
+                        //list.Add(new_obj);
                     }
                     else
                     {
@@ -843,16 +876,17 @@ namespace LPDP.TextAnalysis
                             names.Add(name_w.LValue);
                         }
                     }
-
-                    list.Add(new Macro(v.Key,varunit,v.Value, names));
+                    new_obj = new Macro(v.Key, varunit, v.Value, names); 
+                    //list.Add(new_obj);
                 }
+                list.Add(new_obj);
 
             }//конец перебора переменных
 
             return list;
         }
 
-        Operator create_operator_from_phrase(Phrase concret_operator_ph)
+        Operator CreateOperatorFromPhrase(Phrase concret_operator_ph)
         {
             Operator result_oper = new Operator();
 

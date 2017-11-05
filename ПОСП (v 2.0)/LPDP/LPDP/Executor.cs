@@ -23,7 +23,7 @@ namespace LPDP
         //public ConditionsTable CT;
         public TimeAndConditionController TC_Cont;
 
-        public InitiatorsTable IT;
+        //public InitiatorsTable IT;
         Random RAND;
         
         
@@ -35,17 +35,52 @@ namespace LPDP
             //this.FTT = new FutureTimesTable();
             this.TC_Cont = new TimeAndConditionController(this);
 
-            this.IT = new InitiatorsTable();
+            
 
             this.TIME = 0;
             this.SUBPROGRAM = null;
             this.NEXT_OPERATOR = null;
             this.INITIATOR = null;
             this.RAND = new Random();
-            
         }
 
-        public 
+        public void StartUntil(double time)
+        {
+            while (this.TIME < time)
+            {
+                this.ExecuteSubprogram(this.SUBPROGRAM);
+            }
+        }
+
+        public void StartStep()
+        {
+            this.ExecuteOperator(this.NEXT_OPERATOR);
+        }
+
+        //public void StartSEC()
+        //{
+        //    while(this.SUBPROGRAM.)
+        //}
+
+        public void SetState()
+        {
+            RecordEvent next_event = this.TC_Cont.FindNextEvent();
+            this.INITIATOR = next_event.Initiator;
+            this.SUBPROGRAM = this.TC_Cont.FindNextEvent().Subprogram;
+            this.NEXT_OPERATOR = this.SUBPROGRAM.Operators[0];
+
+            if (next_event.GetType() == typeof(RecordFTT))
+            {
+                double active_time = ((RecordFTT)next_event).ActiveTime;
+                this.TIME = active_time;
+            }
+        }
+
+        public void SetCurrentUnit(Unit unit)
+        {
+            this.SUBPROGRAM = new Subprogram();
+            this.SUBPROGRAM.Unit = unit;
+        }
 
         int ExecuteSubprogram(Subprogram subprogram)
         {
@@ -55,6 +90,15 @@ namespace LPDP
             {
                 ExecuteOperator(oper);
             }
+            //RecordEvent next_event = this.TC_Cont.FindNextEvent();
+            //this.INITIATOR = next_event.Initiator;
+            //this.SUBPROGRAM = this.TC_Cont.FindNextEvent().Subprogram;
+            //this.NEXT_OPERATOR = this.SUBPROGRAM.Operators[0];
+            this.SetState();
+
+
+
+            //this.NEXT_OPERATOR = null;
             return 1;
         }
 
@@ -63,6 +107,18 @@ namespace LPDP
             foreach (Structure.Action action in oper.Actions)
             {
                 ExecuteAction(action);
+            }
+            int next_oper_index = oper.ParentSubprogram.Operators.IndexOf(oper)+1;
+
+            this.NEXT_OPERATOR = oper.ParentSubprogram.Operators[next_oper_index];
+            if (this.NEXT_OPERATOR == null)
+            {
+                //искать в след подпрограмме
+                //RecordEvent next_event = this.TC_Cont.FindNextEvent();
+                //this.INITIATOR = next_event.Initiator;
+                //this.SUBPROGRAM = this.TC_Cont.FindNextEvent().Subprogram;
+                //this.NEXT_OPERATOR = this.SUBPROGRAM.Operators[0];
+                this.SetState();
             }
             return 1;
         }
@@ -77,19 +133,17 @@ namespace LPDP
                     string unit_name = action.ParentOperator.ParentSubprogram.Unit.Name;
 
                     Phrase value_ph = (Phrase)action.Parameters[1];
-                    object value_obj;
-                    if (value_ph.Value[0].PhType == PhraseType.StringValue)
-                    {
-                        value_obj = ((Word)value_ph.Value[0]).LValue;
-                    }
-                    else
-                    {
-                        value_obj = ComputeArithmeticExpression(value_ph.Value[0]);
-                    }
+
+                    object value_obj = ConvertValueToObject(value_ph);
+                    //if (value_ph.Value[0].PhType == PhraseType.StringValue)
+                    //{
+                    //    value_obj = ((Lexeme)value_ph.Value[0]).LValue;
+                    //}
+                    //else
+                    //{
+                    //    value_obj = ComputeArithmeticExpression(value_ph.Value[0]);
+                    //}
                     var.SetValue(value_obj);
-
-
-                    
 
                     //this.ParentModel.O_Cont.SetValueToVar(action.Parameters
                     break;
@@ -107,7 +161,7 @@ namespace LPDP
 
         #region computing region
 
-        double ComputeArithmeticExpression(Phrase ar_exp)
+        public double ComputeArithmeticExpression(Phrase ar_exp)
         {
             double result = 0;
             Phrase first_exp_ph;
@@ -129,7 +183,7 @@ namespace LPDP
 
                         first_num = this.ComputeArithmeticExpression(first_exp_ph);
                         last_num = this.ComputeArithmeticExpression(last_exp_ph);
-                        switch (((Word)oper_ph).LValue)
+                        switch (((Lexeme)oper_ph).LValue)
                         {
                             case "+":
                                 result = first_num + last_num;
@@ -164,7 +218,7 @@ namespace LPDP
 
                         first_num = this.ComputeArithmeticExpression(first_exp_ph);
                         last_num = this.ComputeArithmeticExpression(last_exp_ph);
-                        switch (((Word)oper_ph).LValue)
+                        switch (((Lexeme)oper_ph).LValue)
                         {
                             case "*":
                                 result = first_num * last_num;
@@ -200,7 +254,7 @@ namespace LPDP
                         first_num = this.ComputeArithmeticExpression(first_exp_ph);
                         last_num = this.ComputeArithmeticExpression(last_exp_ph);
 
-                        switch (((Word)oper_ph).LValue)
+                        switch (((Lexeme)oper_ph).LValue)
                         {
                             case "^":
                                 result = Math.Pow(first_num,last_num);
@@ -253,7 +307,9 @@ namespace LPDP
                             result = this.TIME;
                             break;
                         case PhraseType.Number:
-                            result = Convert.ToDouble(((Word)first_exp_ph).LValue);
+                            string double_str = ((Lexeme)first_exp_ph).LValue;
+                            double_str = double_str.Replace('.',',');
+                            result = Convert.ToDouble(double_str);
                             break;                        
                     }
                     #endregion
@@ -266,9 +322,13 @@ namespace LPDP
             return result;
         }
 
-        bool ComputeLogicExpression(Phrase logic_exp)
+        public bool ComputeLogicExpression(Phrase logic_exp)
         {
             bool result;
+            if (logic_exp.PhType == PhraseType.True)
+            {
+                return true;
+            }
             if (logic_exp.Value.Exists(ph => ph.PhType == PhraseType.ComparisonOperator))
             {
                 #region comparison
@@ -285,7 +345,7 @@ namespace LPDP
                 }
                 else
                 {
-                    first_value = ((Word)first_value_ph).LValue;
+                    first_value = ((Lexeme)first_value_ph).LValue;
                 }
                 if (last_value_ph.PhType == PhraseType.ArithmeticExpression_3lvl)
                 {
@@ -293,10 +353,10 @@ namespace LPDP
                 }
                 else
                 {
-                    last_value = ((Word)last_value_ph).LValue;
+                    last_value = ((Lexeme)last_value_ph).LValue;
                 }
 
-                switch (((Word)comparison_oper_ph).LValue)
+                switch (((Lexeme)comparison_oper_ph).LValue)
                 {
                     case "=":
                         result = first_value == last_value;
@@ -333,7 +393,7 @@ namespace LPDP
 
                 bool first_bool = this.ComputeLogicExpression(first_exp_ph);
                 bool last_bool = this.ComputeLogicExpression(last_exp_ph);
-                switch (((Word)logic_oper_ph).LValue)
+                switch (((Lexeme)logic_oper_ph).LValue)
                 {
                     case "/\\":
                         result = first_bool && last_bool;
@@ -359,19 +419,32 @@ namespace LPDP
             return false;
         }
 
+        public object ConvertValueToObject(Phrase value_ph)
+        {
+            object value_obj;
+            if (value_ph.Value[0].PhType == PhraseType.StringValue)
+            {
+                value_obj = ((Lexeme)value_ph.Value[0]).LValue;
+            }
+            else
+            {
+                value_obj = ComputeArithmeticExpression(value_ph.Value[0]);
+            }
+            return value_obj;
+        }
 
         #endregion
 
         public LPDP.Objects.Object GetObject(Phrase var)
         {
             //заглушка
-            LPDP.Objects.Object result = this.ParentModel.O_Cont.GetScalar(((Word)var).LValue, this.SUBPROGRAM.Unit.Name);
+            LPDP.Objects.Object result = this.ParentModel.O_Cont.GetScalar(((Lexeme)var).LValue, this.SUBPROGRAM.Unit.Name);
             //
 
             switch (var.PhType)
             {
                 case PhraseType.Name:
-                    string var_name = ((Word)var).LValue;
+                    string var_name = ((Lexeme)var).LValue;
                     result = this.ParentModel.O_Cont.GetScalar(var_name, this.SUBPROGRAM.Unit.Name);
                     //this.ParentModel.O_Cont.SetValueToScalar(var_name, unit_name, value_obj);
 
@@ -386,13 +459,13 @@ namespace LPDP
                     switch (var_from_link.Type)
                     {
                         case ObjectType.Scalar:
-                            if (var_from_link.Name != ((Word)path).LValue)
+                            if (var_from_link.Name != ((Lexeme)path).LValue)
                             { //error
                             }
                             result = var_from_link;
                             break;
                         case ObjectType.Vector:
-                            if (var_from_link.Name != ((Word)path.Value[0]).LValue)
+                            if (var_from_link.Name != ((Lexeme)path.Value[0]).LValue)
                             { //error
                             }
                             Phrase inner_node = path.Value[2];
@@ -403,7 +476,7 @@ namespace LPDP
                     break;
                 default:
                     //error
-                    var_name = ((Word)var).LValue;
+                    var_name = ((Lexeme)var).LValue;
                     result = this.ParentModel.O_Cont.GetScalar(var_name, this.SUBPROGRAM.Unit.Name);
                     break;
             }
@@ -421,10 +494,12 @@ namespace LPDP
             }
             else
             {
-                cell_id = this.ParentModel.O_Cont.GetLinkValue((((Word)link_name).LValue), this.SUBPROGRAM.Unit.Name);
+                cell_id = this.ParentModel.O_Cont.GetLinkValue((((Lexeme)link_name).LValue), this.SUBPROGRAM.Unit.Name);
             }
             result = this.ParentModel.O_Cont.GetObjectByID(cell_id);
             return result;
         }
+
+
     }
 }

@@ -26,7 +26,7 @@ namespace LPDP.Objects
             //!!!ЗАГЛУШКА
             this.Code = (Phrase)value;
         }
-        public override Phrase GetValue()
+        public override object GetValue()
         {
             //!!!ЗАГЛУШКА
             return this.Code;
