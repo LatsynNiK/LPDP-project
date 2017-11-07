@@ -48,6 +48,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Calculating.cs" />
+    <Compile Include="DataSets\OutputData.cs" />
     <Compile Include="Dynamics\ConditionsTable.cs" />
     <Compile Include="Dynamics\FutureTimesTable.cs" />
     <Compile Include="Dynamics\RecordEvent.cs" />

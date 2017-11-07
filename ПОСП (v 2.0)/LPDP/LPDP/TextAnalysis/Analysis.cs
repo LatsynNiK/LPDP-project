@@ -788,100 +788,123 @@ namespace LPDP.TextAnalysis
         {
             List<LPDP.Objects.Object> list = new List<Objects.Object>();
 
-            Phrase vars_ph = desc_line.Value.Find(ph => ph.PhType == PhraseType.Vars);
-            Dictionary<string,Phrase> vars_dictionary = new Dictionary<string,Phrase>();
-            foreach (Phrase var_ph in vars_ph.Value)
+            //Phrase[] desc_line_value_copy;
+            //desc_line.Value.CopyTo(desc_line_value_copy);
+            //desc_line.Value = desc_line_value_copy.ToList();
+            while(desc_line.Value.Count >0 )
             {
-                if (var_ph.PhType == PhraseType.Comma)
+                Phrase vars_ph = desc_line.Value.Find(ph => ph.PhType == PhraseType.Vars);
+                Dictionary<string, Phrase> vars_dictionary = new Dictionary<string, Phrase>();
+                foreach (Phrase var_ph in vars_ph.Value)
                 {
-                    continue;
-                }
-                if (var_ph.PhType == PhraseType.Var)
-                {
-                    if (var_ph.Value.Exists(p => p.PhType == PhraseType.AssignOperator))
+                    if (var_ph.PhType == PhraseType.Comma)
                     {
-                        Phrase assign_op_ph = var_ph.Value.Find(p => p.PhType == PhraseType.AssignOperator);
-                        string name = this.EjectStringName(assign_op_ph);
-                        Phrase val = assign_op_ph.Value.Find(p => p.PhType == PhraseType.Value);
-                        vars_dictionary.Add(name, val);
                         continue;
                     }
-                    if (var_ph.Value.Exists(p => p.PhType == PhraseType.Name))
+                    if (var_ph.PhType == PhraseType.Var)
                     {
-                        string name = this.EjectStringName(var_ph);
-                        vars_dictionary.Add(name, null);
-                        continue;
-                    }
-                }
-            }
-
-            Phrase vardescription_ph = desc_line.Value.Find(ph => ph.PhType == PhraseType.VarDescription);
-            Phrase vartype_ph = vardescription_ph.Value.Find(ph => ph.PhType == PhraseType.VarType);
-
-            string varunit;
-            Phrase ref_to_unit_ph = vardescription_ph.Value.Find(ph => ph.PhType == PhraseType.RefToUnit);
-            if (ref_to_unit_ph != null)
-            {
-                varunit = this.EjectStringName(ref_to_unit_ph);
-            }
-            else
-            {
-                varunit = this.ResultModel.ST_Cont.CurrentUnit.Name;
-            }
-
-            foreach (var v in vars_dictionary)
-            {
-                Objects.Object new_obj = new Objects.Scalar("","");//заглушка
-                //для скаляра
-                if (vartype_ph.Value.Exists(ph => ph.PhType == PhraseType.ScalarVarType_Word))
-                {
-                    new_obj = new Objects.Scalar(v.Key, varunit);
-                    if (v.Value != null)
-                    {
-                        //если выражение
-                        object value_obj = this.ResultModel.Executor.ConvertValueToObject(v.Value);
-                        new_obj.SetValue(value_obj);
-                    }
-                    //list.Add(new_scalar);
-                }
-                //для вектора
-                if (vartype_ph.Value.Exists(ph => ph.PhType == PhraseType.VectorVarType_Word))
-                {
-                    new_obj = new Objects.Vector(v.Key, varunit, CreateObjectsFromDesciptionLine(v.Value));
-                }   
-                //для ссылки
-                if (vartype_ph.Value.Exists(ph => ph.PhType == PhraseType.LinkVarType_Word))
-                {
-                    if (v.Value == null)
-                    {
-                        new_obj = new Objects.Link(v.Key, varunit); 
-                        //list.Add(new_obj);
-                    }
-                    else
-                    {
-                        //если выражение
-                        //list.Add(new Scalar(v.Key., varunit,v.Value);
-                    }
-                }
-                //для макроса
-                if (vartype_ph.Value.Exists(ph => ph.PhType == PhraseType.MacroVarType_Word))
-                {
-                    Phrase names_ph = vartype_ph.Value.Find(ph => ph.PhType == PhraseType.Names);
-                    List<string> names = new List<string>();
-                    foreach(Phrase ph in names_ph.Value)
-                    {
-                        if (ph.PhType == PhraseType.Name)
+                        if (var_ph.Value.Exists(p => p.PhType == PhraseType.AssignOperator))
                         {
-                            Word name_w = (Word)ph;
-                            names.Add(name_w.LValue);
+                            Phrase assign_op_ph = var_ph.Value.Find(p => p.PhType == PhraseType.AssignOperator);
+                            string name = this.EjectStringName(assign_op_ph);
+                            Phrase val = assign_op_ph.Value.Find(p => p.PhType == PhraseType.Value);
+                            vars_dictionary.Add(name, val);
+                            continue;
+                        }
+                        if (var_ph.Value.Exists(p => p.PhType == PhraseType.Name))
+                        {
+                            string name = this.EjectStringName(var_ph);
+                            vars_dictionary.Add(name, null);
+                            continue;
                         }
                     }
-                    new_obj = new Macro(v.Key, varunit, v.Value, names); 
-                    //list.Add(new_obj);
                 }
-                list.Add(new_obj);
 
-            }//конец перебора переменных
+                Phrase vardescription_ph = desc_line.Value.Find(ph => ph.PhType == PhraseType.VarDescription);
+                Phrase vartype_ph = vardescription_ph.Value.Find(ph => ph.PhType == PhraseType.VarType);
+
+                string varunit;
+                Phrase ref_to_unit_ph = vardescription_ph.Value.Find(ph => ph.PhType == PhraseType.RefToUnit);
+                if (ref_to_unit_ph != null)
+                {
+                    varunit = this.EjectStringName(ref_to_unit_ph);
+                }
+                else
+                {
+                    varunit = this.ResultModel.ST_Cont.CurrentUnit.Name;
+                }
+
+                foreach (var v in vars_dictionary)
+                {
+                    Objects.Object new_obj = new Objects.Scalar("", "");//заглушка
+                    //для скаляра
+                    if (vartype_ph.Value.Exists(ph => ph.PhType == PhraseType.ScalarVarType_Word))
+                    {
+                        new_obj = new Objects.Scalar(v.Key, varunit);
+                        if (v.Value != null)
+                        {
+                            //если выражение
+                            object value_obj = this.ResultModel.Executor.ConvertValueToObject(v.Value);
+                            new_obj.SetValue(value_obj);
+                        }
+                        //list.Add(new_scalar);
+                    }
+                    //для вектора
+                    if (vartype_ph.Value.Exists(ph => ph.PhType == PhraseType.VectorVarType_Word))
+                    {
+                        Phrase description_line_ph = vartype_ph.Value.Find(ph => ph.PhType == PhraseType.DescriptionLine);
+                        new_obj = new Objects.Vector(v.Key, varunit, CreateObjectsFromDesciptionLine(description_line_ph));
+                    }
+                    //для ссылки
+                    if (vartype_ph.Value.Exists(ph => ph.PhType == PhraseType.LinkVarType_Word))
+                    {
+                        if (v.Value == null)
+                        {
+                            new_obj = new Objects.Link(v.Key, varunit);
+                            //list.Add(new_obj);
+                        }
+                        else
+                        {
+                            //если выражение
+                            //list.Add(new Scalar(v.Key., varunit,v.Value);
+                        }
+                    }
+                    //для макроса
+                    if (vartype_ph.Value.Exists(ph => ph.PhType == PhraseType.MacroVarType_Word))
+                    {
+                        Phrase names_ph = vartype_ph.Value.Find(ph => ph.PhType == PhraseType.Names);
+                        List<string> names = new List<string>();
+                        foreach (Phrase ph in names_ph.Value)
+                        {
+                            if (ph.PhType == PhraseType.Name)
+                            {
+                                Word name_w = (Word)ph;
+                                names.Add(name_w.LValue);
+                            }
+                        }
+                        new_obj = new Macro(v.Key, varunit, v.Value, names);
+                        //list.Add(new_obj);
+                    }
+                    list.Add(new_obj);
+
+                }//конец перебора переменных
+
+                desc_line.Value.RemoveRange(0, 3);//vars , -- , var_description
+                if (desc_line.Value.Count >0)
+                {
+                    desc_line.Value.RemoveAt(0);//comma
+                }
+            }
+
+            //foreach (Phrase vars_ph in desc_line.Value)
+            //{
+            //    if (vars_ph.PhType == PhraseType.Vars)
+            //    {
+
+            
+                //}
+
+
 
             return list;
         }

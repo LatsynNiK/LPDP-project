@@ -20,7 +20,7 @@ namespace LPDP.Objects
         //    this.Cells.Add()
         //}
 
-        public Object AddSingletonObject(Object o) 
+        public Object AddSingletonObject(Object o)
         {
             Objects.Object finded = this.Cells.Find(c => ((c.Name == o.Name)&&(c.Unit == o.Unit)));
             if (finded != null)

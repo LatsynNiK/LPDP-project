@@ -71,5 +71,28 @@ namespace LPDP.Objects
             return finded_node;
         }
 
+        public string GetTree()
+        {
+            string result = "(";
+            foreach (Object obj in this.Value)
+            {
+                if (obj.Type == ObjectType.Vector)
+                {
+                    Vector NewVector = (Vector)obj;
+                    result += NewVector.GetTree();
+                }
+                else
+                {
+                    result += obj.Name/*.Substring(obj.Name.LastIndexOf('.') + 1)*/;
+                }
+                if (this.Value.IndexOf(obj) < this.Value.Count - 1) // если не последний
+                {
+                    result += ", ";
+                }
+            }
+            result += ")";
+            return result;
+        }
+
     }
 }

@@ -501,5 +501,9 @@ namespace LPDP
         }
 
 
+        public double GetTIME()
+        {
+            return this.TIME;
+        }
     }
 }

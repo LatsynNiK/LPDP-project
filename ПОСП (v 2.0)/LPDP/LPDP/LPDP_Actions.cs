@@ -11,7 +11,7 @@ namespace LPDP
 {
     public static class LPDP_Actions
     {
-        public static void Building(/*string CodeTxt, bool ShowSysMark, bool ShowNextOperatar, bool ShowQueues*/)
+        public static Model Building(/*string CodeTxt, bool ShowSysMark, bool ShowNextOperatar, bool ShowQueues*/)
         {
             LPDP_Core.RESET();
             Analysis NewAnalysis = new Analysis();
@@ -46,7 +46,7 @@ namespace LPDP
 
 
 
-            LPDP_Core.TIME = 100;
+            //LPDP_Core.TIME = 100;
             //LPDP_Data.InfoTxt = 
             //LPDP_Core.Build_POSP_Model(LPDP_Data.CodeTxt);
 
@@ -76,6 +76,7 @@ namespace LPDP
             }
             else { }
             //BuildingField.Text = ErrorText;
+            return NewAnalysis.ResultModel;
         }
 
         public static void StartUntil(double time)

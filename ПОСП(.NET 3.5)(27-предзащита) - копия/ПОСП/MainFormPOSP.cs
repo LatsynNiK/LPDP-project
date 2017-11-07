@@ -7,7 +7,11 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using System.IO;
+
 using LPDP;
+using LPDP.DataSets;
+//нужно скрыть!
+//using LPDP.Structure;
 
 namespace ПОСП
 {
@@ -15,21 +19,28 @@ namespace ПОСП
     {
         bool ModelTextIsModified = false;
 
+        OutputData DataSets;
+
+
         public POSP_Form()
         {
             InitializeComponent();
             Initiators_Tab.Parent = null;
             Queues_Tab.Parent = null;
             GraphicModel_Tab.Parent = null;
+
+            ////
+            this.DataSets = new OutputData();
         }
         private void POSP_Form_Load(object sender, EventArgs e)
         {
-            LPDP_Data.ClearTable(LPDP_Data.Objects);
+            this.DataSets.ClearTable(this.DataSets.Objects);
             LPDP_Data.ClearTable(LPDP_Data.Initiators);
             LPDP_Data.ClearTable(LPDP_Data.Queues);
             LPDP_Data.ClearTable(LPDP_Data.FTT);
             LPDP_Data.ClearTable(LPDP_Data.CT);
 
+            //this.DataSets.CreateTable(this.DataSets.Objects, "Unit", "Name", "Value", "Type");
             LPDP_Data.CreateTable(LPDP_Data.Objects, "Unit", "Name", "Value", "Type");
             LPDP_Data.CreateTable(LPDP_Data.Initiators, "ID", "Value", "Type");
             LPDP_Data.CreateTable(LPDP_Data.Queues, "ID", "Unit", "Mark", "Initiators");
@@ -443,7 +454,6 @@ namespace ПОСП
             this.CodeField.TabIndex = 0;
             this.CodeField.Text = "";
             this.CodeField.WordWrap = false;
-            //this.CodeField.TextChanged += new System.EventHandler(this.CodeField_TextChanged);
             // 
             // TIME_Indicator
             // 
@@ -495,7 +505,6 @@ namespace ПОСП
             this.ResultField.SelectedIndex = 0;
             this.ResultField.Size = new System.Drawing.Size(313, 379);
             this.ResultField.TabIndex = 0;
-            //this.ResultField.Resize += new System.EventHandler(this.ResultField_Resize);
             // 
             // Objects_Tab
             // 
@@ -812,7 +821,6 @@ namespace ПОСП
             this.Search_initiator_in_queues_button.TabIndex = 0;
             this.Search_initiator_in_queues_button.Text = "Искать";
             this.Search_initiator_in_queues_button.UseVisualStyleBackColor = true;
-            //this.Search_initiator_in_queues_button.Click += new System.EventHandler(this.Search_initiator_in_queues_button_Click);
             // 
             // Search_initiator_in_queues_label
             // 
@@ -857,11 +865,6 @@ namespace ПОСП
             this.GraphicModel_View.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
             this.GraphicModel_View.TabIndex = 0;
             this.GraphicModel_View.TabStop = false;
-            //this.GraphicModel_View.VisibleChanged += new System.EventHandler(this.GraphicModel_View_VisibleChanged);
-            //this.GraphicModel_View.Paint += new System.Windows.Forms.PaintEventHandler(this.GraphicModel_View_Paint);
-            //this.GraphicModel_View.MouseDown += new System.Windows.Forms.MouseEventHandler(this.GraphicModel_View_MouseDown);
-            //this.GraphicModel_View.MouseMove += new System.Windows.Forms.MouseEventHandler(this.GraphicModel_View_MouseMove);
-            //this.GraphicModel_View.MouseUp += new System.Windows.Forms.MouseEventHandler(this.GraphicModel_View_MouseUp);
             // 
             // BuildingField
             // 
@@ -1330,10 +1333,11 @@ namespace ПОСП
 
             TIME_Value.Text = Convert.ToString(Math.Round(LPDP_Data.GetTIME(), 2));
             LPDP_Data.Rewrite_All_Views();
+            this.DataSets.Rewrite_Objects();
 
             //LPDP_Actions.Building();
 
-            this.Objects_View.DataSource = LPDP_Data.Objects;
+            this.Objects_View.DataSource = this.DataSets.Objects;
             this.Initiators_View.DataSource = LPDP_Data.Initiators;
             this.FTT_View.DataSource = LPDP_Data.FTT;
             this.CT_View.DataSource = LPDP_Data.CT;
@@ -1510,7 +1514,9 @@ namespace ПОСП
         private void построениеToolStripMenuItem_Click(object sender, EventArgs e)
         {
             this.UpDate();
-            LPDP_Actions.Building();
+
+            //Model mod = LPDP_Actions.Building();
+            this.DataSets.SetParentModel(LPDP_Actions.Building());
             this.UpLoad();
 
             //LPDP_Core.RESET();
