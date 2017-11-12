@@ -10,7 +10,7 @@ namespace LPDP.Objects
     {
         public int Number; 
         public int ID_of_MemoryCell;
-        InitiatorType Type;
+        public InitiatorType Type;
 
         public Initiator(InitiatorType type)
         {

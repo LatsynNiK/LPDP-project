@@ -13,6 +13,7 @@ namespace LPDP.Objects
         public Memory()
         {
             this.Cells = new List<Object>();
+            this.ID_Object_Counter = 1;
         }
 
         //public void CreateObject(ObjectType type)

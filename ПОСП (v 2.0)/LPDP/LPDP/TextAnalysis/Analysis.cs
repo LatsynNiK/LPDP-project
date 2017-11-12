@@ -29,9 +29,9 @@ namespace LPDP.TextAnalysis
 
         Error CurrentError;
 
-        public Model ResultModel;
+        Model ParentModel;
 
-        public Analysis()
+        public Analysis(Model parent_model)
         {
             this.SourceText = "";
             this.Errors = new List<Error>();
@@ -39,178 +39,20 @@ namespace LPDP.TextAnalysis
             this.ParsedText = new Phrase();
             this.ResultRTFCode = "";
             this.ResultTxtCode = "";
+
+            this.ParentModel = parent_model;
         }
 
-        #region public functions
-
-        public int AnalyzeText(string SourceText) // возвращает 1 если успешно
+        public void Building(string source_text)
         {
-            this.SourceText = SourceText;
-            //this.Errors = new List<Error>();
+            this.AnalyzeText(source_text);
 
-            // Пустой текст модели
-            //if (SourceText == "")
-            //{
-            //    Errors.Add(new Error(ErrorType.EmptyText, ModelTextRules.ErrorTypes[ErrorType.EmptyText], 0, 0, 0));
-            //}
+            this.AnalyzeStructure(this.ParsedText);
 
-            this.Lexemes = LexicalAnalysis(this.SourceText);
-            if (Errors.Count > 0)
-            {
-                return 0;
-            }
-            this.ParsedText = SyntacticalAnalysis(this.Lexemes);
-            if (Errors.Count > 0)
-            {
-                return 0;
-            }
-            this.ParsedText = MadeStruct(this.ParsedText);
-            if (Errors.Count > 0)
-            {
-                return 0;
-            }
-
-            this.ResultTxtCode = "";
-            this.ResultRTFCode = "";
-            return 1;
+            this.LaunchPreparation();
         }
 
-        public int AnalyzeStructure(Phrase source_phrase)
-        {
-            switch (source_phrase.PhType)
-            {
-                //Создание пустой модели
-                case PhraseType.Model:
-                    this.ResultModel = new Model(EjectStringName(source_phrase));
-
-                    Phrase units_ph = source_phrase.Value.Find(ph => ph.PhType == PhraseType.Units);
-                    foreach (Phrase unit_ph in units_ph.Value)
-                    {
-                        AnalyzeStructure(unit_ph);
-                    }
-                    break;
-
-                case PhraseType.Unit:
-                    this.ResultModel.ST_Cont.CreateUnit();
-                    foreach (Phrase unit_part_ph in source_phrase.Value)
-                    {
-                        AnalyzeStructure(unit_part_ph);
-                    }
-                    break;
-
-                case PhraseType.UnitHeader:
-                    Phrase unit_type_ph = source_phrase.Value.Find(ph => ph.PhType == PhraseType.UnitType_Word);
-                    Word unit_type_w = (Word) unit_type_ph;
-                    string unit_type_s = unit_type_w.LValue;
-                    UnitType u_type;
-                    switch (unit_type_s)
-                    {
-                        case "контроллер":
-                            u_type = UnitType.Controller;
-                            break;    
-                        case "процессор":
-                            u_type = UnitType.Processor;
-                            break;
-                        case "агрегат":
-                            u_type = UnitType.Aggregate;
-                            break;
-                        default:
-                            u_type = UnitType.Processor;
-                            break;
-                    }
-                    this.ResultModel.ST_Cont.SetUnitHeader(EjectStringName(source_phrase), u_type);
-                    this.ResultModel.Executor.SetCurrentUnit(this.ResultModel.ST_Cont.CurrentUnit);
-                    break;
-
-                case PhraseType.Description:
-                    Phrase descriptionlines_ph = source_phrase.Value.Find(ph => ph.PhType == PhraseType.DescriptionLines);
-                    foreach (Phrase descriptionline_ph in descriptionlines_ph.Value)
-                    {
-                        AnalyzeStructure(descriptionline_ph);
-                    }
-                    break;
-
-                case PhraseType.DescriptionLine:
-                    List<Objects.Object> list_obj = this.CreateObjectsFromDesciptionLine(source_phrase);
-                    foreach (Objects.Object o in list_obj)
-                    {
-                        this.ResultModel.O_Cont.AddObject(o);
-                    }
-                    break;
-
-                case PhraseType.Algorithm:
-                    Phrase algorithmlines_ph = source_phrase.Value.Find(ph => ph.PhType == PhraseType.AlgorithmLines);
-                    foreach (Phrase algorithmline_ph in algorithmlines_ph.Value)
-                    {
-                        AnalyzeStructure(algorithmline_ph);
-                    }
-                    break;
-
-                case PhraseType.AlgorithmLine:
-
-                    if (this.ResultModel.ST_Cont.CurrentSubprogram ==  null)
-                    {
-                        //error
-                    }
-
-                    //если встретили метку
-                    if (source_phrase.Value.Exists(ph => ph.PhType == PhraseType.Label))
-                    {
-                        Subprogram NewSubp = new Subprogram();
-                        this.ResultModel.ST_Cont.AddSubprogram(NewSubp);
-                        Phrase label_ph = source_phrase.Value.Find(ph => ph.PhType == PhraseType.Label);
-                        string label_name = EjectStringName(label_ph);
-                        Label NewLabel = new Label(label_name, true);
-                        this.ResultModel.ST_Cont.AddLabel(NewLabel);
-                    }
-
-                    Phrase operator_ph = source_phrase.Value.Find(ph => ph.PhType == PhraseType.Operator);
-                    Operator oper = CreateOperatorFromPhrase(operator_ph.Value[0]);
-                    this.ResultModel.ST_Cont.AddOperator(oper);
-                    if ((oper.Name == OperatorName.Transfer) ||
-                        (oper.Name == OperatorName.ComplexWait) ||
-                        (oper.Name == OperatorName.If)||
-                        (oper.Name == OperatorName.Terminate)||
-                        (oper.Name == OperatorName.Passivate))
-                    {
-                        this.ResultModel.ST_Cont.CurrentSubprogram = null;
-                    }
-                    if (oper.Name == OperatorName.SimpleWait)
-                    {
-                        Subprogram NewSubp = new Subprogram();
-                        this.ResultModel.ST_Cont.AddSubprogram(NewSubp);
-
-                        Label NewLabel = new Label("", false);
-                        this.ResultModel.ST_Cont.AddLabel(NewLabel);
-                    }
-                    break;
-            }
-            return 1;
-        }
-
-        public int LaunchPreparation()
-        {
-            foreach (Unit unit in this.ResultModel.Units)
-            {
-                if ((unit.Type == UnitType.Aggregate) || (unit.Type == UnitType.Controller))
-                {
-                    Phrase true_ph = new Phrase(PhraseType.True);
-                    Initiator new_init = this.ResultModel.O_Cont.CreateInitiator();
-                    Subprogram to_subp = this.ResultModel.Tracks.Find(sp => sp.Unit == unit);
-
-                    this.ResultModel.Executor.TC_Cont.AddConditionRecord(true_ph, new_init, to_subp, false);
-                }
-            }
-            this.ResultModel.Executor.SetState();
-
-
-            //this.ResultModel.O_Cont.SetValueToScalar("L", "ГЕН", 100);
-
-
-            return 1;
-        }
-
-        #endregion
+        #region main functions
 
         List<Lexeme> LexicalAnalysis(string Text)
         {
@@ -324,6 +166,177 @@ namespace LPDP.TextAnalysis
 
             return Stack;
         }
+
+        int AnalyzeText(string SourceText) // возвращает 1 если успешно
+        {
+            this.SourceText = SourceText;
+            //this.Errors = new List<Error>();
+
+            // Пустой текст модели
+            //if (SourceText == "")
+            //{
+            //    Errors.Add(new Error(ErrorType.EmptyText, ModelTextRules.ErrorTypes[ErrorType.EmptyText], 0, 0, 0));
+            //}
+
+            this.Lexemes = LexicalAnalysis(this.SourceText);
+            if (Errors.Count > 0)
+            {
+                return 0;
+            }
+            this.ParsedText = SyntacticalAnalysis(this.Lexemes);
+            if (Errors.Count > 0)
+            {
+                return 0;
+            }
+            this.ParsedText = MadeStruct(this.ParsedText);
+            if (Errors.Count > 0)
+            {
+                return 0;
+            }
+
+            this.ResultTxtCode = "";
+            this.ResultRTFCode = "";
+            return 1;
+        }
+
+        int AnalyzeStructure(Phrase source_phrase)
+        {
+            switch (source_phrase.PhType)
+            {
+                //Определение имени модели
+                case PhraseType.Model:
+                    this.ParentModel.Name = EjectStringName(source_phrase);
+
+                    Phrase units_ph = source_phrase.Value.Find(ph => ph.PhType == PhraseType.Units);
+                    foreach (Phrase unit_ph in units_ph.Value)
+                    {
+                        AnalyzeStructure(unit_ph);
+                    }
+                    break;
+
+                case PhraseType.Unit:
+                    //this.ParentModel.Executor.TC_Cont.
+                    this.ParentModel.ST_Cont.CreateUnit();
+                    foreach (Phrase unit_part_ph in source_phrase.Value)
+                    {
+                        AnalyzeStructure(unit_part_ph);
+                    }
+                    break;
+
+                case PhraseType.UnitHeader:
+                    Phrase unit_type_ph = source_phrase.Value.Find(ph => ph.PhType == PhraseType.UnitType_Word);
+                    Word unit_type_w = (Word) unit_type_ph;
+                    string unit_type_s = unit_type_w.LValue;
+                    UnitType u_type;
+                    switch (unit_type_s)
+                    {
+                        case "контроллер":
+                            u_type = UnitType.Controller;
+                            break;    
+                        case "процессор":
+                            u_type = UnitType.Processor;
+                            break;
+                        case "агрегат":
+                            u_type = UnitType.Aggregate;
+                            break;
+                        default:
+                            u_type = UnitType.Processor;
+                            break;
+                    }
+                    this.ParentModel.ST_Cont.SetUnitHeader(EjectStringName(source_phrase), u_type);
+                    this.ParentModel.Executor.SetCurrentUnit(this.ParentModel.ST_Cont.CurrentUnit);
+                    break;
+
+                case PhraseType.Description:
+                    Phrase descriptionlines_ph = source_phrase.Value.Find(ph => ph.PhType == PhraseType.DescriptionLines);
+                    foreach (Phrase descriptionline_ph in descriptionlines_ph.Value)
+                    {
+                        AnalyzeStructure(descriptionline_ph);
+                    }
+                    break;
+
+                case PhraseType.DescriptionLine:
+                    List<Objects.Object> list_obj = this.CreateObjectsFromDesciptionLine(source_phrase,this.ParentModel.ST_Cont.CurrentUnit.Name);
+                    foreach (Objects.Object o in list_obj)
+                    {
+                        this.ParentModel.O_Cont.AddObject(o,this.ParentModel.ST_Cont.CurrentUnit.Name);
+                    }
+                    break;
+
+                case PhraseType.Algorithm:
+                    Phrase algorithmlines_ph = source_phrase.Value.Find(ph => ph.PhType == PhraseType.AlgorithmLines);
+                    foreach (Phrase algorithmline_ph in algorithmlines_ph.Value)
+                    {
+                        AnalyzeStructure(algorithmline_ph);
+                    }
+                    break;
+
+                case PhraseType.AlgorithmLine:
+
+                    if (this.ParentModel.ST_Cont.CurrentSubprogram ==  null)
+                    {
+                        //error
+                    }
+
+                    //если встретили метку
+                    if (source_phrase.Value.Exists(ph => ph.PhType == PhraseType.Label))
+                    {
+                        Subprogram NewSubp = new Subprogram();
+                        this.ParentModel.ST_Cont.AddSubprogram(NewSubp);
+                        Phrase label_ph = source_phrase.Value.Find(ph => ph.PhType == PhraseType.Label);
+                        string label_name = EjectStringName(label_ph);
+                        Label NewLabel = new Label(label_name, true);
+                        this.ParentModel.ST_Cont.AddLabel(NewLabel);
+                    }
+
+                    Phrase operator_ph = source_phrase.Value.Find(ph => ph.PhType == PhraseType.Operator);
+                    Operator oper = CreateOperatorFromPhrase(operator_ph.Value[0]);
+                    this.ParentModel.ST_Cont.AddOperator(oper);
+                    if ((oper.Name == OperatorName.Transfer) ||
+                        (oper.Name == OperatorName.ComplexWait) ||
+                        (oper.Name == OperatorName.If)||
+                        (oper.Name == OperatorName.Terminate)||
+                        (oper.Name == OperatorName.Passivate))
+                    {
+                        this.ParentModel.ST_Cont.CurrentSubprogram = null;
+                    }
+                    if (oper.Name == OperatorName.SimpleWait)
+                    {
+                        Subprogram NewSubp = new Subprogram();
+                        this.ParentModel.ST_Cont.AddSubprogram(NewSubp);
+
+                        Label NewLabel = new Label("", false);
+                        this.ParentModel.ST_Cont.AddLabel(NewLabel);
+                    }
+                    break;
+            }
+            return 1;
+        }
+
+        int LaunchPreparation()
+        {
+            foreach (Unit unit in this.ParentModel.Units)
+            {
+                if ((unit.Type == UnitType.Aggregate) || (unit.Type == UnitType.Controller))
+                {
+                    Phrase true_ph = new Phrase(PhraseType.True);
+                    Initiator new_init = this.ParentModel.O_Cont.CreateInitiator(unit.Name);
+                    Subprogram to_subp = this.ParentModel.Tracks.Find(sp => sp.Unit == unit);
+
+                    this.ParentModel.Executor.TC_Cont.AddConditionRecord(true_ph, new_init, to_subp, false);
+                }
+            }
+
+            this.ParentModel.Executor.SetState();
+            this.ParentModel.Built = true;
+
+            //this.ParentModel.O_Cont.SetValueToScalar("L", "ГЕН", 100);
+
+
+            return 1;
+        }
+
+        #endregion
 
         #region for Syntactical Analysis
         enum ScanningState
@@ -784,13 +797,13 @@ namespace LPDP.TextAnalysis
             return name_s;
         }
 
-        List<LPDP.Objects.Object> CreateObjectsFromDesciptionLine(Phrase desc_line)
+        public List<LPDP.Objects.Object> CreateObjectsFromDesciptionLine(Phrase desc_line, string unit_name)
         {
             List<LPDP.Objects.Object> list = new List<Objects.Object>();
 
-            //Phrase[] desc_line_value_copy;
-            //desc_line.Value.CopyTo(desc_line_value_copy);
-            //desc_line.Value = desc_line_value_copy.ToList();
+            Phrase[] desc_line_value_copy = new Phrase[desc_line.Value.Count];
+            desc_line.Value.CopyTo(desc_line_value_copy);
+            
             while(desc_line.Value.Count >0 )
             {
                 Phrase vars_ph = desc_line.Value.Find(ph => ph.PhType == PhraseType.Vars);
@@ -831,7 +844,7 @@ namespace LPDP.TextAnalysis
                 }
                 else
                 {
-                    varunit = this.ResultModel.ST_Cont.CurrentUnit.Name;
+                    varunit = unit_name;
                 }
 
                 foreach (var v in vars_dictionary)
@@ -844,7 +857,7 @@ namespace LPDP.TextAnalysis
                         if (v.Value != null)
                         {
                             //если выражение
-                            object value_obj = this.ResultModel.Executor.ConvertValueToObject(v.Value);
+                            object value_obj = this.ParentModel.Executor.ConvertValueToObject(v.Value);
                             new_obj.SetValue(value_obj);
                         }
                         //list.Add(new_scalar);
@@ -853,7 +866,7 @@ namespace LPDP.TextAnalysis
                     if (vartype_ph.Value.Exists(ph => ph.PhType == PhraseType.VectorVarType_Word))
                     {
                         Phrase description_line_ph = vartype_ph.Value.Find(ph => ph.PhType == PhraseType.DescriptionLine);
-                        new_obj = new Objects.Vector(v.Key, varunit, CreateObjectsFromDesciptionLine(description_line_ph));
+                        new_obj = new Objects.Vector(v.Key, varunit, CreateObjectsFromDesciptionLine(description_line_ph,""));
                     }
                     //для ссылки
                     if (vartype_ph.Value.Exists(ph => ph.PhType == PhraseType.LinkVarType_Word))
@@ -896,15 +909,7 @@ namespace LPDP.TextAnalysis
                 }
             }
 
-            //foreach (Phrase vars_ph in desc_line.Value)
-            //{
-            //    if (vars_ph.PhType == PhraseType.Vars)
-            //    {
-
-            
-                //}
-
-
+            desc_line.Value = desc_line_value_copy.ToList();
 
             return list;
         }
@@ -1032,8 +1037,8 @@ namespace LPDP.TextAnalysis
                         Phrase wait_time_ph = concret_operator_ph.Value.Find(ph => ph.PhType == PhraseType.WaitTime);
                         Phrase wait_time_value_ph = wait_time_ph.Value.Find(ph => ph.PhType == PhraseType.ArithmeticExpression_3lvl);
                         action.Parameters.Add(wait_time_value_ph);
-                        action.Parameters.Add("$L_" + this.ResultModel.ST_Cont.NextWaitLabelNumber);
-                        action.Parameters.Add(this.ResultModel.ST_Cont.CurrentUnit.Name);
+                        action.Parameters.Add("$L_" + this.ParentModel.ST_Cont.NextWaitLabelNumber);
+                        action.Parameters.Add(this.ParentModel.ST_Cont.CurrentUnit.Name);
                         result_oper.AddAction(action);
                     }
                     if (concret_operator_ph.Value.Exists(ph => ph.PhType == PhraseType.WaitUntil))
@@ -1046,8 +1051,8 @@ namespace LPDP.TextAnalysis
                         action.Parameters.Add(wait_logic_expression_ph);//condition
                         action.Parameters.Add(true);//initiator                        
                         action.Parameters.Add(true);
-                        action.Parameters.Add("$L_" + this.ResultModel.ST_Cont.NextWaitLabelNumber);
-                        action.Parameters.Add(this.ResultModel.ST_Cont.CurrentUnit.Name);
+                        action.Parameters.Add("$L_" + this.ParentModel.ST_Cont.NextWaitLabelNumber);
+                        action.Parameters.Add(this.ParentModel.ST_Cont.CurrentUnit.Name);
                         result_oper.AddAction(action);
                     }
                     if (concret_operator_ph.Value.Exists(ph => ph.PhType == PhraseType.WaitConditions))
@@ -1102,10 +1107,12 @@ namespace LPDP.TextAnalysis
             }
             else
             {
-                result = new KeyValuePair<string,string>(label_name_word.LValue,this.ResultModel.ST_Cont.CurrentUnit.Name);
+                result = new KeyValuePair<string,string>(label_name_word.LValue,this.ParentModel.ST_Cont.CurrentUnit.Name);
             }
             return result;
         }
+
+
 
         #endregion
     }

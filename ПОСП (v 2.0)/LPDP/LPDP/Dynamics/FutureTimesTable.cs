@@ -32,9 +32,16 @@ namespace LPDP.Dynamics
 
         public RecordFTT FindNextMinTimeRecord()
         {
-            double time = this.TimesTable.Min(rec => rec.ActiveTime);
-            RecordFTT result = this.TimesTable.Find(rec => rec.ActiveTime == time);
-            return result;
+            if (this.TimesTable.Count > 0)
+            {
+                double time = this.TimesTable.Min(rec => rec.ActiveTime);
+                RecordFTT result = this.TimesTable.Find(rec => rec.ActiveTime == time);
+                return result;
+            }
+            else
+            {
+                return null;
+            }
             //if (finded != null)
             //{
             //    return finded;

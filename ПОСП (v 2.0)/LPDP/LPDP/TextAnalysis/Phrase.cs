@@ -74,5 +74,23 @@ namespace LPDP.TextAnalysis
             }
             return length;
         }
+
+        public override string ToString()
+        {
+            string result = "";
+            foreach (Phrase ph in this.Value)
+            {
+                if (ph.GetType() == typeof(Lexeme))
+                {
+                    Lexeme lex = (Lexeme)ph;
+                    result += lex.LValue;
+                }
+                else
+                {
+                    result += ph.ToString();
+                }
+            }
+            return result;
+        }
     }
 }

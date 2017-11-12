@@ -7,7 +7,7 @@ namespace LPDP.Objects
 {
     public class InitiatorsTable
     {
-        List<Initiator> Initiators;
+        public List<Initiator> Initiators;
         int NumberCount;
 
         public InitiatorsTable()

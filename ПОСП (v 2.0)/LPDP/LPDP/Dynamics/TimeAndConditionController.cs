@@ -16,6 +16,16 @@ namespace LPDP.Dynamics
         Executor ParentExecutor;
         FutureTimesTable FTT;
         ConditionsTable CT;
+
+        // Getters
+        public List<RecordFTT> FutureTimesTable
+        {
+            get{ return this.FTT.TimesTable;}
+        }
+        public List<RecordCT> ConditionsTable 
+        {
+            get { return this.CT.CondTable; }
+        }
         
 
         public TimeAndConditionController(LPDP.Executor executor)
@@ -51,10 +61,10 @@ namespace LPDP.Dynamics
             CT.Insert(NewRec);
         }
 
-        public void DeleteRecords(int deleted_id, FutureTimesTable FTT, ConditionsTable CT)
+        public void DeleteRecords(int deleted_id)
         {
-            CT.CondTable.RemoveAll(rec => rec.ID == deleted_id);
-            FTT.TimesTable.RemoveAll(rec => rec.ID == deleted_id);
+            this.CT.CondTable.RemoveAll(rec => rec.ID == deleted_id);
+            this.FTT.TimesTable.RemoveAll(rec => rec.ID == deleted_id);
         }
 
         public RecordEvent FindNextEvent()
@@ -80,7 +90,5 @@ namespace LPDP.Dynamics
         }
 
         
-
-        public void ApplyEvent() { }
     }
 }

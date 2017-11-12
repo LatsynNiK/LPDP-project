@@ -55,7 +55,7 @@ namespace LPDP.Objects
 
         //}
 
-        public void AddObject(Object obj)
+        public void AddObject(Object obj, string unit)
         {
             obj = this.ParentModel.Memory.AddSingletonObject(obj);
 
@@ -65,9 +65,23 @@ namespace LPDP.Objects
             }
             else
             {
-                this.GVT.AddToUnit(obj, this.ParentModel.ST_Cont.CurrentUnit.Name);
+                this.GVT.AddToUnit(obj, unit);
             }
         }
+
+        //public void CreateObject(Object obj)
+        //{
+        //    obj = this.ParentModel.Memory.AddSingletonObject(obj);
+
+        //    if (obj.Type == ObjectType.Macro)
+        //    {
+        //        this.ParentModel.MT.Add((Macro)obj);
+        //    }
+        //    else
+        //    {
+        //        this.GVT.AddToUnit(obj, this.ParentModel.Executor.);
+        //    }
+        //}        
 
         public void SetValueToScalar(string name, string unit, object value) 
         {
@@ -95,6 +109,11 @@ namespace LPDP.Objects
             return result;
         }
 
+        public LPDP.Objects.Object GetObjectByName(string name, string unit)
+        {
+            return this.GVT.Vars[unit].Find(o => o.Name == name);
+        }
+
         public int GetLinkValue(string link_name, string link_unit)
         {
             LPDP.Objects.Link link = (Link)this.GVT.Vars[link_unit].Find(l => l.Name == link_name);
@@ -102,10 +121,14 @@ namespace LPDP.Objects
             return result;
         }
 
-        public Scalar GetScalar(string name, string unit)
-        {
-            return (Scalar)this.GVT.Vars[unit].Find(o => o.Name == name);
-        }
+        //public Scalar GetScalar(string name, string unit)
+        //{
+        //    return (Scalar)this.GVT.Vars[unit].Find(o => o.Name == name);
+        //}
+        //public Link GetLink(string name, string unit)
+        //{
+        //    return (Link)this.GVT.Vars[unit].Find(o => o.Name == name);
+        //}
 
         public Object GetVectorNode(Phrase path, string unit)
         {
@@ -123,15 +146,25 @@ namespace LPDP.Objects
 
 
 
+
         //INITIAORS
-        public Initiator CreateInitiator()
+        public Initiator CreateInitiator(string unit_name)
         {
             Initiator init = new Initiator(InitiatorType.Aggregate);
+
+            Object obj = new Scalar ("Инициатор блока",unit_name,unit_name);
+            obj = this.ParentModel.Memory.AddSingletonObject(obj);
+            init.ID_of_MemoryCell = obj.ID;
             this.IT.Add(init);
             return init;
         }
 
-
+        public Object GetObjectFromInitiator(Initiator init)
+        {
+            int cell_id = init.ID_of_MemoryCell;
+            Object finded_obj = this.ParentModel.Memory.GetObjectByID(cell_id);
+            return finded_obj;
+        }
 
         //public Vector FindVector
     }

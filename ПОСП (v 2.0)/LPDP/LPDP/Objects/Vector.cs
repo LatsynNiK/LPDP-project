@@ -32,22 +32,9 @@ namespace LPDP.Objects
             this.Value = new List<Object>();
         }
         ////
-        public override void SetValue(object node_and_value)
+        public override void SetValue(object list_obj)
         {
-            //KeyValuePair<Phrase, object> node_and_value_pair = (KeyValuePair<Phrase, object>)node_and_value;
-            //Phrase node = node_and_value_pair.Key;
-            //object value = node_and_value_pair.Value;
-
-            //string name = 
-
-            //if (path.Value.Exists(ph => ph.PhType == PhraseType.VectorNode))
-            //{
-            //    Vector inner_vector = 
-
-            //    Phrase inner_path = path.Value.Find(ph => ph.PhType == PhraseType.VectorNode);
-            //    this.Value.
-            //}
-            ////this.Value = Convert.ToString(value);
+            this.Value = (List<Object>)list_obj;
         }
 
         public override object GetValue()

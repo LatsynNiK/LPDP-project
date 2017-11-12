@@ -21,7 +21,15 @@ namespace LPDP.Objects
 
         public void AddToUnit(Object obj, string unit_name)
         {
-            this.Vars[unit_name].Add(obj);
+            Objects.Object finded = this.Vars[unit_name].Find(o => (o.Name == obj.Name));            
+            if (finded != null)
+            {
+                finded.SetValue(obj.GetValue());
+            }
+            else
+            {
+                this.Vars[unit_name].Add(obj);
+            }
         }
     }
 }

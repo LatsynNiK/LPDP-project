@@ -5,6 +5,7 @@ using System.Text;
 
 //using LPDP.Dynamics;
 using LPDP.Objects;
+using LPDP.TextAnalysis;
 
 namespace LPDP.Structure
 {
@@ -17,7 +18,7 @@ namespace LPDP.Structure
         //public TimeAndConditionController TC_Cont;
 
         public List<Subprogram> Tracks;
-        public LabelsTable LT;
+        //public LabelsTable LT;
         public MacrosTable MT;
         public List<Unit> Units;
         public StructureController ST_Cont;
@@ -28,6 +29,8 @@ namespace LPDP.Structure
         public ObjectController O_Cont;
 
         public Executor Executor;
+
+        public Analysis Analysis;
         
         //double TIME;
         //Initiator INITIATOR;
@@ -35,28 +38,29 @@ namespace LPDP.Structure
         //int OPERATION;
         //Random RAND;
 
-        public Model (string name)
-        {
-            this.Name = name;
-            //this.ObjectCounter = 0;
-            //this.FTT = new FutureTimesTable();
-            //this.CT = new ConditionsTable();
-            //this.TC_Cont = new TimeAndConditionController(this);
+        public bool Built;
 
+        public Model ()//string name)
+        {
+            //this.Name = name;
+            
             this.Tracks = new List<Subprogram>();
-            this.LT = new LabelsTable();
             this.MT = new MacrosTable();
             this.Units = new List<Unit>();
             this.ST_Cont = new StructureController(this);
 
             this.Memory = new Memory();
-            //this.GVT = new GlobalVarsTable();
-            //this.IT = new InitiatorsTable();
             this.O_Cont = new ObjectController(this);
             this.Executor = new Executor(this);
+            this.Built = false;
 
-            //this.TIME = 0;
-            //this.RAND = new Random();
+            this.Analysis = new Analysis(this);
+
+        }
+
+        public void Clear()
+        {
+
         }
     }
 }

@@ -65,14 +65,22 @@ namespace LPDP
         public void SetState()
         {
             RecordEvent next_event = this.TC_Cont.FindNextEvent();
-            this.INITIATOR = next_event.Initiator;
-            this.SUBPROGRAM = this.TC_Cont.FindNextEvent().Subprogram;
-            this.NEXT_OPERATOR = this.SUBPROGRAM.Operators[0];
-
-            if (next_event.GetType() == typeof(RecordFTT))
+            if (next_event != null)
             {
-                double active_time = ((RecordFTT)next_event).ActiveTime;
-                this.TIME = active_time;
+                this.TC_Cont.DeleteRecords(next_event.ID);
+                this.INITIATOR = next_event.Initiator;
+                this.SUBPROGRAM = next_event.Subprogram;
+                this.NEXT_OPERATOR = this.SUBPROGRAM.Operators[0];
+
+                if (next_event.GetType() == typeof(RecordFTT))
+                {
+                    double active_time = ((RecordFTT)next_event).ActiveTime;
+                    this.TIME = active_time;
+                }                
+            }
+            else
+            {
+                //модель выполнилась до конца
             }
         }
 
@@ -108,46 +116,61 @@ namespace LPDP
             {
                 ExecuteAction(action);
             }
-            int next_oper_index = oper.ParentSubprogram.Operators.IndexOf(oper)+1;
-
-            this.NEXT_OPERATOR = oper.ParentSubprogram.Operators[next_oper_index];
-            if (this.NEXT_OPERATOR == null)
+            int next_oper_index = oper.ParentSubprogram.Operators.IndexOf(oper)+1;            
+            if (oper.ParentSubprogram.Operators.Count == next_oper_index)
             {
-                //искать в след подпрограмме
-                //RecordEvent next_event = this.TC_Cont.FindNextEvent();
-                //this.INITIATOR = next_event.Initiator;
-                //this.SUBPROGRAM = this.TC_Cont.FindNextEvent().Subprogram;
-                //this.NEXT_OPERATOR = this.SUBPROGRAM.Operators[0];
                 this.SetState();
+            }
+            else
+            {
+                this.NEXT_OPERATOR = oper.ParentSubprogram.Operators[next_oper_index];
             }
             return 1;
         }
 
         int ExecuteAction(Structure.Action action)
         {
+            string unit_name = action.ParentOperator.ParentSubprogram.Unit.Name;
             switch (action.Name)
             { 
                 case ActionName.Assign:
                     Phrase var_ph = (Phrase)action.Parameters[0];
                     Objects.Object var = this.GetObject(var_ph);
-                    string unit_name = action.ParentOperator.ParentSubprogram.Unit.Name;
-
+                    
                     Phrase value_ph = (Phrase)action.Parameters[1];
-
                     object value_obj = ConvertValueToObject(value_ph);
-                    //if (value_ph.Value[0].PhType == PhraseType.StringValue)
-                    //{
-                    //    value_obj = ((Lexeme)value_ph.Value[0]).LValue;
-                    //}
-                    //else
-                    //{
-                    //    value_obj = ComputeArithmeticExpression(value_ph.Value[0]);
-                    //}
                     var.SetValue(value_obj);
-
-                    //this.ParentModel.O_Cont.SetValueToVar(action.Parameters
                     break;
                 case ActionName.Create:
+                    string var_name = (string)action.Parameters[0];
+                    Phrase vartype_ph = (Phrase)action.Parameters[1];
+
+                    Objects.Object new_obj = new Objects.Scalar("", "");//заглушка
+
+                    //для скаляра
+                    if (vartype_ph.Value.Exists(ph => ph.PhType == PhraseType.ScalarVarType_Word))
+                    {
+                        new_obj = new Objects.Scalar(var_name, unit_name);
+                    }
+                    //для вектора
+                    if (vartype_ph.Value.Exists(ph => ph.PhType == PhraseType.VectorVarType_Word))
+                    {
+                        Phrase description_line_ph = vartype_ph.Value.Find(ph => ph.PhType == PhraseType.DescriptionLine);
+                        new_obj = new Objects.Vector(var_name, unit_name, this.ParentModel.Analysis.CreateObjectsFromDesciptionLine(description_line_ph,this.SUBPROGRAM.Unit.Name));
+                    }
+                    //для ссылки
+                    if (vartype_ph.Value.Exists(ph => ph.PhType == PhraseType.LinkVarType_Word))
+                    {
+                        new_obj = new Objects.Link(var_name,unit_name);
+                    }
+                    //для макроса
+                    if (vartype_ph.Value.Exists(ph => ph.PhType == PhraseType.MacroVarType_Word))
+                    {
+
+                    }
+                    this.ParentModel.O_Cont.AddObject(new_obj,this.SUBPROGRAM.Unit.Name);
+
+                    //list.Add(new_obj);
                     break;
                 case ActionName.Delete:
                     break;
@@ -298,7 +321,7 @@ namespace LPDP
                             break;
                         case PhraseType.LinkVarType_Word:
                             last_exp_ph = ar_exp.Value[2];//ссылка на Name
-                            result = Convert.ToDouble(this.GetObject(first_exp_ph).ID);
+                            result = Convert.ToDouble(this.GetObject(last_exp_ph).ID);
                             break;
                         case PhraseType.Rand_Word:
                             result = this.RAND.NextDouble();
@@ -438,14 +461,37 @@ namespace LPDP
         public LPDP.Objects.Object GetObject(Phrase var)
         {
             //заглушка
-            LPDP.Objects.Object result = this.ParentModel.O_Cont.GetScalar(((Lexeme)var).LValue, this.SUBPROGRAM.Unit.Name);
+            LPDP.Objects.Object result = new LPDP.Objects.Scalar("","");
             //
 
             switch (var.PhType)
             {
                 case PhraseType.Name:
                     string var_name = ((Lexeme)var).LValue;
-                    result = this.ParentModel.O_Cont.GetScalar(var_name, this.SUBPROGRAM.Unit.Name);
+
+                    result = this.ParentModel.O_Cont.GetObjectByName (var_name, this.SUBPROGRAM.Unit.Name);
+
+                    
+                    //if (this.ParentModel.O_Cont.GVT.Vars[this.SUBPROGRAM.Unit.Name].
+                    //    Exists(v => (v.Name == var_name) && (v.Type == Objects.ObjectType.Scalar)))
+                    //{
+                    //    result = this.ParentModel.O_Cont.GetScalar(var_name, this.SUBPROGRAM.Unit.Name);
+                    //}
+                    //if (this.ParentModel.O_Cont.GVT.Vars[this.SUBPROGRAM.Unit.Name].
+                    //    Exists(v => (v.Name == var_name) && (v.Type == Objects.ObjectType.Link)))
+                    //{
+                    //    result = this.ParentModel.O_Cont.GetLink(var_name, this.SUBPROGRAM.Unit.Name);
+                    //}
+                    //if (this.ParentModel.O_Cont.GVT.Vars[this.SUBPROGRAM.Unit.Name].
+                    //    Exists(v => (v.Name == var_name) && (v.Type == Objects.ObjectType.Scalar)))
+                    //{
+                    //    result = this.ParentModel.O_Cont.GetScalar(var_name, this.SUBPROGRAM.Unit.Name);
+                    //}
+                    //if (this.ParentModel.O_Cont.GVT.Vars[this.SUBPROGRAM.Unit.Name].
+                    //    Exists(v => (v.Name == var_name) && (v.Type == Objects.ObjectType.Vector)))
+                    //{
+                    //    result = this.ParentModel.O_Cont.Get(var_name, this.SUBPROGRAM.Unit.Name);
+                    //}
                     //this.ParentModel.O_Cont.SetValueToScalar(var_name, unit_name, value_obj);
 
                     break;
@@ -477,7 +523,7 @@ namespace LPDP
                 default:
                     //error
                     var_name = ((Lexeme)var).LValue;
-                    result = this.ParentModel.O_Cont.GetScalar(var_name, this.SUBPROGRAM.Unit.Name);
+                    result = this.ParentModel.O_Cont.GetObjectByName(var_name, this.SUBPROGRAM.Unit.Name);
                     break;
             }
             return result;

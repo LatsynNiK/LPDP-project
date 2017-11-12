@@ -16,9 +16,11 @@ namespace LPDP.Structure
         public Subprogram CurrentSubprogram;
         public Operator LastOperator;
         public int NextWaitLabelNumber;
+        public LabelsTable LT;
 
         public StructureController(Model model)
         {
+            this.LT = new LabelsTable();
             this.ParentModel = model;
             this.NextWaitLabelNumber = 1;
             SubprogramID_Counter = 0;
@@ -77,7 +79,7 @@ namespace LPDP.Structure
                 label.Name = "$L_" + this.NextWaitLabelNumber;
                 this.NextWaitLabelNumber++;
             }
-            this.ParentModel.LT.Add(label);
+            this.LT.Add(label);
         }
 
         //public int GetOperatorID()

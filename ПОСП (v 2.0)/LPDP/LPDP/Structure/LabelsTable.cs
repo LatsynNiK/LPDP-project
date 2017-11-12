@@ -31,6 +31,11 @@ namespace LPDP.Structure
             this.Table.Add(label);
         }
 
+        public Label FindFirstBySubprogram(Subprogram subp)
+        {
+            return this.Table.Find(l => l.Subprogram == subp);
+        }
+
         //public void Delete(int id_rec)
         //{
         //    Label rec = this.Table.Find(r => r.SubprogramID == id_rec);

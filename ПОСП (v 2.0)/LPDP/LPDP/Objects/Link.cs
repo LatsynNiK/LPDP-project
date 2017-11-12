@@ -5,7 +5,7 @@ using System.Text;
 
 namespace LPDP.Objects
 {
-    class Link:Object
+    public class Link:Object
     {
         int Value;
 
@@ -13,7 +13,7 @@ namespace LPDP.Objects
             : base(name, unit)
         {
             base.Type = ObjectType.Link;
-            this.Value = -1;
+            //this.Value = -1;
         }
 
         public Link(string name, string unit, int value)

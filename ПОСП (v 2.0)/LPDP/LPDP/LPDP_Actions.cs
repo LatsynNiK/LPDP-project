@@ -11,12 +11,14 @@ namespace LPDP
 {
     public static class LPDP_Actions
     {
-        public static Model Building(/*string CodeTxt, bool ShowSysMark, bool ShowNextOperatar, bool ShowQueues*/)
+        public static Model Building(string model_text/*string CodeTxt, bool ShowSysMark, bool ShowNextOperatar, bool ShowQueues*/)
         {
+            return new Model();
+            /*
             LPDP_Core.RESET();
             Analysis NewAnalysis = new Analysis();
 
-            NewAnalysis.AnalyzeText(LPDP_Data.CodeTxt);
+            NewAnalysis.AnalyzeText(model_text);
 
             NewAnalysis.AnalyzeStructure(NewAnalysis.ParsedText);
 
@@ -39,7 +41,7 @@ namespace LPDP
             
             // Конец Нового Анализа
 
-            Model model = NewAnalysis.ResultModel;
+            //Model model = NewAnalysis.ResultModel;
             Phrase true_ph = new Phrase(PhraseType.True);
             //model.Executor.TC_Cont.AddConditionRecord(true_ph,
 
@@ -76,7 +78,7 @@ namespace LPDP
             }
             else { }
             //BuildingField.Text = ErrorText;
-            return NewAnalysis.ResultModel;
+            //return NewAnalysis.;*/
         }
 
         public static void StartUntil(double time)

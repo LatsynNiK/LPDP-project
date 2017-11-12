@@ -10,6 +10,7 @@ using System.IO;
 
 using LPDP;
 using LPDP.DataSets;
+using LPDP.Structure;
 //нужно скрыть!
 //using LPDP.Structure;
 
@@ -19,7 +20,8 @@ namespace ПОСП
     {
         bool ModelTextIsModified = false;
 
-        OutputData DataSets;
+        InputOutputData DataSets;
+        Model ExploredModel;
 
 
         public POSP_Form()
@@ -30,22 +32,22 @@ namespace ПОСП
             GraphicModel_Tab.Parent = null;
 
             ////
-            this.DataSets = new OutputData();
+            this.DataSets = new InputOutputData();
         }
         private void POSP_Form_Load(object sender, EventArgs e)
         {
-            this.DataSets.ClearTable(this.DataSets.Objects);
-            LPDP_Data.ClearTable(LPDP_Data.Initiators);
-            LPDP_Data.ClearTable(LPDP_Data.Queues);
-            LPDP_Data.ClearTable(LPDP_Data.FTT);
-            LPDP_Data.ClearTable(LPDP_Data.CT);
+            //this.DataSets.ClearTable(this.DataSets.Objects);
+            //LPDP_Data.ClearTable(LPDP_Data.Initiators);
+            //LPDP_Data.ClearTable(LPDP_Data.Queues);
+            //LPDP_Data.ClearTable(LPDP_Data.FTT);
+            //LPDP_Data.ClearTable(LPDP_Data.CT);
 
-            //this.DataSets.CreateTable(this.DataSets.Objects, "Unit", "Name", "Value", "Type");
-            LPDP_Data.CreateTable(LPDP_Data.Objects, "Unit", "Name", "Value", "Type");
-            LPDP_Data.CreateTable(LPDP_Data.Initiators, "ID", "Value", "Type");
-            LPDP_Data.CreateTable(LPDP_Data.Queues, "ID", "Unit", "Mark", "Initiators");
-            LPDP_Data.CreateTable(LPDP_Data.FTT, "Time", "Initiator", "Mark", "Unit");
-            LPDP_Data.CreateTable(LPDP_Data.CT, "Condition", "Initiator", "Mark", "Unit");
+            ////this.DataSets.CreateTable(this.DataSets.Objects, "Unit", "Name", "Value", "Type");
+            //LPDP_Data.CreateTable(LPDP_Data.Objects, "Unit", "Name", "Value", "Type");
+            //LPDP_Data.CreateTable(LPDP_Data.Initiators, "ID", "Value", "Type");
+            //LPDP_Data.CreateTable(LPDP_Data.Queues, "ID", "Unit", "Mark", "Initiators");
+            //LPDP_Data.CreateTable(LPDP_Data.FTT, "Time", "Initiator", "Mark", "Unit");
+            //LPDP_Data.CreateTable(LPDP_Data.CT, "Condition", "Initiator", "Mark", "Unit");
 
             LPDP_Actions.Initialize_LPDP_ModelTextRules();
         }
@@ -1316,32 +1318,31 @@ namespace ПОСП
 
         void UpDate()
         {
-            LPDP_Data.CodeRtf = CodeField.Rtf;
-            LPDP_Data.CodeTxt = CodeField.Text;
-            LPDP_Data.InfoTxt = BuildingField.Text;
-            LPDP_Data.ShowNextOperator = следующийОператорToolStripMenuItem.Checked;
-            LPDP_Data.ShowQueues = очередиToolStripMenuItem.Checked;
-            LPDP_Data.ShowSysMark = системныеМеткиToolStripMenuItem.Checked;
+            this.DataSets.CodeRtf = CodeField.Rtf;
+            this.DataSets.CodeTxt = CodeField.Text;
+            this.DataSets.InfoTxt = BuildingField.Text;
+            this.DataSets.ShowNextOperator = следующийОператорToolStripMenuItem.Checked;
+            this.DataSets.ShowQueues = очередиToolStripMenuItem.Checked;
+            this.DataSets.ShowSysMark = системныеМеткиToolStripMenuItem.Checked;
         }
         void UpLoad()
         {
-            CodeField.Rtf = LPDP_Data.CodeRtf;
-            BuildingField.Text = LPDP_Data.InfoTxt;
-            следующийОператорToolStripMenuItem.Checked = LPDP_Data.ShowNextOperator;
-            очередиToolStripMenuItem.Checked = LPDP_Data.ShowQueues;
-            системныеМеткиToolStripMenuItem.Checked = LPDP_Data.ShowSysMark;
+            this.DataSets.Output_All_Data();
+            //CodeField.Rtf = LPDP_Data.CodeRtf;
+            CodeField.Text = this.DataSets.CodeTxt;// CodeRtf;
+            BuildingField.Text = this.DataSets.InfoTxt;
+            следующийОператорToolStripMenuItem.Checked = this.DataSets.ShowNextOperator;
+            очередиToolStripMenuItem.Checked = this.DataSets.ShowQueues;
+            системныеМеткиToolStripMenuItem.Checked = this.DataSets.ShowSysMark;
 
-            TIME_Value.Text = Convert.ToString(Math.Round(LPDP_Data.GetTIME(), 2));
-            LPDP_Data.Rewrite_All_Views();
-            this.DataSets.Rewrite_Objects();
-
-            //LPDP_Actions.Building();
-
+            TIME_Value.Text = Convert.ToString(Math.Round(this.DataSets.TIME, 2));
+            
             this.Objects_View.DataSource = this.DataSets.Objects;
-            this.Initiators_View.DataSource = LPDP_Data.Initiators;
-            this.FTT_View.DataSource = LPDP_Data.FTT;
-            this.CT_View.DataSource = LPDP_Data.CT;
-            this.Queues_View.DataSource = LPDP_Data.Queues;
+            this.Initiators_View.DataSource = this.DataSets.Initiators;
+            this.FTT_View.DataSource = this.DataSets.FTT;
+            this.CT_View.DataSource = this.DataSets.CT;
+
+            //this.Queues_View.DataSource = this.DataSets.Queues;
         }
 
 
@@ -1401,6 +1402,8 @@ namespace ПОСП
                     CodeField.Text = ModelText;
 
                     BuildingField.Text = "Файл " + "\"" + SelectedFile + "\" успешно открыт.";
+
+                    this.ExploredModel = new Model();
                 }
                 catch (Exception ex)
                 {
@@ -1515,29 +1518,14 @@ namespace ПОСП
         {
             this.UpDate();
 
-            //Model mod = LPDP_Actions.Building();
-            this.DataSets.SetParentModel(LPDP_Actions.Building());
+            //this.ExploredModel = 
+            //Model new_model = new Model();
+            this.ExploredModel.Analysis.Building(this.DataSets.CodeTxt);
+            this.DataSets.SetParentModel(this.ExploredModel);
             this.UpLoad();
 
-            //LPDP_Core.RESET();
-            //BuildingField.Text = "Выполняется построение модели...";
-            ////CodeField.Rtf = LPDP_Code.ClearFromPointer_RTF(CodeField.Rtf);
-
-            //string ErrorText = LPDP_Core.Build_POSP_Model(CodeField.Text);
-
-            if (LPDP_Data.GetModelIsBuilt() == true)
+            if (this.DataSets.ModelIsBuilt == true)
             {
-            //    CodeField.ResetText();
-            //    LPDP_Core.Rewrite_Queues();
-                
-            //    CodeField.Rtf = LPDP_Code.Build_RTF_Code(системныеМеткиToolStripMenuItem.Checked);
-            //    CodeField.Rtf = LPDP_Code.Rewrite_Initiators_RTF(CodeField.Rtf, следующийОператорToolStripMenuItem.Checked, очередиToolStripMenuItem.Checked);
-                
-            //    LPDP_Graphics.Load_GraphicModel();
-            //    LPDP_Graphics.Reload_Values_and_Queues(очередиToolStripMenuItem.Checked);
-            //    //GraphicModel_View.Refresh();
-
-            //    Rewrite_All_Views();
 
                 запускToolStripMenuItem.Enabled = true;
                 выполнениеКОСToolStripMenuItem.Enabled = true;
@@ -1548,8 +1536,10 @@ namespace ПОСП
                 файлToolStripMenuItem.Enabled = false;
                 стопToolStripMenuItem.Enabled = true;
             }
-            else { }
-            //BuildingField.Text = ErrorText;
+            else 
+            {
+                //errors
+            }
         }
 
         //запуск
@@ -1628,25 +1618,12 @@ namespace ПОСП
         private void шагToolStripMenuItem_Click(object sender, EventArgs e)
         {
             this.UpDate();
-            LPDP_Actions.StartStep();
+            this.ExploredModel.Executor.StartStep();
 
-            if (LPDP_Data.GetModelIsBuilt() == false)
+            if (this.DataSets.ModelIsBuilt == false)
                 стопToolStripMenuItem.PerformClick();
 
             this.UpLoad();
-            //BuildingField.Focus();
-            //BuildingField.Text = "Выполняется элементарный оператор...";
-            //string NewStr = LPDP_Core.Launch_POSP_Model(0, LPDP_Core.Mode.step);
-            //if (LPDP_Data.GetModelIsBuilt == false) стопToolStripMenuItem.PerformClick();
-            //LPDP_Core.Rewrite_Queues();
-            ////CodeField.Rtf = LPDP_Code.Build_RTF_Code();
-            //CodeField.Rtf = LPDP_Code.Rewrite_Initiators_RTF(CodeField.Rtf, следующийОператорToolStripMenuItem.Checked, очередиToolStripMenuItem.Checked);
-
-            //LPDP_Graphics.Reload_Values_and_Queues(очередиToolStripMenuItem.Checked);
-
-            //TIME_Value.Text = Convert.ToString(Math.Round(LPDP_Core.TIME, 2));
-            //Rewrite_All_Views();
-            //BuildingField.Text = NewStr;
         } 
 
         //стоп
@@ -1788,7 +1765,7 @@ namespace ПОСП
                 системныеМеткиToolStripMenuItem.Checked = false;
 
             отображенияToolStripMenuItem.ShowDropDown();
-            LPDP_Actions.Building();
+            LPDP_Actions.Building(this.DataSets.CodeTxt);
             //CodeField.Rtf = LPDP_Code.Build_RTF_Code(системныеМеткиToolStripMenuItem.Checked);
             //CodeField.Rtf = LPDP_Code.Rewrite_Initiators_RTF(CodeField.Rtf, следующийОператорToolStripMenuItem.Checked, очередиToolStripMenuItem.Checked);
         }
@@ -1818,7 +1795,7 @@ namespace ПОСП
 
             отображенияToolStripMenuItem.ShowDropDown();
             //CodeField.Rtf = LPDP_Code.Rewrite_Initiators_RTF(CodeField.Rtf, следующийОператорToolStripMenuItem.Checked, очередиToolStripMenuItem.Checked);
-            LPDP_Actions.Building();
+            LPDP_Actions.Building(this.DataSets.CodeTxt);
             //LPDP_Graphics.Reload_Values_and_Queues(очередиToolStripMenuItem.Checked);
             GraphicModel_View.Refresh();
         }
