@@ -80,7 +80,7 @@ namespace LPDP.TextAnalysis
             string result = "";
             foreach (Phrase ph in this.Value)
             {
-                if (ph.GetType() == typeof(Lexeme))
+                if (ph is Lexeme)
                 {
                     Lexeme lex = (Lexeme)ph;
                     result += lex.LValue;

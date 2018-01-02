@@ -131,6 +131,9 @@ namespace LPDP
         int ExecuteAction(Structure.Action action)
         {
             string unit_name = action.ParentOperator.ParentSubprogram.Unit.Name;
+            string label;
+            string unit;
+            bool islast;
             switch (action.Name)
             { 
                 case ActionName.Assign:
@@ -173,10 +176,70 @@ namespace LPDP
                     //list.Add(new_obj);
                     break;
                 case ActionName.Delete:
+                    string deleted_name = Convert.ToString(action.Parameters[0]);
+                    if (deleted_name == "True")
+                    {
+                        int deleted_id = this.INITIATOR.ID_of_MemoryCell;
+                        this.ParentModel.O_Cont.DeleteInitiatorByID(deleted_id);
+                    }
+                    else
+                    {
+                        Objects.Object del_obj= this.ParentModel.O_Cont.GetObjectByName(deleted_name,this.SUBPROGRAM.Unit.Name);
+                        if (del_obj.Unit == this.SUBPROGRAM.Unit.Name)
+                        {
+                            this.ParentModel.O_Cont.DeleteObjectByID(del_obj.ID);
+                        }
+                    }
                     break;
                 case ActionName.Write_to_CT:
+                    Phrase condition;
+                    if (typeof(bool) == action.Parameters[0].GetType())
+                    {
+                        if ((bool)action.Parameters[0]) 
+                            condition = new Phrase(PhraseType.True);
+                        else
+                            condition = new Phrase(PhraseType.False);
+                    }
+                    else 
+                    {
+                        condition = (Phrase)action.Parameters[0];
+                    }
+                    string link_name = Convert.ToString(action.Parameters[1]);
+                    bool to_the_begining = (bool)action.Parameters[2];
+                    label = (string)action.Parameters[3];
+                    unit = (string)action.Parameters[4];
+                    islast = (bool)action.Parameters[5];
+
+                    Initiator init;
+                    Subprogram subp = this.ParentModel.ST_Cont.FindSubprogramByLabelAndUnit(label,unit);
+                    if (link_name == "True")
+                    {
+                        init = this.INITIATOR;
+                    }
+                    else 
+                    {
+                        init = this.ParentModel.O_Cont.ActivateFromLink(link_name, this.SUBPROGRAM.Unit.Name);
+                    }
+
+                    if (to_the_begining)
+                    {
+                        this.TC_Cont.InsertConditionRecord(condition,init,subp,islast);
+                    }
+                    else
+                    {
+                        this.TC_Cont.AddConditionRecord(condition,init,subp,islast);
+                    }
                     break;
                 case ActionName.Write_to_FTT:
+                    Phrase time_exp = (Phrase)action.Parameters[0];
+                    double time = Convert.ToDouble( this.ComputeArithmeticExpression(time_exp));
+                    label = (string)action.Parameters[1];
+                    unit = (string)action.Parameters[2];
+                    islast = (bool)action.Parameters[3];
+
+                    init = this.INITIATOR;
+                    subp = this.ParentModel.ST_Cont.FindSubprogramByLabelAndUnit(label, unit);
+                    this.TC_Cont.AddTimeRecord(time, init, subp, islast);
                     break;
             }
             return 1;
@@ -184,7 +247,7 @@ namespace LPDP
 
         #region computing region
 
-        public double ComputeArithmeticExpression(Phrase ar_exp)
+        public string ComputeArithmeticExpression(Phrase ar_exp)
         {
             double result = 0;
             Phrase first_exp_ph;
@@ -204,8 +267,8 @@ namespace LPDP
                         oper_ph = ar_exp.Value[1];
                         last_exp_ph = ar_exp.Value[2];
 
-                        first_num = this.ComputeArithmeticExpression(first_exp_ph);
-                        last_num = this.ComputeArithmeticExpression(last_exp_ph);
+                        first_num = Convert.ToDouble(this.ComputeArithmeticExpression(first_exp_ph));
+                        last_num = Convert.ToDouble(this.ComputeArithmeticExpression(last_exp_ph));
                         switch (((Lexeme)oper_ph).LValue)
                         {
                             case "+":
@@ -215,19 +278,19 @@ namespace LPDP
                                 result = first_num - last_num;
                                 break;
                         }
-                        return result;
+                        return Convert.ToString(result);
                     }
                     if (ar_exp.Value.Exists(ph => ph.PhType == PhraseType.ArithmeticExpression_2lvl))
                     {
                         first_exp_ph = ar_exp.Value[0];
-                        result = this.ComputeArithmeticExpression(first_exp_ph);
-                        return result;
+                        result = Convert.ToDouble(this.ComputeArithmeticExpression(first_exp_ph));
+                        return Convert.ToString(result);
                     }
                     if (ar_exp.Value.Exists(ph => ph.PhType == PhraseType.ArithmeticExpression_3lvl))
                     {
                         first_exp_ph = ar_exp.Value[1]; // ( exp )
-                        result = this.ComputeArithmeticExpression(first_exp_ph);
-                        return result;
+                        result = Convert.ToDouble(this.ComputeArithmeticExpression(first_exp_ph));
+                        return Convert.ToString(result);
                     }
                     #endregion
                     break;
@@ -239,8 +302,8 @@ namespace LPDP
                         oper_ph = ar_exp.Value[1];
                         last_exp_ph = ar_exp.Value[2];
 
-                        first_num = this.ComputeArithmeticExpression(first_exp_ph);
-                        last_num = this.ComputeArithmeticExpression(last_exp_ph);
+                        first_num = Convert.ToDouble(this.ComputeArithmeticExpression(first_exp_ph));
+                        last_num = Convert.ToDouble(this.ComputeArithmeticExpression(last_exp_ph));
                         switch (((Lexeme)oper_ph).LValue)
                         {
                             case "*":
@@ -250,19 +313,19 @@ namespace LPDP
                                 result = first_num / last_num;
                                 break;
                         }
-                        return result;
+                        return Convert.ToString(result);
                     }
                     if (ar_exp.Value.Exists(ph => ph.PhType == PhraseType.ArithmeticExpression_1lvl))
                     {
                         first_exp_ph = ar_exp.Value[0];
-                        result = this.ComputeArithmeticExpression(first_exp_ph);
-                        return result;
+                        result =Convert.ToDouble( this.ComputeArithmeticExpression(first_exp_ph));
+                        return Convert.ToString(result);
                     }
                     if (ar_exp.Value.Exists(ph => ph.PhType == PhraseType.ArithmeticExpression_3lvl))
                     {
                         first_exp_ph = ar_exp.Value[1]; // ( exp )
-                        result = this.ComputeArithmeticExpression(first_exp_ph);
-                        return result;
+                        result = Convert.ToDouble(this.ComputeArithmeticExpression(first_exp_ph));
+                        return Convert.ToString(result);
                     }
                     #endregion
                     break;
@@ -274,8 +337,8 @@ namespace LPDP
                         oper_ph = ar_exp.Value[1];
                         last_exp_ph = ar_exp.Value[2];
 
-                        first_num = this.ComputeArithmeticExpression(first_exp_ph);
-                        last_num = this.ComputeArithmeticExpression(last_exp_ph);
+                        first_num = Convert.ToDouble(this.ComputeArithmeticExpression(first_exp_ph));
+                        last_num = Convert.ToDouble(this.ComputeArithmeticExpression(last_exp_ph));
 
                         switch (((Lexeme)oper_ph).LValue)
                         {
@@ -283,25 +346,24 @@ namespace LPDP
                                 result = Math.Pow(first_num,last_num);
                                 break;
                         }
-                        return result;
+                        return Convert.ToString(result);
                     }
                     if (ar_exp.Value.Exists(ph => ph.PhType == PhraseType.DigitalValue))
                     {
                         first_exp_ph = ar_exp.Value[0];
-                        result = this.ComputeArithmeticExpression(first_exp_ph);
-                        return result;
+                        result = Convert.ToDouble(this.ComputeArithmeticExpression(first_exp_ph));
+                        return Convert.ToString(result);
                     }
                     if (ar_exp.Value.Exists(ph => ph.PhType == PhraseType.ArithmeticExpression_3lvl))
                     {
                         first_exp_ph = ar_exp.Value[1]; // ( exp )
-                        result = this.ComputeArithmeticExpression(first_exp_ph);
-                        return result;
+                        result = Convert.ToDouble(this.ComputeArithmeticExpression(first_exp_ph));
+                        return Convert.ToString(result);
                     }
                     if (ar_exp.Value.Exists(ph => ph.PhType == PhraseType.ArithmeticFunction))
                     {
                         first_exp_ph = ar_exp.Value[0];
-                        result = this.ComputeArithmeticExpression(first_exp_ph);
-                        return result;
+                        return Convert.ToString(result);
                     }
                     #endregion
                     break;
@@ -310,29 +372,53 @@ namespace LPDP
                     first_exp_ph = ar_exp.Value[0];
                     switch (first_exp_ph.PhType)
                     {
+                        //case PhraseType.ValueFromLink:
+                        //    //result = Convert.ToDouble(this.GetObject(first_exp_ph).GetValue());
+                        //    break;
+                        //case PhraseType.VectorNode:
+                        //    result = Convert.ToDouble(this.GetObject(first_exp_ph).GetValue());
+                        //    break;
+                        //case PhraseType.Name:
+                        //    result = Convert.ToDouble(this.GetObject(first_exp_ph).GetValue());
+                        //    break;
+                        //case PhraseType.LinkVarType_Word:
+                        //    last_exp_ph = ar_exp.Value[2];//ссылка на Name
+                        //    result = Convert.ToDouble(this.GetObject(last_exp_ph).ID);
+                        //    break;
+                        //case PhraseType.Rand_Word:
+                        //    result = this.RAND.NextDouble();
+                        //    break;
+                        //case PhraseType.Time_Word:
+                        //    result = this.TIME;
+                        //    break;
+                        //case PhraseType.Number:
+                        //    string double_str = ((Lexeme)first_exp_ph).LValue;
+                        //    double_str = double_str.Replace('.',',');
+                        //    result = Convert.ToDouble(double_str);
+                        //    break;                        
                         case PhraseType.ValueFromLink:
-                            result = Convert.ToDouble(this.GetObject(first_exp_ph).GetValue());
+                            //result = Convert.ToDouble(this.GetObject(first_exp_ph).GetValue());
                             break;
                         case PhraseType.VectorNode:
-                            result = Convert.ToDouble(this.GetObject(first_exp_ph).GetValue());
+                            return Convert.ToString(this.GetObject(first_exp_ph).GetValue());
                             break;
                         case PhraseType.Name:
-                            result = Convert.ToDouble(this.GetObject(first_exp_ph).GetValue());
+                            return Convert.ToString(this.GetObject(first_exp_ph).GetValue());
                             break;
                         case PhraseType.LinkVarType_Word:
                             last_exp_ph = ar_exp.Value[2];//ссылка на Name
-                            result = Convert.ToDouble(this.GetObject(last_exp_ph).ID);
+                            return Convert.ToString(this.GetObject(last_exp_ph).ID);
                             break;
                         case PhraseType.Rand_Word:
-                            result = this.RAND.NextDouble();
+                            return Convert.ToString(this.RAND.NextDouble());
                             break;
                         case PhraseType.Time_Word:
-                            result = this.TIME;
+                            return Convert.ToString(this.TIME);
                             break;
                         case PhraseType.Number:
                             string double_str = ((Lexeme)first_exp_ph).LValue;
-                            double_str = double_str.Replace('.',',');
-                            result = Convert.ToDouble(double_str);
+                            double_str = double_str.Replace('.', ',');
+                            return Convert.ToString(double_str);
                             break;                        
                     }
                     #endregion
@@ -342,7 +428,7 @@ namespace LPDP
 
 
 
-            return result;
+            return Convert.ToString(result);
         }
 
         public bool ComputeLogicExpression(Phrase logic_exp)
@@ -445,13 +531,20 @@ namespace LPDP
         public object ConvertValueToObject(Phrase value_ph)
         {
             object value_obj;
-            if (value_ph.Value[0].PhType == PhraseType.StringValue)
+            switch (value_ph.Value[0].PhType)
             {
-                value_obj = ((Lexeme)value_ph.Value[0]).LValue;
-            }
-            else
-            {
-                value_obj = ComputeArithmeticExpression(value_ph.Value[0]);
+                case PhraseType.String:
+                    value_obj = ((Lexeme)value_ph.Value[0]).LValue;
+                    break;
+                case PhraseType.Name:
+                    value_obj = this.GetObject(value_ph).GetValue();
+                    break;
+                case PhraseType.ArithmeticExpression_3lvl:
+                    value_obj = ComputeArithmeticExpression(value_ph.Value[0]);
+                    break;
+                default:
+                    value_obj = ComputeArithmeticExpression(value_ph.Value[0]);
+                    break;
             }
             return value_obj;
         }

@@ -283,10 +283,19 @@ namespace LPDP.TextAnalysis
                     {
                         Subprogram NewSubp = new Subprogram();
                         this.ParentModel.ST_Cont.AddSubprogram(NewSubp);
-                        Phrase label_ph = source_phrase.Value.Find(ph => ph.PhType == PhraseType.Label);
-                        string label_name = EjectStringName(label_ph);
-                        Label NewLabel = new Label(label_name, true);
-                        this.ParentModel.ST_Cont.AddLabel(NewLabel);
+                        foreach (Phrase ph in source_phrase.Value)
+                        {
+                            if (ph.PhType == PhraseType.Label)
+                            {
+                                string label_name = EjectStringName(ph);
+                                Label NewLabel = new Label(label_name, true);
+                                this.ParentModel.ST_Cont.AddLabel(NewLabel);
+                            }
+                        }
+                        //Phrase label_ph = source_phrase.Value.Find(ph => ph.PhType == PhraseType.Label);
+                        //string label_name = EjectStringName(label_ph);
+                        //Label NewLabel = new Label(label_name, true);
+                        //this.ParentModel.ST_Cont.AddLabel(NewLabel);
                     }
 
                     Phrase operator_ph = source_phrase.Value.Find(ph => ph.PhType == PhraseType.Operator);
@@ -321,7 +330,7 @@ namespace LPDP.TextAnalysis
                 {
                     Phrase true_ph = new Phrase(PhraseType.True);
                     Initiator new_init = this.ParentModel.O_Cont.CreateInitiator(unit.Name);
-                    Subprogram to_subp = this.ParentModel.Tracks.Find(sp => sp.Unit == unit);
+                    Subprogram to_subp = this.ParentModel.ST_Cont.Tracks.Find(sp => sp.Unit == unit);
 
                     this.ParentModel.Executor.TC_Cont.AddConditionRecord(true_ph, new_init, to_subp, false);
                 }
@@ -944,6 +953,7 @@ namespace LPDP.TextAnalysis
                     destination_str = EjectStringDestination(destination_ph);
                     action.Parameters.Add(destination_str.Key);
                     action.Parameters.Add(destination_str.Value);
+                    action.Parameters.Add(false);
                     result_oper.AddAction(action);
                     break;
 
@@ -968,6 +978,7 @@ namespace LPDP.TextAnalysis
                     destination_str = EjectStringDestination(destination_ph);
                     action.Parameters.Add(destination_str.Key);
                     action.Parameters.Add(destination_str.Value);
+                    action.Parameters.Add(false);
                     result_oper.AddAction(action);
                     break;
 
@@ -1024,6 +1035,7 @@ namespace LPDP.TextAnalysis
                         destination_str = EjectStringDestination(destination_ph);
                         action.Parameters.Add(destination_str.Key);
                         action.Parameters.Add(destination_str.Value);
+                        action.Parameters.Add(false); //islast
                         result_oper.AddAction(action);
                     }
                     break;
@@ -1039,6 +1051,7 @@ namespace LPDP.TextAnalysis
                         action.Parameters.Add(wait_time_value_ph);
                         action.Parameters.Add("$L_" + this.ParentModel.ST_Cont.NextWaitLabelNumber);
                         action.Parameters.Add(this.ParentModel.ST_Cont.CurrentUnit.Name);
+                        action.Parameters.Add(false);
                         result_oper.AddAction(action);
                     }
                     if (concret_operator_ph.Value.Exists(ph => ph.PhType == PhraseType.WaitUntil))
@@ -1053,6 +1066,7 @@ namespace LPDP.TextAnalysis
                         action.Parameters.Add(true);
                         action.Parameters.Add("$L_" + this.ParentModel.ST_Cont.NextWaitLabelNumber);
                         action.Parameters.Add(this.ParentModel.ST_Cont.CurrentUnit.Name);
+                        action.Parameters.Add(false);
                         result_oper.AddAction(action);
                     }
                     if (concret_operator_ph.Value.Exists(ph => ph.PhType == PhraseType.WaitConditions))
@@ -1087,6 +1101,7 @@ namespace LPDP.TextAnalysis
                             destination_str = EjectStringDestination(destination_ph);
                             action.Parameters.Add(destination_str.Key);
                             action.Parameters.Add(destination_str.Value);
+                            action.Parameters.Add(true);
                             result_oper.AddAction(action);
                         }
                     }
@@ -1100,10 +1115,10 @@ namespace LPDP.TextAnalysis
             KeyValuePair<string, string> result;
             Word label_name_word = (Word)destination_ph.Value.Find(ph => ph.PhType == PhraseType.Name);
             
-            if (destination_ph.Value.Exists(ph => ph.PhType == PhraseType.RefToUnit_Word))
+            if (destination_ph.Value.Exists(ph => ph.PhType == PhraseType.RefToUnit))
             {
-                Word unit_name_word = (Word)destination_ph.Value.FindLast(ph => ph.PhType == PhraseType.Name);
-                result = new KeyValuePair<string,string>(label_name_word.LValue, unit_name_word.LValue);
+                Phrase ref_to_unit_ph = destination_ph.Value.Find(ph => ph.PhType == PhraseType.RefToUnit);
+                result = new KeyValuePair<string,string>(label_name_word.LValue, EjectStringName(ref_to_unit_ph));
             }
             else
             {

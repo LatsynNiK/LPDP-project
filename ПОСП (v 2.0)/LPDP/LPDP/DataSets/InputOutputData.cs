@@ -30,6 +30,8 @@ namespace LPDP.DataSets
         public double TIME;
         public bool ModelIsBuilt;
 
+        public int Precision;
+
         //public double GetTIME()
         //{
         //    return this.Model.Executor.GetTIME();
@@ -53,7 +55,7 @@ namespace LPDP.DataSets
         public InputOutputData()
         {
             //this.CodeTxt = this.Model.
-
+            this.Precision = 2;
 
             //this.Model = model;
             this.Objects = new DataTable("Objects");
@@ -101,7 +103,14 @@ namespace LPDP.DataSets
                     if (unit == obj.Unit)
                     {
                         string name = obj.Name;
-                        string value = Convert.ToString(obj.GetValue());
+                        object value_obj = obj.GetValue();
+                        try
+                        {
+                            value_obj = Convert.ToDouble(value_obj);
+                            value_obj = Math.Round((double)value_obj, this.Precision);
+                        }
+                        catch { }
+                        string value = Convert.ToString(value_obj);
                         string type = "";
                         switch (obj.Type)
                         {
@@ -150,7 +159,15 @@ namespace LPDP.DataSets
 
                 LPDP.Objects.Object obj = this.Model.O_Cont.GetObjectFromInitiator(init);
                 name = obj.Name;
-                value = Convert.ToString(obj.GetValue());
+                object value_obj = obj.GetValue();
+                try
+                {
+                    value_obj = Convert.ToDouble(value_obj);
+                    value_obj = Math.Round((double)value_obj, this.Precision);
+                }
+                catch { }
+
+                value = Convert.ToString(value_obj);
                 switch (obj.Type)
                 {
                     case LPDP.Objects.ObjectType.Scalar:
@@ -249,7 +266,14 @@ namespace LPDP.DataSets
                 }
                 else
                 {
-                    DT.Rows.Add("", obj.Name, obj.GetValue(), type);
+                    object value_obj = obj.GetValue();
+                    try
+                    {
+                        value_obj = Convert.ToDouble(value_obj);
+                        value_obj = Math.Round((double)value_obj, this.Precision);
+                    }
+                    catch { }
+                    DT.Rows.Add("", obj.Name, value_obj, type);
                 }
 
             }

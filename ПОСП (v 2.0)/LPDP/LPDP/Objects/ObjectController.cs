@@ -69,19 +69,16 @@ namespace LPDP.Objects
             }
         }
 
-        //public void CreateObject(Object obj)
-        //{
-        //    obj = this.ParentModel.Memory.AddSingletonObject(obj);
-
-        //    if (obj.Type == ObjectType.Macro)
-        //    {
-        //        this.ParentModel.MT.Add((Macro)obj);
-        //    }
-        //    else
-        //    {
-        //        this.GVT.AddToUnit(obj, this.ParentModel.Executor.);
-        //    }
-        //}        
+        public void DeleteObjectByID(int id)
+        {
+            this.ParentModel.Memory.DeleteObject(id);
+            this.GVT.DeleteObjectByID(id);
+        }
+        public void DeleteInitiatorByID(int id)
+        {
+            this.ParentModel.Memory.DeleteObject(id);
+            this.IT.Delete(id);
+        }
 
         public void SetValueToScalar(string name, string unit, object value) 
         {
@@ -159,11 +156,29 @@ namespace LPDP.Objects
             return init;
         }
 
+        public Initiator ActivateFromLink(string link_name, string link_unit)
+        {
+            Initiator init = new Initiator(InitiatorType.Flow);
+
+            Object obj = GetObjectFromLink(link_name,link_unit);
+            //obj = this.ParentModel.Memory.AddSingletonObject(obj);
+            init.ID_of_MemoryCell = obj.ID;
+            this.IT.Add(init);
+            return init;
+        }
+
         public Object GetObjectFromInitiator(Initiator init)
         {
             int cell_id = init.ID_of_MemoryCell;
             Object finded_obj = this.ParentModel.Memory.GetObjectByID(cell_id);
             return finded_obj;
+        }
+
+        public Object GetObjectFromLink(string link_name, string link_unit)
+        {
+            int link_value = GetLinkValue(link_name, link_unit);
+            Object result = GetObjectByID(link_value);
+            return result;
         }
 
         //public Vector FindVector

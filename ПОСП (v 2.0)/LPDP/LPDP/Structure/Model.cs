@@ -17,7 +17,7 @@ namespace LPDP.Structure
         //public ConditionsTable CT;
         //public TimeAndConditionController TC_Cont;
 
-        public List<Subprogram> Tracks;
+        //public List<Subprogram> Tracks;
         //public LabelsTable LT;
         public MacrosTable MT;
         public List<Unit> Units;
@@ -44,7 +44,7 @@ namespace LPDP.Structure
         {
             //this.Name = name;
             
-            this.Tracks = new List<Subprogram>();
+            //this.Tracks = new List<Subprogram>();
             this.MT = new MacrosTable();
             this.Units = new List<Unit>();
             this.ST_Cont = new StructureController(this);

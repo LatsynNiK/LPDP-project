@@ -40,6 +40,12 @@ namespace LPDP.Objects
             return result;
         }
 
+        public void DeleteObject(int id)
+        {
+            Object deleted = this.Cells.Find(o => o.ID == id);
+            this.Cells.Remove(deleted);
+        }
+
 
     }
 }

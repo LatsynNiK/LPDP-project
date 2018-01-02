@@ -31,5 +31,15 @@ namespace LPDP.Objects
                 this.Vars[unit_name].Add(obj);
             }
         }
+
+        public void DeleteObjectByID(int id)
+        {
+            List<string> unit_list = this.Vars.Keys.ToList<string>();
+            foreach (string u in unit_list)
+            {
+                Object obj = this.Vars[u].Find(o => o.ID == id);
+                this.Vars[u].Remove(obj);
+            }
+        }
     }
 }

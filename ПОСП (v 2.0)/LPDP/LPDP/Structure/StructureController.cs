@@ -18,9 +18,12 @@ namespace LPDP.Structure
         public int NextWaitLabelNumber;
         public LabelsTable LT;
 
+        public List<Subprogram> Tracks;
+
         public StructureController(Model model)
         {
             this.LT = new LabelsTable();
+            this.Tracks = new List<Subprogram>();
             this.ParentModel = model;
             this.NextWaitLabelNumber = 1;
             SubprogramID_Counter = 0;
@@ -40,13 +43,13 @@ namespace LPDP.Structure
             subp.ID = this.SubprogramID_Counter;
             this.SubprogramID_Counter++;
             subp.Unit = this.CurrentUnit;
-            this.ParentModel.Tracks.Add(subp);
+            this.Tracks.Add(subp);
             this.CurrentSubprogram = subp;
         }
         public void RevertSubprogram()
         {
-            this.ParentModel.Tracks.Remove(this.CurrentSubprogram);
-            this.CurrentSubprogram = this.ParentModel.Tracks.Last();
+            this.Tracks.Remove(this.CurrentSubprogram);
+            this.CurrentSubprogram = this.Tracks.Last();
         }
 
         public void AddOperator(Operator oper)
@@ -55,6 +58,12 @@ namespace LPDP.Structure
             //this.OperatorID_Counter++;
             this.CurrentSubprogram.AddOperator(oper);
             this.LastOperator = oper;
+        }
+
+        public Subprogram FindSubprogramByLabelAndUnit(string label, string unit)
+        {
+            return this.LT.GetSubprogram(label, unit);
+
         }
 
         //UNIT

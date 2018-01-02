@@ -22,5 +22,11 @@ namespace LPDP.Objects
             this.NumberCount++;
             this.Initiators.Add(init);
         }
+
+        public void Delete(int id)
+        {
+            Initiator init = this.Initiators.Find(i => i.ID_of_MemoryCell == id);
+            this.Initiators.Remove(init);
+        }
     }
 }

@@ -36,6 +36,12 @@ namespace LPDP.Structure
             return this.Table.Find(l => l.Subprogram == subp);
         }
 
+        public Subprogram GetSubprogram(string name, string unit)
+        {
+            Label label = this.Table.Find(l => ((l.Name == name) && (l.Unit == unit)));
+            return label.Subprogram;
+        }
+
         //public void Delete(int id_rec)
         //{
         //    Label rec = this.Table.Find(r => r.SubprogramID == id_rec);

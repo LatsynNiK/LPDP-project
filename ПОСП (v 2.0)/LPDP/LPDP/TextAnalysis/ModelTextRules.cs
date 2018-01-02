@@ -55,7 +55,7 @@ namespace LPDP.TextAnalysis
         Comment_Slash,           // //
 
         Comment,
-        StringValue,
+        String,
 
         Unknown_Symbol
 
@@ -101,7 +101,7 @@ namespace LPDP.TextAnalysis
 
         //Word       
         AssignOperator_Word,
-        StringValue,
+        String,
         ArithmeticOperator_1lvl,    // ^
         ArithmeticOperator_2lvl,    // * /
         ArithmeticOperator_3lvl,    // + -
@@ -301,7 +301,7 @@ namespace LPDP.TextAnalysis
             LexicalTemplates.Add(new LexemeTypeTemplate(LexemeType.Comment_Slash, LexemeType.Comment_Slash, LexemeType.Anything));
             LexicalTemplates.Add(new LexemeTypeTemplate(LexemeType.Comment_Bracket_Open, LexemeType.Comment_Bracket_Open, LexemeType.Anything));
             LexicalTemplates.Add(new LexemeTypeTemplate(LexemeType.Comment, LexemeType.Comment_Bracket_Open, LexemeType.Comment_Bracket_Close));
-            LexicalTemplates.Add(new LexemeTypeTemplate(LexemeType.StringValue, LexemeType.Quotes, LexemeType.Quotes));
+            LexicalTemplates.Add(new LexemeTypeTemplate(LexemeType.String, LexemeType.Quotes, LexemeType.Quotes));
             LexicalTemplates.Add(new LexemeTypeTemplate(LexemeType.Quotes, LexemeType.Quotes, LexemeType.Anything));
 
 
@@ -441,7 +441,7 @@ namespace LPDP.TextAnalysis
                 
                 //Word       
                 {PhraseType.AssignOperator_Word,true},   
-                {PhraseType.StringValue,true},
+                {PhraseType.String,true},
                 {PhraseType.ArithmeticOperator_1lvl,true},    // ^
                 {PhraseType.ArithmeticOperator_2lvl,   true}, // * /
                 {PhraseType.ArithmeticOperator_3lvl,    true},// + -
@@ -502,6 +502,7 @@ namespace LPDP.TextAnalysis
                 {PhraseType.Operator,false},
                 
                 {PhraseType.TerminateOperator,false},
+                {PhraseType.DeleteOperator,false},
                 {PhraseType.IfOperator,false},
                 {PhraseType.ActivateOperator,false},
                 {PhraseType.PassivateOperator,false},
@@ -568,8 +569,8 @@ namespace LPDP.TextAnalysis
                     return PhraseType.LabelSeparator;
                 case LexemeType.TypeSeparator:
                     return PhraseType.TypeSeparator;
-                case LexemeType.StringValue:
-                    return PhraseType.StringValue;
+                case LexemeType.String:
+                    return PhraseType.String;
 
                 case LexemeType.Arithmetic_Operator_1lvl:
                     return PhraseType.ArithmeticOperator_1lvl;
@@ -679,6 +680,7 @@ namespace LPDP.TextAnalysis
             SyntacticalTemplates.Add(new PhraseTypeTemplate(PhraseType.Operator, PhraseType.ActivateOperator, PhraseType.EoL));
             SyntacticalTemplates.Add(new PhraseTypeTemplate(PhraseType.Operator, PhraseType.PassivateOperator, PhraseType.EoL));
             SyntacticalTemplates.Add(new PhraseTypeTemplate(PhraseType.Operator, PhraseType.TerminateOperator, PhraseType.EoL));
+            SyntacticalTemplates.Add(new PhraseTypeTemplate(PhraseType.Operator, PhraseType.DeleteOperator, PhraseType.EoL));
             SyntacticalTemplates.Add(new PhraseTypeTemplate(PhraseType.Operator, PhraseType.AssignOperator, PhraseType.EoL));
             SyntacticalTemplates.Add(new PhraseTypeTemplate(PhraseType.Operator, PhraseType.IfOperator));
             SyntacticalTemplates.Add(new PhraseTypeTemplate(PhraseType.Operator, PhraseType.WaitOperator));
@@ -690,8 +692,9 @@ namespace LPDP.TextAnalysis
             SyntacticalTemplates.Add(new PhraseTypeTemplate(PhraseType.AssignOperator, PhraseType.Name, PhraseType.AssignOperator_Word, PhraseType.Algorithm));
             SyntacticalTemplates.Add(new PhraseTypeTemplate(PhraseType.VectorNode, PhraseType.Name, PhraseType.Round_Bracket_Open, PhraseType.Name, PhraseType.Round_Bracket_Close));
             SyntacticalTemplates.Add(new PhraseTypeTemplate(PhraseType.VectorNode, PhraseType.Name, PhraseType.Round_Bracket_Open, PhraseType.VectorNode, PhraseType.Round_Bracket_Close));
-            SyntacticalTemplates.Add(new PhraseTypeTemplate(PhraseType.Value, PhraseType.StringValue));
+            //SyntacticalTemplates.Add(new PhraseTypeTemplate(PhraseType.Value, PhraseType.String));
             SyntacticalTemplates.Add(new PhraseTypeTemplate(PhraseType.Value, PhraseType.ArithmeticExpression_3lvl));
+            //SyntacticalTemplates.Add(new PhraseTypeTemplate(PhraseType.Value, PhraseType.Name));
 
             //ArithmeticExpression
             SyntacticalTemplates.Add(new PhraseTypeTemplate(PhraseType.ArithmeticExpression_3lvl, PhraseType.ArithmeticExpression_2lvl, PhraseType.ArithmeticOperator_3lvl, PhraseType.ArithmeticExpression_3lvl));
@@ -733,6 +736,7 @@ namespace LPDP.TextAnalysis
             SyntacticalTemplates.Add(new PhraseTypeTemplate(PhraseType.DigitalValue, PhraseType.Time_Word));
             SyntacticalTemplates.Add(new PhraseTypeTemplate(PhraseType.DigitalValue, PhraseType.Number));
             SyntacticalTemplates.Add(new PhraseTypeTemplate(PhraseType.DigitalValue, PhraseType.Name));
+            SyntacticalTemplates.Add(new PhraseTypeTemplate(PhraseType.DigitalValue, PhraseType.String)); 
 
             //TransferOperator
             SyntacticalTemplates.Add(new PhraseTypeTemplate(PhraseType.TransferOperator, PhraseType.TransferOperator_Word, PhraseType.InitiatorOperator_Word, PhraseType.ToOperator_Word, PhraseType.Destination));
@@ -750,6 +754,7 @@ namespace LPDP.TextAnalysis
 
             SyntacticalTemplates.Add(new PhraseTypeTemplate(PhraseType.IfCondition, PhraseType.IfOperator_Word, PhraseType.LogicExpression, PhraseType.ThenOperator_Word, PhraseType.TransferOperator));
             SyntacticalTemplates.Add(new PhraseTypeTemplate(PhraseType.LogicExpression, PhraseType.Round_Bracket_Open, PhraseType.Value, PhraseType.ComparisonOperator, PhraseType.Value, PhraseType.Round_Bracket_Close));
+            //SyntacticalTemplates.Add(new PhraseTypeTemplate(PhraseType.LogicExpression, PhraseType.Round_Bracket_Open, PhraseType.String, PhraseType.ComparisonOperator, PhraseType.String, PhraseType.Round_Bracket_Close));
             SyntacticalTemplates.Add(new PhraseTypeTemplate(PhraseType.LogicExpression, PhraseType.Round_Bracket_Open, PhraseType.LogicExpression, PhraseType.LogicOperator, PhraseType.LogicExpression, PhraseType.Round_Bracket_Close));
             SyntacticalTemplates.Add(new PhraseTypeTemplate(PhraseType.LogicExpression, PhraseType.Round_Bracket_Open, PhraseType.LogicExpression, PhraseType.Round_Bracket_Close));
 
