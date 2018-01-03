@@ -34,6 +34,13 @@ namespace LPDP.Objects
             this.ID_Object_Counter++;
             return o;
         }
+        public Object AddNewObject(Object o)
+        {
+            o.ID = this.ID_Object_Counter;
+            this.Cells.Add(o);
+            this.ID_Object_Counter++;
+            return o;
+        }
         public Object GetObjectByID(int id)
         {
             Object result = this.Cells.Find(o => o.ID == id);

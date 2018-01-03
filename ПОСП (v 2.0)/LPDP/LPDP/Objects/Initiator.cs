@@ -2,15 +2,18 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using LPDP.Structure;
 
 namespace LPDP.Objects
 {
-    public enum InitiatorType {Aggregate, Flow}
+    public enum InitiatorType { Aggregate, Flow, Description}
     public class Initiator
     {
         public int Number; 
         public int ID_of_MemoryCell;
         public InitiatorType Type;
+
+        public Subprogram Position;
 
         public Initiator(InitiatorType type)
         {

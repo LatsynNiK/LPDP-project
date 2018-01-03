@@ -331,6 +331,7 @@ namespace LPDP.TextAnalysis
                     Phrase true_ph = new Phrase(PhraseType.True);
                     Initiator new_init = this.ParentModel.O_Cont.CreateInitiator(unit.Name);
                     Subprogram to_subp = this.ParentModel.ST_Cont.Tracks.Find(sp => sp.Unit == unit);
+                    new_init.Position = to_subp;
 
                     this.ParentModel.Executor.TC_Cont.AddConditionRecord(true_ph, new_init, to_subp, false);
                 }
@@ -1063,7 +1064,7 @@ namespace LPDP.TextAnalysis
                         Phrase wait_logic_expression_ph = wait_time_ph.Value.Find(ph => ph.PhType == PhraseType.LogicExpression);
                         action.Parameters.Add(wait_logic_expression_ph);//condition
                         action.Parameters.Add(true);//initiator                        
-                        action.Parameters.Add(true);
+                        action.Parameters.Add(false);//to the begining
                         action.Parameters.Add("$L_" + this.ParentModel.ST_Cont.NextWaitLabelNumber);
                         action.Parameters.Add(this.ParentModel.ST_Cont.CurrentUnit.Name);
                         action.Parameters.Add(false);
@@ -1094,7 +1095,7 @@ namespace LPDP.TextAnalysis
                                 Phrase logic_exp = wait_until_ph.Value.Find(ph => ph.PhType == PhraseType.LogicExpression);
                                 action.Parameters.Add(logic_exp);
                                 action.Parameters.Add(true);
-                                action.Parameters.Add(true);
+                                action.Parameters.Add(false);
                             }
                             Phrase transfer_oper_in_wait_ph = wait_condition_ph.Value.Find(ph => ph.PhType == PhraseType.TransferOperator);
                             destination_ph = transfer_oper_in_wait_ph.Value.Find(ph => ph.PhType == PhraseType.Destination);

@@ -72,6 +72,7 @@ namespace LPDP
                 this.SUBPROGRAM = next_event.Subprogram;
                 this.NEXT_OPERATOR = this.SUBPROGRAM.Operators[0];
 
+                this.INITIATOR.Position = this.SUBPROGRAM;
                 if (next_event.GetType() == typeof(RecordFTT))
                 {
                     double active_time = ((RecordFTT)next_event).ActiveTime;
@@ -86,8 +87,16 @@ namespace LPDP
 
         public void SetCurrentUnit(Unit unit)
         {
-            this.SUBPROGRAM = new Subprogram();
-            this.SUBPROGRAM.Unit = unit;
+            this.INITIATOR = new Initiator(InitiatorType.Description);
+            this.INITIATOR.Position = new Subprogram();
+            this.INITIATOR.Position.Unit = unit;
+            //this.SUBPROGRAM = new Subprogram();
+            //this.SUBPROGRAM.Unit = unit;
+        }
+
+        public void SetInitiator(Initiator init)
+        {
+            this.INITIATOR = init;
         }
 
         int ExecuteSubprogram(Subprogram subprogram)
@@ -171,7 +180,7 @@ namespace LPDP
                     {
 
                     }
-                    this.ParentModel.O_Cont.AddObject(new_obj,this.SUBPROGRAM.Unit.Name);
+                    this.ParentModel.O_Cont.CreateObject(new_obj,this.SUBPROGRAM.Unit.Name);
 
                     //list.Add(new_obj);
                     break;
@@ -220,6 +229,7 @@ namespace LPDP
                     {
                         init = this.ParentModel.O_Cont.ActivateFromLink(link_name, this.SUBPROGRAM.Unit.Name);
                     }
+                    init.Position = subp;
 
                     if (to_the_begining)
                     {
@@ -283,14 +293,16 @@ namespace LPDP
                     if (ar_exp.Value.Exists(ph => ph.PhType == PhraseType.ArithmeticExpression_2lvl))
                     {
                         first_exp_ph = ar_exp.Value[0];
-                        result = Convert.ToDouble(this.ComputeArithmeticExpression(first_exp_ph));
-                        return Convert.ToString(result);
+                        //result = Convert.ToDouble(this.ComputeArithmeticExpression(first_exp_ph));
+                        //return Convert.ToString(result);
+                        return this.ComputeArithmeticExpression(first_exp_ph);
                     }
                     if (ar_exp.Value.Exists(ph => ph.PhType == PhraseType.ArithmeticExpression_3lvl))
                     {
                         first_exp_ph = ar_exp.Value[1]; // ( exp )
-                        result = Convert.ToDouble(this.ComputeArithmeticExpression(first_exp_ph));
-                        return Convert.ToString(result);
+                        //result = Convert.ToDouble(this.ComputeArithmeticExpression(first_exp_ph));
+                        //return Convert.ToString(result);
+                        return this.ComputeArithmeticExpression(first_exp_ph);
                     }
                     #endregion
                     break;
@@ -318,14 +330,16 @@ namespace LPDP
                     if (ar_exp.Value.Exists(ph => ph.PhType == PhraseType.ArithmeticExpression_1lvl))
                     {
                         first_exp_ph = ar_exp.Value[0];
-                        result =Convert.ToDouble( this.ComputeArithmeticExpression(first_exp_ph));
-                        return Convert.ToString(result);
+                        //result =Convert.ToDouble( this.ComputeArithmeticExpression(first_exp_ph));
+                        //return Convert.ToString(result);
+                        return this.ComputeArithmeticExpression(first_exp_ph);
                     }
                     if (ar_exp.Value.Exists(ph => ph.PhType == PhraseType.ArithmeticExpression_3lvl))
                     {
                         first_exp_ph = ar_exp.Value[1]; // ( exp )
-                        result = Convert.ToDouble(this.ComputeArithmeticExpression(first_exp_ph));
-                        return Convert.ToString(result);
+                        //result = Convert.ToDouble(this.ComputeArithmeticExpression(first_exp_ph));
+                        //return Convert.ToString(result);
+                        return this.ComputeArithmeticExpression(first_exp_ph);
                     }
                     #endregion
                     break;
@@ -351,14 +365,16 @@ namespace LPDP
                     if (ar_exp.Value.Exists(ph => ph.PhType == PhraseType.DigitalValue))
                     {
                         first_exp_ph = ar_exp.Value[0];
-                        result = Convert.ToDouble(this.ComputeArithmeticExpression(first_exp_ph));
-                        return Convert.ToString(result);
+                        //result = Convert.ToDouble(this.ComputeArithmeticExpression(first_exp_ph));
+                        //return Convert.ToString(result);
+                        return this.ComputeArithmeticExpression(first_exp_ph);
                     }
                     if (ar_exp.Value.Exists(ph => ph.PhType == PhraseType.ArithmeticExpression_3lvl))
                     {
                         first_exp_ph = ar_exp.Value[1]; // ( exp )
-                        result = Convert.ToDouble(this.ComputeArithmeticExpression(first_exp_ph));
-                        return Convert.ToString(result);
+                        //result = Convert.ToDouble(this.ComputeArithmeticExpression(first_exp_ph));
+                        //return Convert.ToString(result);
+                        return this.ComputeArithmeticExpression(first_exp_ph);
                     }
                     if (ar_exp.Value.Exists(ph => ph.PhType == PhraseType.ArithmeticFunction))
                     {
@@ -419,7 +435,10 @@ namespace LPDP
                             string double_str = ((Lexeme)first_exp_ph).LValue;
                             double_str = double_str.Replace('.', ',');
                             return Convert.ToString(double_str);
-                            break;                        
+                            break;     
+                        case PhraseType.String:
+                            return ((Lexeme)first_exp_ph).LValue;
+
                     }
                     #endregion
                     break;
@@ -445,8 +464,8 @@ namespace LPDP
                 Phrase last_value_ph = logic_exp.Value.FindLast(ph => ph.PhType == PhraseType.Value).Value[0];
                 Phrase comparison_oper_ph = logic_exp.Value.Find(ph => ph.PhType == PhraseType.ComparisonOperator);
 
-                object first_value;
-                object last_value;
+                string first_value;
+                string last_value;
 
                 if (first_value_ph.PhType == PhraseType.ArithmeticExpression_3lvl)
                 {
@@ -474,16 +493,16 @@ namespace LPDP
                         result = first_value != last_value;
                         break;
                     case ">":
-                        result = (double)first_value > (double)last_value;
+                        result = Convert.ToDouble(first_value) > Convert.ToDouble(last_value);
                         break;
                     case "<":
-                        result = (double)first_value > (double)last_value;
+                        result = Convert.ToDouble(first_value) < Convert.ToDouble(last_value);
                         break;
                     case ">=":
-                        result = (double)first_value >= (double)last_value;
+                        result = Convert.ToDouble(first_value) >= Convert.ToDouble(last_value);
                         break;
                     case "<=":
-                        result = (double)first_value <= (double)last_value;
+                        result = Convert.ToDouble(first_value) <= Convert.ToDouble(last_value);
                         break;
                     default:
                         //error
@@ -562,7 +581,7 @@ namespace LPDP
                 case PhraseType.Name:
                     string var_name = ((Lexeme)var).LValue;
 
-                    result = this.ParentModel.O_Cont.GetObjectByName (var_name, this.SUBPROGRAM.Unit.Name);
+                    result = this.ParentModel.O_Cont.GetObjectByName (var_name, this.INITIATOR.Position.Unit.Name);
 
                     
                     //if (this.ParentModel.O_Cont.GVT.Vars[this.SUBPROGRAM.Unit.Name].

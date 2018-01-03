@@ -13,7 +13,7 @@ namespace LPDP.Objects
         public InitiatorsTable()
         {
             this.Initiators = new List<Initiator>();
-            this.NumberCount = 0;
+            this.NumberCount = 1;
         }
 
         public void Add(Initiator init)

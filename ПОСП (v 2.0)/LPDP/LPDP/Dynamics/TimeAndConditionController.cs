@@ -72,6 +72,7 @@ namespace LPDP.Dynamics
             RecordEvent result;
             foreach (RecordCT rec_ct in this.CT.CondTable)
             {
+                this.ParentExecutor.SetInitiator(rec_ct.Initiator);
                 bool right_cond = this.ParentExecutor.ComputeLogicExpression(rec_ct.Condition);
                 if (right_cond)
                 {

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 
 using LPDP.TextAnalysis;
+using LPDP.Structure;
 
 namespace LPDP.Objects
 {
@@ -26,34 +27,19 @@ namespace LPDP.Objects
             this.GVT = new GlobalVarsTable();
         }
 
-        //public void CreateObject(ObjectType type)
-        //{
-        //    Object NewObject;
-        //    switch (type)
-        //    {
-        //        //case ObjectType.Scalar:
-        //        //    NewObject = new Scalar(this.ID_Object_Counter);
-        //        //    break;
-        //        //case ObjectType.Link:
-        //        //    NewObject = new Link(this.ID_Object_Counter);
-        //        //    break;
-        //        //case ObjectType.Vector:
-        //        //    NewObject = new Vector(this.ID_Object_Counter);
-        //        //    break;
-        //        //case ObjectType.Macro:
-        //        //    NewObject = new Macro(this.ID_Object_Counter);
-        //        //    break;
-        //        //default:
-        //        //    NewObject = new Scalar(this.ID_Object_Counter);
-        //        //    break;
-        //    }
-        //    //this.ID_Object_Counter++;
+        public void CreateObject(Object obj, string unit)
+        {
+            obj = this.ParentModel.Memory.AddNewObject(obj);
 
-        //    //Object NewObject = new Object(ID_Object_Counter);
-        //    //this.ParentModel.Units.Add(NewObject);
-        //    //this.CurrentObject = NewObject;
-
-        //}
+            if (obj.Type == ObjectType.Macro)
+            {
+                this.ParentModel.MT.Add((Macro)obj);
+            }
+            else
+            {
+                this.GVT.AddNewToUnit(obj, unit);
+            }
+        }
 
         public void AddObject(Object obj, string unit)
         {
@@ -148,7 +134,8 @@ namespace LPDP.Objects
         public Initiator CreateInitiator(string unit_name)
         {
             Initiator init = new Initiator(InitiatorType.Aggregate);
-
+            //Subprogram subp = this.ParentModel.ST_Cont.Tracks.Find(sp => sp.Unit.Name == unit_name);
+            //init.Position = subp;
             Object obj = new Scalar ("Инициатор блока",unit_name,unit_name);
             obj = this.ParentModel.Memory.AddSingletonObject(obj);
             init.ID_of_MemoryCell = obj.ID;
@@ -160,7 +147,7 @@ namespace LPDP.Objects
         {
             Initiator init = new Initiator(InitiatorType.Flow);
 
-            Object obj = GetObjectFromLink(link_name,link_unit);
+            Object obj = GetObjectFromLink(link_name, link_unit);
             //obj = this.ParentModel.Memory.AddSingletonObject(obj);
             init.ID_of_MemoryCell = obj.ID;
             this.IT.Add(init);
