@@ -6,6 +6,7 @@ using System.Text;
 using LPDP;
 using LPDP.Structure;
 using LPDP.Objects;
+using LPDP.DataSets;
 
 namespace LPDP.TextAnalysis
 {
@@ -336,8 +337,9 @@ namespace LPDP.TextAnalysis
                     this.ParentModel.Executor.TC_Cont.AddConditionRecord(true_ph, new_init, to_subp, false);
                 }
             }
-
-            this.ParentModel.Executor.SetState();
+            this.ParentModel.Executor.Preparetion();
+            //this.ParentModel.Executor.QT = 
+            //this.ParentModel.Executor.SetState();
             this.ParentModel.Built = true;
 
             //this.ParentModel.O_Cont.SetValueToScalar("L", "ГЕН", 100);
@@ -1108,6 +1110,7 @@ namespace LPDP.TextAnalysis
                     }
                     break;
             }
+            result_oper.Position = new Selection(concret_operator_ph.Start, concret_operator_ph.Length);
             return result_oper;
         }
 

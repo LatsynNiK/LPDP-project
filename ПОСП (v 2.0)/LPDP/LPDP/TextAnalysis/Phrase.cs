@@ -67,12 +67,18 @@ namespace LPDP.TextAnalysis
         }
         int FindLength(params Phrase[] ConcatedPhrase)
         {
-            int length = 0;
-            foreach (Phrase ph in ConcatedPhrase)
+            if (ConcatedPhrase.Length > 0)
             {
-                length += ph.Length;
+                int start = ConcatedPhrase[0].Start;
+                int finish = ConcatedPhrase[ConcatedPhrase.Length - 1].Start + ConcatedPhrase[ConcatedPhrase.Length - 1].Length;
+                //foreach (Phrase ph in ConcatedPhrase)
+                //{
+                //    length += ph.Length;
+                //}
+                return finish - start;
             }
-            return length;
+            else
+                return 0;
         }
 
         public override string ToString()

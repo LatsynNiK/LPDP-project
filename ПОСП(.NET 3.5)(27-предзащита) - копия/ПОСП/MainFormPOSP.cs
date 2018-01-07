@@ -1330,6 +1330,12 @@ namespace ПОСП
             this.DataSets.Output_All_Data();
             //CodeField.Rtf = LPDP_Data.CodeRtf;
             CodeField.Text = this.DataSets.CodeTxt;// CodeRtf;
+            
+            Dictionary<int, Color> dict = TextFormat.InsertQueueArrows(CodeField, this.DataSets.QueueArrows);
+            TextFormat.ColorizeArrows(CodeField,dict);
+            TextFormat.ColorizeNextOperator(CodeField, this.DataSets.NextOperatorPosition_Start, this.DataSets.NextOperatorPosition_Length, this.DataSets.NextInitiatorIsFlow);
+
+
             BuildingField.Text = this.DataSets.InfoTxt;
             следующийОператорToolStripMenuItem.Checked = this.DataSets.ShowNextOperator;
             очередиToolStripMenuItem.Checked = this.DataSets.ShowQueues;
@@ -1341,6 +1347,9 @@ namespace ПОСП
             this.Initiators_View.DataSource = this.DataSets.Initiators;
             this.FTT_View.DataSource = this.DataSets.FTT;
             this.CT_View.DataSource = this.DataSets.CT;
+
+            this.Queues_View.DataSource = this.DataSets.Queues;
+
 
             //this.Queues_View.DataSource = this.DataSets.Queues;
         }

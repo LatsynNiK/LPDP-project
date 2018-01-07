@@ -87,6 +87,7 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TextFormat.cs" />
     <EmbeddedResource Include="Closing_Form.resx">
       <DependentUpon>Closing_Form.cs</DependentUpon>
     </EmbeddedResource>

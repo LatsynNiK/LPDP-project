@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 
 using LPDP.TextAnalysis;
+using LPDP.DataSets;
 
 namespace LPDP.Structure
 {
@@ -33,6 +34,7 @@ namespace LPDP.Structure
         public List<Action> Actions;
         public Subprogram ParentSubprogram;
         //public Dictionary<string, object> Params;
+        public Selection Position;
 
         public Operator() 
         {

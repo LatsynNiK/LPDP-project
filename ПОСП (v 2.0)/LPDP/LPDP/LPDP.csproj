@@ -50,6 +50,8 @@
     <Compile Include="DataSets\InputOutputData.cs" />
     <Compile Include="Dynamics\ConditionsTable.cs" />
     <Compile Include="Dynamics\FutureTimesTable.cs" />
+    <Compile Include="Dynamics\Queue.cs" />
+    <Compile Include="Dynamics\QueueTable.cs" />
     <Compile Include="Dynamics\RecordEvent.cs" />
     <Compile Include="Executor.cs" />
     <Compile Include="Objects\InitiatorsTable.cs" />

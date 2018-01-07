@@ -12,7 +12,7 @@ namespace LPDP
 {
     public class Executor
     {
-        Model ParentModel;
+        public Model ParentModel;
 
         Subprogram SUBPROGRAM;
         Operator NEXT_OPERATOR;
@@ -25,6 +25,8 @@ namespace LPDP
 
         //public InitiatorsTable IT;
         Random RAND;
+
+        public QueueTable QT;
         
         
         public Executor(Model model) 
@@ -62,7 +64,7 @@ namespace LPDP
         //    while(this.SUBPROGRAM.)
         //}
 
-        public void SetState()
+        void SetState()
         {
             RecordEvent next_event = this.TC_Cont.FindNextEvent();
             if (next_event != null)
@@ -77,7 +79,7 @@ namespace LPDP
                 {
                     double active_time = ((RecordFTT)next_event).ActiveTime;
                     this.TIME = active_time;
-                }                
+                }
             }
             else
             {
@@ -134,6 +136,8 @@ namespace LPDP
             {
                 this.NEXT_OPERATOR = oper.ParentSubprogram.Operators[next_oper_index];
             }
+            //Очереди            
+            this.QT.Update(this.INITIATOR);
             return 1;
         }
 
@@ -253,6 +257,13 @@ namespace LPDP
                     break;
             }
             return 1;
+        }
+
+        public void Preparetion()
+        {
+            this.QT = new QueueTable(this);
+            this.ParentModel.Executor.SetState();
+            this.QT.Update(this.INITIATOR);
         }
 
         #region computing region
@@ -570,6 +581,7 @@ namespace LPDP
 
         #endregion
 
+        // GET OBJECT
         public LPDP.Objects.Object GetObject(Phrase var)
         {
             //заглушка
@@ -659,9 +671,20 @@ namespace LPDP
         }
 
 
+        //GET 
         public double GetTIME()
         {
             return this.TIME;
+        }
+
+        public LPDP.DataSets.Selection GetNextOperatorPosition()
+        {
+            return this.NEXT_OPERATOR.Position;
+        }
+
+        public InitiatorType GetInitiatorType()
+        {
+            return this.INITIATOR.Type;
         }
     }
 }

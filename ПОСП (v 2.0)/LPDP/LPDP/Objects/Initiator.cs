@@ -26,5 +26,10 @@ namespace LPDP.Objects
         {
             return this.ID_of_MemoryCell;
         }
+
+        public override string ToString()
+        {            
+            return this.Number.ToString();
+        }
     }
 }

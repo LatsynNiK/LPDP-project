@@ -10,6 +10,16 @@ using LPDP.Dynamics;
 
 namespace LPDP.DataSets
 {
+    public struct Selection
+    {
+        public int Start;
+        public int Length;
+        public Selection(int start, int len)
+        {
+            this.Start = start;
+            this.Length = len;
+        }
+    }
     public class InputOutputData
     {
         public string CodeTxt;
@@ -27,10 +37,16 @@ namespace LPDP.DataSets
         public DataTable FTT;
         public DataTable CT;
 
+        public DataTable QueueArrows;
+
         public double TIME;
         public bool ModelIsBuilt;
 
         public int Precision;
+
+        public int NextOperatorPosition_Start;
+        public int NextOperatorPosition_Length;
+        public bool NextInitiatorIsFlow;
 
         //public double GetTIME()
         //{
@@ -47,9 +63,11 @@ namespace LPDP.DataSets
             this.Model = model;
             this.ClearTable(this.Objects);
             this.ClearTable(this.Initiators);
-            LPDP_Data.ClearTable(LPDP_Data.Queues);
-            LPDP_Data.ClearTable(LPDP_Data.FTT);
-            LPDP_Data.ClearTable(LPDP_Data.CT);
+            this.ClearTable(this.Queues);
+            this.ClearTable(this.FTT);
+            this.ClearTable(this.CT);
+
+            this.ClearTable(this.QueueArrows);
         }
 
         public InputOutputData()
@@ -64,18 +82,24 @@ namespace LPDP.DataSets
             this.FTT = new DataTable("FTT");
             this.CT = new DataTable("CT");
 
+            this.QueueArrows = new DataTable("QueueArrows");
+
 
             this.ClearTable(this.Objects);
             this.ClearTable(this.Initiators);
-            //LPDP_Data.ClearTable(LPDP_Data.Queues);
+            this.ClearTable(this.Queues);
             this.ClearTable(this.FTT);
             this.ClearTable(this.CT);
 
+            this.ClearTable(this.QueueArrows);
+
             this.CreateTable(this.Objects, "Unit", "Name", "Value", "Type");
             this.CreateTable(this.Initiators, "Number", "Name", "Value", "Type");
-            //this.CreateTable(LPDP_Data.Queues, "ID", "Unit", "Mark", "Initiators");
+            this.CreateTable(this.Queues, "Unit", "Label", "Initiators");
             this.CreateTable(this.FTT, "Time", "Initiator", "Mark", "Unit");
             this.CreateTable(this.CT, "Condition", "Initiator", "Mark", "Unit");
+
+            this.CreateTable(this.QueueArrows, "Position", "First", "Second", "Third");
         }
 
         void CreateTable(DataTable table, params string[] ColumnNames)
@@ -223,19 +247,119 @@ namespace LPDP.DataSets
             }
         }
 
+        void Rewrite_Queues()
+        {
+            this.Queues.Rows.Clear();
+            List<Queue> qt = this.Model.Executor.QT.Queues;
+            foreach(Queue q in qt)
+            {
+                Label l = this.Model.ST_Cont.LT.FindFirstBySubprogram(q.Place);
+                Unit u = q.Place.Unit;
+                string inits_str = "";
+                foreach(Queue.QueueItem qi in q.Items)
+                {
+                    inits_str += qi.Initiator.Number + ", ";
+                }
+                inits_str = inits_str.TrimEnd(',', ' ');
+                if (q.Items.Count > 0)
+                {
+                    this.Queues.Rows.Add(u.Name, l.Name, inits_str);
+                }                
+            }
+        }
+
+        void Rewrite_QueueArrows()
+        {
+            this.QueueArrows.Rows.Clear();
+            List<Queue> qt = this.Model.Executor.QT.Queues;
+            foreach (Queue q in qt)
+            {
+                int first = (int)Queue.ArrowType.None;
+                int second = (int)Queue.ArrowType.None;
+                int third = (int)Queue.ArrowType.None;
+
+                int position = q.Place.Operators[0].Position.Start;
+                first = GetArrowType(q, 0);
+                second = GetArrowType(q, 1);
+                third = GetArrowType(q, 2);
+                if (q.Items.Count > 3)
+                {
+                    second = (int)Queue.ArrowType.Several;
+                }
+                this.QueueArrows.Rows.Add(position, first, second, third);
+            }
+        }
+
+        int GetArrowType(Queue queue ,int index)
+        {
+            int arrow = (int)Queue.ArrowType.None;
+            int position = queue.Place.Operators[0].Position.Start;
+            if (queue.Items.Count < index+1)
+            {
+                return (int)Queue.ArrowType.None;
+            }
+            Initiator init = queue.Items[index].Initiator;
+
+            bool finded = false;
+            List<Queue> qt = this.Model.Executor.QT.Queues;
+            foreach (Queue inner_q in qt)
+            {
+                if (inner_q.Items.Exists(i => (i.Initiator == init)&&(inner_q != queue)))
+                {
+                    finded = true;
+                    break;
+                }
+            }
+            arrow += (int)Queue.ArrowType.Full;
+            if (finded)
+            {
+                arrow = (int)Queue.ArrowType.Half;
+            }
+            switch (queue.Items[index].Delay)
+            {
+                case Queue.DelayType.Ready:
+                    arrow += (int)Queue.ArrowType.Ready;
+                    break;
+                case Queue.DelayType.WaitTime:
+                    arrow += (int)Queue.ArrowType.WaitTime;
+                    break;
+                case Queue.DelayType.Stopped:
+                    arrow += (int)Queue.ArrowType.Stopped;
+                    break;
+            }
+            return arrow;
+        }
+
         public void Output_All_Data()
         {
             this.Rewrite_Objects();
             this.Rewrite_Initiators();
             this.Rewrite_FTT();
             this.Rewrite_CT();
+            this.Rewrite_Queues();
+
+            this.Rewrite_QueueArrows();
 
             //this.CodeRtf = 
             this.CodeTxt = this.Model.Analysis.SourceText;
+
+            
+
             //this.InfoTxt = this.Model.Analysis.
             this.ModelIsBuilt = this.Model.Built;
 
             this.TIME = this.Model.Executor.GetTIME();
+
+            this.NextOperatorPosition_Start = this.Model.Executor.GetNextOperatorPosition().Start;
+            this.NextOperatorPosition_Length = this.Model.Executor.GetNextOperatorPosition().Length;
+            if (this.Model.Executor.GetInitiatorType() == InitiatorType.Flow)
+            {
+                this.NextInitiatorIsFlow = true; 
+            }
+            else
+            {
+                this.NextInitiatorIsFlow = false;
+            }
         }
 
         void Write_Vector_to_DataTable(DataTable DT, List<LPDP.Objects.Object> list)
