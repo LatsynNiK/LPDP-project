@@ -19,49 +19,29 @@ namespace ПОСП
     public partial class POSP_Form : Form
     {
         bool ModelTextIsModified = false;
+        int precision = 2;
 
-        InputOutputData DataSets;
+        //InputOutputData DataSets;
+
+        InputData Input;
+        OutputData Output;
         Model ExploredModel;
 
 
         public POSP_Form()
         {
             InitializeComponent();
-            Initiators_Tab.Parent = null;
-            Queues_Tab.Parent = null;
-            GraphicModel_Tab.Parent = null;
-
             LPDP.TextAnalysis.ModelTextRules.SetRules();
-
-            ////
-            this.DataSets = new InputOutputData();
-            
-            
+            this.Input = new InputData(precision);
+            //this.DataSets = new InputOutputData(precision);
+            //UseAllCaptions();
+            //Initiators_Tab.Parent = null;
+            //Queues_Tab.Parent = null;
+            GraphicModel_Tab.Parent = null;
         }
         private void POSP_Form_Load(object sender, EventArgs e)
         {
-            //this.DataSets.ClearTable(this.DataSets.Objects);
-            //LPDP_Data.ClearTable(LPDP_Data.Initiators);
-            //LPDP_Data.ClearTable(LPDP_Data.Queues);
-            //LPDP_Data.ClearTable(LPDP_Data.FTT);
-            //LPDP_Data.ClearTable(LPDP_Data.CT);
-
-            ////this.DataSets.CreateTable(this.DataSets.Objects, "Unit", "Name", "Value", "Type");
-            //LPDP_Data.CreateTable(LPDP_Data.Objects, "Unit", "Name", "Value", "Type");
-            //LPDP_Data.CreateTable(LPDP_Data.Initiators, "ID", "Value", "Type");
-            //LPDP_Data.CreateTable(LPDP_Data.Queues, "ID", "Unit", "Mark", "Initiators");
-            //LPDP_Data.CreateTable(LPDP_Data.FTT, "Time", "Initiator", "Mark", "Unit");
-            //LPDP_Data.CreateTable(LPDP_Data.CT, "Condition", "Initiator", "Mark", "Unit");
-
-            //LPDP_Actions.Initialize_LPDP_ModelTextRules();
-
-
-            TextFormat.UseCaptions(this.Objects_View, this.DataSets.Objects);
-            TextFormat.UseCaptions(this.Initiators_View, this.DataSets.Initiators);
-            TextFormat.UseCaptions(this.FTT_View, this.DataSets.FTT);
-            TextFormat.UseCaptions(this.CT_View, this.DataSets.CT);
-            TextFormat.UseCaptions(this.Queues_View, this.DataSets.Queues);
-
+            
         }
 
         private void InitializeComponent()
@@ -89,7 +69,6 @@ namespace ПОСП
             this.инициаторыToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.таблицаБудущихВременToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.таблицаУсловийToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.графическаяМодельToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.очереди_окноToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.отображенияToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.следующийОператорToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -101,6 +80,8 @@ namespace ПОСП
             this.FilePath_label = new System.Windows.Forms.Label();
             this.CodeField = new System.Windows.Forms.RichTextBox();
             this.General_Indicators = new System.Windows.Forms.Panel();
+            this.INITIATOR_Label = new System.Windows.Forms.Label();
+            this.INITIATOR_Value = new System.Windows.Forms.Label();
             this.TIME_Value = new System.Windows.Forms.Label();
             this.TIME_Lable = new System.Windows.Forms.Label();
             this.ResultField = new System.Windows.Forms.TabControl();
@@ -129,8 +110,6 @@ namespace ПОСП
             this.GraphicModel_View = new System.Windows.Forms.PictureBox();
             this.BuildingField = new System.Windows.Forms.RichTextBox();
             this.FileName_label = new System.Windows.Forms.Label();
-            this.INITIATOR_Label = new System.Windows.Forms.Label();
-            this.INITIATOR_Value = new System.Windows.Forms.Label();
             this.MainMenu.SuspendLayout();
             this.MainContainer.Panel1.SuspendLayout();
             this.MainContainer.Panel2.SuspendLayout();
@@ -294,7 +273,6 @@ namespace ПОСП
             this.инициаторыToolStripMenuItem,
             this.таблицаБудущихВременToolStripMenuItem,
             this.таблицаУсловийToolStripMenuItem,
-            this.графическаяМодельToolStripMenuItem,
             this.очереди_окноToolStripMenuItem});
             this.окнаToolStripMenuItem.Name = "окнаToolStripMenuItem";
             this.окнаToolStripMenuItem.Size = new System.Drawing.Size(59, 25);
@@ -312,6 +290,8 @@ namespace ПОСП
             // 
             // инициаторыToolStripMenuItem
             // 
+            this.инициаторыToolStripMenuItem.Checked = true;
+            this.инициаторыToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
             this.инициаторыToolStripMenuItem.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.инициаторыToolStripMenuItem.Name = "инициаторыToolStripMenuItem";
             this.инициаторыToolStripMenuItem.Size = new System.Drawing.Size(243, 24);
@@ -338,16 +318,10 @@ namespace ПОСП
             this.таблицаУсловийToolStripMenuItem.Text = "Таблица Условий";
             this.таблицаУсловийToolStripMenuItem.Click += new System.EventHandler(this.таблицаУсловийToolStripMenuItem_Click);
             // 
-            // графическаяМодельToolStripMenuItem
-            // 
-            this.графическаяМодельToolStripMenuItem.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.графическаяМодельToolStripMenuItem.Name = "графическаяМодельToolStripMenuItem";
-            this.графическаяМодельToolStripMenuItem.Size = new System.Drawing.Size(243, 24);
-            this.графическаяМодельToolStripMenuItem.Text = "Графическая модель";
-            this.графическаяМодельToolStripMenuItem.Click += new System.EventHandler(this.графическаяМодельToolStripMenuItem_Click);
-            // 
             // очереди_окноToolStripMenuItem
             // 
+            this.очереди_окноToolStripMenuItem.Checked = true;
+            this.очереди_окноToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
             this.очереди_окноToolStripMenuItem.Font = new System.Drawing.Font("Segoe UI", 10F);
             this.очереди_окноToolStripMenuItem.Name = "очереди_окноToolStripMenuItem";
             this.очереди_окноToolStripMenuItem.Size = new System.Drawing.Size(243, 24);
@@ -482,6 +456,28 @@ namespace ПОСП
             this.General_Indicators.Name = "General_Indicators";
             this.General_Indicators.Size = new System.Drawing.Size(313, 24);
             this.General_Indicators.TabIndex = 1;
+            // 
+            // INITIATOR_Label
+            // 
+            this.INITIATOR_Label.AutoSize = true;
+            this.INITIATOR_Label.Dock = System.Windows.Forms.DockStyle.Right;
+            this.INITIATOR_Label.Font = new System.Drawing.Font("Microsoft Sans Serif", 16F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.INITIATOR_Label.Location = new System.Drawing.Point(160, 0);
+            this.INITIATOR_Label.Name = "INITIATOR_Label";
+            this.INITIATOR_Label.Size = new System.Drawing.Size(129, 26);
+            this.INITIATOR_Label.TabIndex = 3;
+            this.INITIATOR_Label.Text = "Инициатор:";
+            // 
+            // INITIATOR_Value
+            // 
+            this.INITIATOR_Value.AutoSize = true;
+            this.INITIATOR_Value.Dock = System.Windows.Forms.DockStyle.Right;
+            this.INITIATOR_Value.Font = new System.Drawing.Font("Microsoft Sans Serif", 16F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.INITIATOR_Value.Location = new System.Drawing.Point(289, 0);
+            this.INITIATOR_Value.Name = "INITIATOR_Value";
+            this.INITIATOR_Value.Size = new System.Drawing.Size(24, 26);
+            this.INITIATOR_Value.TabIndex = 5;
+            this.INITIATOR_Value.Text = "0";
             // 
             // TIME_Value
             // 
@@ -904,28 +900,6 @@ namespace ПОСП
             this.FileName_label.Size = new System.Drawing.Size(101, 17);
             this.FileName_label.TabIndex = 3;
             this.FileName_label.Text = "Новая модель";
-            // 
-            // INITIATOR_Label
-            // 
-            this.INITIATOR_Label.AutoSize = true;
-            this.INITIATOR_Label.Dock = System.Windows.Forms.DockStyle.Right;
-            this.INITIATOR_Label.Font = new System.Drawing.Font("Microsoft Sans Serif", 16F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.INITIATOR_Label.Location = new System.Drawing.Point(160, 0);
-            this.INITIATOR_Label.Name = "INITIATOR_Label";
-            this.INITIATOR_Label.Size = new System.Drawing.Size(129, 26);
-            this.INITIATOR_Label.TabIndex = 3;
-            this.INITIATOR_Label.Text = "Инициатор:";
-            // 
-            // INITIATOR_Value
-            // 
-            this.INITIATOR_Value.AutoSize = true;
-            this.INITIATOR_Value.Dock = System.Windows.Forms.DockStyle.Right;
-            this.INITIATOR_Value.Font = new System.Drawing.Font("Microsoft Sans Serif", 16F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.INITIATOR_Value.Location = new System.Drawing.Point(289, 0);
-            this.INITIATOR_Value.Name = "INITIATOR_Value";
-            this.INITIATOR_Value.Size = new System.Drawing.Size(24, 26);
-            this.INITIATOR_Value.TabIndex = 5;
-            this.INITIATOR_Value.Text = "0";
             // 
             // POSP_Form
             // 
@@ -1356,24 +1330,27 @@ namespace ПОСП
 
         void UpDate()
         {
-            this.DataSets.CodeRtf = CodeField.Rtf;
-            this.DataSets.CodeTxt = CodeField.Text;
-            this.DataSets.InfoTxt = BuildingField.Text;
-            this.DataSets.ShowNextOperator = следующийОператорToolStripMenuItem.Checked;
-            this.DataSets.ShowQueues = очередиToolStripMenuItem.Checked;
-            this.DataSets.ShowSysMark = системныеМеткиToolStripMenuItem.Checked;
+            //this.DataSets.Input. CodeRtf = CodeField.Rtf;
+            this.Input.CodeTxt = CodeField.Text;
+            //this.DataSets.InfoTxt = BuildingField.Text;
+            this.Input.ShowNextOperator = следующийОператорToolStripMenuItem.Checked;
+            this.Input.ShowQueues = очередиToolStripMenuItem.Checked;
+            this.Input.ShowSysMark = системныеМеткиToolStripMenuItem.Checked;
         }
         void UpLoad()
         {
-            this.DataSets.Output_All_Data();
-            //CodeField.Rtf = LPDP_Data.CodeRtf;
-            CodeField.Text = this.DataSets.CodeTxt;// CodeRtf;
-
+            this.Output = new OutputData(this.precision, this.ExploredModel);
+            OutputData out_data = this.Output;
+            out_data.Output_All_Data();
             
-            Dictionary<int, Color> dict = TextFormat.InsertQueueArrows(CodeField, this.DataSets.QueueArrows);
-            TextFormat.ColorizeAll(CodeField, dict, 
-                this.DataSets.NextOperatorPosition_Start, this.DataSets.NextOperatorPosition_Length, this.DataSets.NextInitiatorIsFlow,
-                this.DataSets.UnitPosition);
+            //CodeField.Rtf = LPDP_Data.CodeRtf;
+            CodeField.Text = out_data.CodeTxt;// CodeRtf;
+
+
+            Dictionary<int, Color> dict = TextFormat.InsertQueueArrows(CodeField, out_data.QueueArrows);
+            TextFormat.ColorizeAll(CodeField, dict,
+                out_data.NextOperatorPosition_Start, out_data.NextOperatorPosition_Length, out_data.NextInitiatorIsFlow,
+                out_data.UnitPosition);
              
 
 
@@ -1381,24 +1358,24 @@ namespace ПОСП
             //TextFormat.ColorizeNextOperator(CodeField, this.DataSets.NextOperatorPosition_Start, this.DataSets.NextOperatorPosition_Length, this.DataSets.NextInitiatorIsFlow);
 
 
-            BuildingField.Text = this.DataSets.InfoTxt;
-            следующийОператорToolStripMenuItem.Checked = this.DataSets.ShowNextOperator;
-            очередиToolStripMenuItem.Checked = this.DataSets.ShowQueues;
-            системныеМеткиToolStripMenuItem.Checked = this.DataSets.ShowSysMark;
+            BuildingField.Text = out_data.InfoTxt;
+            //следующийОператорToolStripMenuItem.Checked = this.DataSets.ShowNextOperator;
+            //очередиToolStripMenuItem.Checked = this.DataSets.ShowQueues;
+            //системныеМеткиToolStripMenuItem.Checked = this.DataSets.ShowSysMark;
 
-            TIME_Value.Text = Convert.ToString(Math.Round(this.DataSets.TIME, this.DataSets.Precision));
-            INITIATOR_Value.Text = Convert.ToString(this.DataSets.InitiatorNumber);
-            
-            this.Objects_View.DataSource = this.DataSets.Objects;
-            this.Initiators_View.DataSource = this.DataSets.Initiators;
-            this.FTT_View.DataSource = this.DataSets.FTT;
-            this.CT_View.DataSource = this.DataSets.CT;
-            this.Queues_View.DataSource = this.DataSets.Queues;
-            
+            TIME_Value.Text = Convert.ToString(Math.Round(out_data.TIME, out_data.Precision));
+            INITIATOR_Value.Text = Convert.ToString(out_data.InitiatorNumber);
+
+            this.Objects_View.DataSource = out_data.Objects;
+            this.Initiators_View.DataSource = out_data.Initiators;
+            this.FTT_View.DataSource = out_data.FTT;
+            this.CT_View.DataSource = out_data.CT;
+            this.Queues_View.DataSource = out_data.Queues;
+            UseAllCaptions();
         }
 
 
-        // ВКЛАДКИ МЕНЮ        
+        #region ВКЛАДКИ МЕНЮ
         // Файл
         private void открытьToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -1455,7 +1432,7 @@ namespace ПОСП
 
                     BuildingField.Text = "Файл " + "\"" + SelectedFile + "\" успешно открыт.";
 
-                    this.ExploredModel = new Model();
+                    //this.ExploredModel = new Model();
                 }
                 catch (Exception ex)
                 {
@@ -1569,14 +1546,13 @@ namespace ПОСП
         private void построениеToolStripMenuItem_Click(object sender, EventArgs e)
         {
             this.UpDate();
-
-            //this.ExploredModel = 
-            //Model new_model = new Model();
-            this.ExploredModel.Analysis.Building(this.DataSets.CodeTxt);
-            this.DataSets.SetParentModel(this.ExploredModel);
+            this.ExploredModel = new Model();
+            //this.DataSets.SetParentModel(this.ExploredModel);
+            this.ExploredModel.Analysis.Building(this.Input.CodeTxt);
+            
             this.UpLoad();
 
-            if (this.DataSets.ModelIsBuilt == true)
+            if (this.Output.ModelIsBuilt == true)
             {
 
                 запускToolStripMenuItem.Enabled = true;
@@ -1612,67 +1588,28 @@ namespace ПОСП
             {
                 this.UpDate();
                 double LaunchTime = Convert.ToDouble(вводВремениToolStripMenuItem.Text);
-                LPDP_Actions.StartUntil(LaunchTime);
-                if (LPDP_Data.GetModelIsBuilt() == false)
+                this.ExploredModel.Executor.StartUntil(LaunchTime);
+                if (this.Output.ModelIsBuilt == false)
                     стопToolStripMenuItem.PerformClick();
                 this.UpLoad();
-
-                //////////////////////
-                //BuildingField.Focus();
-                //запускToolStripMenuItem.HideDropDown();
-                //BuildingField.Text = "Выполняется рассчет модели до времени требуемого времени...";
-
-                ////возможность писать с"+"
-                //string SaveText = "";
-                //if (вводВремениToolStripMenuItem.Text[0] == '+')
-                //{
-                //    SaveText = вводВремениToolStripMenuItem.Text;
-                //    вводВремениToolStripMenuItem.Text = Convert.ToString(Convert.ToDouble(TIME_Value.Text) + Convert.ToDouble(вводВремениToolStripMenuItem.Text.Substring(1)));
-                //}
-                //string NewStr = LPDP_Core.Launch_POSP_Model(Convert.ToDouble(вводВремениToolStripMenuItem.Text), LPDP_Core.Mode.time);
-                //if (LPDP_Data.GetModelIsBuilt == false) стопToolStripMenuItem.PerformClick();
-                //else
-                //{
-                //    вводВремениToolStripMenuItem.Text = SaveText;
-
-                //    LPDP_Core.Rewrite_Queues();
-                //    //CodeField.Rtf = LPDP_Code.Build_RTF_Code();
-                //    CodeField.Rtf = LPDP_Code.Rewrite_Initiators_RTF(CodeField.Rtf, следующийОператорToolStripMenuItem.Checked, очередиToolStripMenuItem.Checked);
-                //    LPDP_Graphics.Reload_Values_and_Queues(очередиToolStripMenuItem.Checked);
-                //    TIME_Value.Text = Convert.ToString(Math.Round(LPDP_Core.TIME, 2));
-                //    Rewrite_All_Views();
-                //    BuildingField.Text = NewStr;
-                //}
             }
         }
         private void выполнениеКОСToolStripMenuItem_Click(object sender, EventArgs e)
         {
             this.UpDate();
-            LPDP_Actions.StartSEC();
-
-            if (LPDP_Data.GetModelIsBuilt() == false)
+            double LaunchTime = Convert.ToDouble(вводВремениToolStripMenuItem.Text);
+            this.ExploredModel.Executor.StartSEC();
+            if (this.Output.ModelIsBuilt == false)
                 стопToolStripMenuItem.PerformClick();
-
             this.UpLoad();
 
-            //BuildingField.Focus();
-            //BuildingField.Text = "Выполняется Класс Одновременных Событий...";
-            //string NewStr = LPDP_Core.Launch_POSP_Model(0, LPDP_Core.Mode.timestep);
-            //if (LPDP_Data.GetModelIsBuilt == false) стопToolStripMenuItem.PerformClick();
-            //LPDP_Core.Rewrite_Queues();
-            ////CodeField.Rtf = LPDP_Code.Build_RTF_Code();
-            //CodeField.Rtf = LPDP_Code.Rewrite_Initiators_RTF(CodeField.Rtf, следующийОператорToolStripMenuItem.Checked, очередиToolStripMenuItem.Checked);
-            //LPDP_Graphics.Reload_Values_and_Queues(очередиToolStripMenuItem.Checked);
-            //TIME_Value.Text = Convert.ToString(Math.Round(LPDP_Core.TIME, 2));
-            //Rewrite_All_Views();
-            //BuildingField.Text = NewStr;
         }
         private void шагToolStripMenuItem_Click(object sender, EventArgs e)
         {
             this.UpDate();
             this.ExploredModel.Executor.StartStep();
 
-            if (this.DataSets.ModelIsBuilt == false)
+            if (this.Output.ModelIsBuilt == false)
                 стопToolStripMenuItem.PerformClick();
 
             this.UpLoad();
@@ -1687,9 +1624,6 @@ namespace ПОСП
 
             this.UpLoad();
 
-            //CodeField.Rtf = LPDP_Code.Build_RTF_Code(false); 
-            //LPDP_Graphics.Reload_Values_and_Queues(false);
-            //GraphicModel_View.Refresh();
 
             CodeField.ReadOnly = false;
             построениеToolStripMenuItem.Enabled = true;
@@ -1702,9 +1636,6 @@ namespace ПОСП
 
             стопToolStripMenuItem.Enabled = false;
 
-            //LPDP_Data.Model_Is_Built = false;
-
-            //BuildingField.Text = "Модель остановлена.";
         }
 
         //окна
@@ -1783,21 +1714,21 @@ namespace ПОСП
             }
             окнаToolStripMenuItem.ShowDropDown();
         }
-        private void графическаяМодельToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            if (графическаяМодельToolStripMenuItem.Checked == false)
-            {
-                графическаяМодельToolStripMenuItem.Checked = true;
-                GraphicModel_Tab.Parent = ResultField;
-                BuildingField.Focus();
-            }
-            else
-            {
-                графическаяМодельToolStripMenuItem.Checked = false;
-                GraphicModel_Tab.Parent = null;
-            }
-            окнаToolStripMenuItem.ShowDropDown();
-        }
+        //private void графическаяМодельToolStripMenuItem_Click(object sender, EventArgs e)
+        //{
+        //    if (графическаяМодельToolStripMenuItem.Checked == false)
+        //    {
+        //        графическаяМодельToolStripMenuItem.Checked = true;
+        //        GraphicModel_Tab.Parent = ResultField;
+        //        BuildingField.Focus();
+        //    }
+        //    else
+        //    {
+        //        графическаяМодельToolStripMenuItem.Checked = false;
+        //        GraphicModel_Tab.Parent = null;
+        //    }
+        //    окнаToolStripMenuItem.ShowDropDown();
+        //}
         
         //отображения
         private void отображенияToolStripMenuItem_Click(object sender, EventArgs e)
@@ -1817,7 +1748,7 @@ namespace ПОСП
                 системныеМеткиToolStripMenuItem.Checked = false;
 
             отображенияToolStripMenuItem.ShowDropDown();
-            LPDP_Actions.Building(this.DataSets.CodeTxt);
+            //LPDP_Actions.Building(this.DataSets.CodeTxt);
             //CodeField.Rtf = LPDP_Code.Build_RTF_Code(системныеМеткиToolStripMenuItem.Checked);
             //CodeField.Rtf = LPDP_Code.Rewrite_Initiators_RTF(CodeField.Rtf, следующийОператорToolStripMenuItem.Checked, очередиToolStripMenuItem.Checked);
         }
@@ -1847,7 +1778,7 @@ namespace ПОСП
 
             отображенияToolStripMenuItem.ShowDropDown();
             //CodeField.Rtf = LPDP_Code.Rewrite_Initiators_RTF(CodeField.Rtf, следующийОператорToolStripMenuItem.Checked, очередиToolStripMenuItem.Checked);
-            LPDP_Actions.Building(this.DataSets.CodeTxt);
+            //LPDP_Actions.Building(this.DataSets.CodeTxt);
             //LPDP_Graphics.Reload_Values_and_Queues(очередиToolStripMenuItem.Checked);
             GraphicModel_View.Refresh();
         }
@@ -1868,7 +1799,9 @@ namespace ПОСП
             отображенияToolStripMenuItem.ShowDropDown();
         }
 
-        //ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ
+        #endregion
+
+        #region ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ
         //очищение от select
         private void Objects_View_SelectionChanged(object sender, EventArgs e)
         {
@@ -2169,56 +2102,18 @@ namespace ПОСП
             }
         }
 
+        // применение шапок таблиц
+        void UseAllCaptions()
+        {
+            OutputData out_data = this.Output;
+            TextFormat.UseCaptions(this.Objects_View, out_data.Objects);
+            TextFormat.UseCaptions(this.Initiators_View, out_data.Initiators);
+            TextFormat.UseCaptions(this.FTT_View, out_data.FTT);
+            TextFormat.UseCaptions(this.CT_View, out_data.CT);
+            TextFormat.UseCaptions(this.Queues_View, out_data.Queues);
+        }
 
-        ////Рисование
-        //private void GraphicModel_View_Paint(object sender, PaintEventArgs e)
-        //{
-        //    Graphics NewG = e.Graphics;
-        //    for (int i = 0; i < LPDP_Graphics.GraphicModel.Count; i++)
-        //    {
-        //        NewG = LPDP_Graphics.Draw_GraphicObject(NewG, i);
-        //    }
-        //    for (int i = 0; i < LPDP_Graphics.Connections.Count; i++)
-        //    {
-        //        NewG = LPDP_Graphics.Draw_Connection(NewG, i);
-        //    }
-        //}
-        //private void GraphicModel_View_VisibleChanged(object sender, EventArgs e)
-        //{
-        //    Refresh(); 
-        //}
-
-        //private void ResultField_Resize(object sender, EventArgs e)
-        //{
-        //    GraphicModel_View.Width = ResultField.Width - 15;
-        //    GraphicModel_View.Height = ResultField.Height - 30;
-        //}
-
-        //// перетаскивание
-        //private int WhereMouse=-1;
-        //private Point CurrentPosition;
-        //private void GraphicModel_View_MouseDown(object sender, MouseEventArgs e)
-        //{
-        //    WhereMouse = LPDP_Graphics.MouseInGraphicObject(e.Location);
-        //    CurrentPosition = e.Location;
-        //}
-        //private void GraphicModel_View_MouseUp(object sender, MouseEventArgs e)
-        //{
-        //    WhereMouse = -1;
-        //}
-
-        //private void GraphicModel_View_MouseMove(object sender, MouseEventArgs e)
-        //{
-        //    if (WhereMouse != -1)
-        //    {
-        //        Point NewPosition = new Point(  LPDP_Graphics.GraphicModel[WhereMouse].positionX + (e.X - CurrentPosition.X),
-        //                                        LPDP_Graphics.GraphicModel[WhereMouse].positionY + (e.Y - CurrentPosition.Y));
-        //        LPDP_Graphics.ChangePosition(WhereMouse, NewPosition);
-        //        CurrentPosition = e.Location;
-        //        Refresh();
-        //    }
-        //}
-
+        #endregion
         // закрытие формы
         private void POSP_Form_FormClosing(object sender, FormClosingEventArgs e)
         {

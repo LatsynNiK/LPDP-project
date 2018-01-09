@@ -43,7 +43,6 @@
         private System.Windows.Forms.TabPage GraphicModel_Tab;
         private System.Windows.Forms.Panel GraphicModel_Panel;
         private System.Windows.Forms.PictureBox GraphicModel_View;
-        private System.Windows.Forms.ToolStripMenuItem графическаяМодельToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem отображенияToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem системныеМеткиToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem очередиToolStripMenuItem;

@@ -59,10 +59,10 @@ namespace LPDP
             this.ExecuteOperator(this.NEXT_OPERATOR);
         }
 
-        //public void StartSEC()
-        //{
-        //    while(this.SUBPROGRAM.)
-        //}
+        public void StartSEC()
+        {
+            //while(this.SUBPROGRAM.)
+        }
 
         void SetState()
         {

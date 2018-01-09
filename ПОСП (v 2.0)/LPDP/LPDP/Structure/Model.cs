@@ -31,6 +31,8 @@ namespace LPDP.Structure
         public Executor Executor;
 
         public Analysis Analysis;
+
+        public LPDP.DataSets.OutputData Out;
         
         //double TIME;
         //Initiator INITIATOR;

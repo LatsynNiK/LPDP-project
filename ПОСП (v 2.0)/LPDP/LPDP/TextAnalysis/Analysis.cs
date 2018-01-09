@@ -424,12 +424,7 @@ namespace LPDP.TextAnalysis
                 }
             }
             this.ParentModel.Executor.Preparetion();
-            //this.ParentModel.Executor.QT = 
-            //this.ParentModel.Executor.SetState();
             this.ParentModel.Built = true;
-
-            //this.ParentModel.O_Cont.SetValueToScalar("L", "ГЕН", 100);
-
 
             return 1;
         }
@@ -1250,15 +1245,5 @@ namespace LPDP.TextAnalysis
 
 
         #endregion
-
-
-        //public static void SetRules()
-        //{
-        //    ModelTextRules.InitializeLexicalTemplates();
-        //    ModelTextRules.InitializeWordTypes();
-        //    ModelTextRules.InitializePrimaryPhraseTypes();
-        //    ModelTextRules.InitializeSyntacticalTemplates();
-        //    ModelTextRules.InitializeErrorTypes();
-        //}
     }
 }
