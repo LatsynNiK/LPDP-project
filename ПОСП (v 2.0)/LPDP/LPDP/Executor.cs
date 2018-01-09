@@ -101,6 +101,11 @@ namespace LPDP
             this.INITIATOR = init;
         }
 
+        public Initiator GetInitiator()
+        {
+            return this.INITIATOR;
+        }
+
         int ExecuteSubprogram(Subprogram subprogram)
         {
             this.SUBPROGRAM = subprogram;
@@ -390,7 +395,8 @@ namespace LPDP
                     if (ar_exp.Value.Exists(ph => ph.PhType == PhraseType.ArithmeticFunction))
                     {
                         first_exp_ph = ar_exp.Value[0];
-                        return Convert.ToString(result);
+                        return this.ComputeArithmeticExpression(first_exp_ph);
+                        //return Convert.ToString(result);
                     }
                     #endregion
                     break;
@@ -399,30 +405,6 @@ namespace LPDP
                     first_exp_ph = ar_exp.Value[0];
                     switch (first_exp_ph.PhType)
                     {
-                        //case PhraseType.ValueFromLink:
-                        //    //result = Convert.ToDouble(this.GetObject(first_exp_ph).GetValue());
-                        //    break;
-                        //case PhraseType.VectorNode:
-                        //    result = Convert.ToDouble(this.GetObject(first_exp_ph).GetValue());
-                        //    break;
-                        //case PhraseType.Name:
-                        //    result = Convert.ToDouble(this.GetObject(first_exp_ph).GetValue());
-                        //    break;
-                        //case PhraseType.LinkVarType_Word:
-                        //    last_exp_ph = ar_exp.Value[2];//ссылка на Name
-                        //    result = Convert.ToDouble(this.GetObject(last_exp_ph).ID);
-                        //    break;
-                        //case PhraseType.Rand_Word:
-                        //    result = this.RAND.NextDouble();
-                        //    break;
-                        //case PhraseType.Time_Word:
-                        //    result = this.TIME;
-                        //    break;
-                        //case PhraseType.Number:
-                        //    string double_str = ((Lexeme)first_exp_ph).LValue;
-                        //    double_str = double_str.Replace('.',',');
-                        //    result = Convert.ToDouble(double_str);
-                        //    break;                        
                         case PhraseType.ValueFromLink:
                             //result = Convert.ToDouble(this.GetObject(first_exp_ph).GetValue());
                             break;
@@ -450,6 +432,62 @@ namespace LPDP
                         case PhraseType.String:
                             return ((Lexeme)first_exp_ph).LValue;
 
+                    }
+                    #endregion
+                    break;
+
+                    //
+                case PhraseType.ArithmeticFunction:
+                    #region ArithmeticFunction
+                    string func_type = ((Word)ar_exp.Value[0]).LValue;
+                    
+                    List<string> param_values = new List<string>();
+                    Phrase Params = ar_exp.Value.Find(ph => ph.PhType == PhraseType.Parameters);
+                    foreach (Phrase ph in Params.Value)
+                    {
+                        if (ph.PhType != PhraseType.Comma)
+                        {
+                            string value = this.ComputeArithmeticExpression(ph);
+                            param_values.Add(value);
+                        }
+                    }
+
+                    string p1, p2, p3;
+                    switch (func_type)
+                    {
+                        case "ЦЕЛОЕ":
+                            if (param_values.Count < 1)
+                            {
+                                //error
+                            }
+                            p1 = param_values[0];
+                            return Convert.ToString(Convert.ToInt32(Convert.ToDouble(p1)));
+                            break;
+                        case "ln":
+                            if (param_values.Count < 1)
+                            {
+                                //error
+                            }
+                            p1 = param_values[0];
+                            return Convert.ToString( Math.Log(Convert.ToDouble(p1)));
+                            break;
+                        case "log":
+                            if (param_values.Count < 2)
+                            {
+                                //error
+                            }
+                            p1 = param_values[0];
+                            p2 = param_values[1];
+                            return Convert.ToString(Math.Log(Convert.ToDouble(p1),Convert.ToDouble(p2)));
+                            break;
+                        case "lg":
+                            if (param_values.Count < 1)
+                            {
+                                //error
+                            }
+                            p1 = param_values[0];
+                            return Convert.ToString(Math.Log10(Convert.ToDouble(p1)));
+                            break;
                     }
                     #endregion
                     break;
@@ -629,16 +667,16 @@ namespace LPDP
                     switch (var_from_link.Type)
                     {
                         case ObjectType.Scalar:
-                            if (var_from_link.Name != ((Lexeme)path).LValue)
+                            if (var_from_link.Name != ((Lexeme)path.Value[0]).LValue)
                             { //error
                             }
                             result = var_from_link;
                             break;
                         case ObjectType.Vector:
-                            if (var_from_link.Name != ((Lexeme)path.Value[0]).LValue)
+                            if (var_from_link.Name != ((Lexeme)path.Value[0].Value[0]).LValue)
                             { //error
                             }
-                            Phrase inner_node = path.Value[2];
+                            Phrase inner_node = path.Value[0].Value[2];
                             LPDP.Objects.Vector vector_from_link = (LPDP.Objects.Vector)var_from_link;
                             result = vector_from_link.FindNode(inner_node);
                             break;

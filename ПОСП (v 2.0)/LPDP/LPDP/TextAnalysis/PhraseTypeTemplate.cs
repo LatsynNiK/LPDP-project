@@ -5,7 +5,7 @@ using System.Text;
 
 namespace LPDP.TextAnalysis
 {
-    class PhraseTypeTemplate
+    public class PhraseTypeTemplate
     {
         public PhraseType PhType;
         public PhraseType[] PhTemplate;

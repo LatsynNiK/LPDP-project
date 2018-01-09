@@ -44,7 +44,7 @@ namespace ПОСП
         {
             string full_arrow = "\u27A4";
             string half_arrow = "\u27A2";
-            string several = "...";
+            string several = "-";
 
             Dictionary<int, Color> result = new Dictionary<int, Color>();
 
@@ -68,8 +68,8 @@ namespace ПОСП
                     }
                     if (type == 100)
                     {
-                        rtb.Text.Insert(position, several);
-                        continue;
+                        arrow = several;
+                        type -= 100;
                     }
                     
                     if (type < 20) //Full
@@ -84,6 +84,9 @@ namespace ПОСП
                     }
                     switch (type)
                     {
+                        case 0:
+                            color = Color.Black;
+                            break;
                         case 1:
                             color = ready_color;
                             break;
@@ -125,15 +128,41 @@ namespace ПОСП
             return result;
         }
 
-        public static void ColorizeArrows(RichTextBox rtb, Dictionary<int, Color> dict)
+        public static void ColorizeAll(RichTextBox rtb,
+            Dictionary<int, Color> dict,// для стрелок
+            int start, int len, bool is_flow,// для оператора
+            int unit_position)
         {
+            int shifting = 0;
+            //int save_cursor = rtb.SelectionStart;
             foreach (int position in dict.Keys)
             {
+                if (position <= start + shifting)
+                {
+                    shifting++;
+                }
+                //else
+                //{
+
+                //}
+
                 rtb.Select(position, 1);
                 rtb.SelectionColor = dict[position];
-                rtb.DeselectAll();
+            }
+
+            rtb.Select(unit_position, 0);
+            rtb.ScrollToCaret();
+            TextFormat.ColorizeNextOperator(rtb, start + shifting, len, is_flow);
+        }
+
+        public static void UseCaptions(DataGridView dgv, DataTable dt)
+        {
+            foreach (DataGridViewColumn col in dgv.Columns)
+            {
+                col.HeaderText = dt.Columns[col.Name].Caption;
             }
         }
+        
 
         //static void InsertArrow(RichTextBox rtb, int position, string arrow, Color color)
         //{

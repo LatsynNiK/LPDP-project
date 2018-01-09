@@ -5,7 +5,7 @@ using System.Text;
 
 namespace LPDP.TextAnalysis
 {
-    class Lexeme : Phrase
+    public class Lexeme : Phrase
     {
         public LexemeType LType;
         public string LValue;
@@ -33,6 +33,11 @@ namespace LPDP.TextAnalysis
             this.LType = type;
             this.LValue = value;
 
+        }
+
+        public override string ToString()
+        {
+            return this.LValue;
         }
     }
 }

@@ -47,6 +47,9 @@ namespace LPDP.DataSets
         public int NextOperatorPosition_Start;
         public int NextOperatorPosition_Length;
         public bool NextInitiatorIsFlow;
+        public int UnitPosition;
+
+        public int InitiatorNumber;
 
         //public double GetTIME()
         //{
@@ -61,13 +64,13 @@ namespace LPDP.DataSets
         public void SetParentModel(Model model)
         {
             this.Model = model;
-            this.ClearTable(this.Objects);
-            this.ClearTable(this.Initiators);
-            this.ClearTable(this.Queues);
-            this.ClearTable(this.FTT);
-            this.ClearTable(this.CT);
+            //this.ClearTable(this.Objects);
+            //this.ClearTable(this.Initiators);
+            //this.ClearTable(this.Queues);
+            //this.ClearTable(this.FTT);
+            //this.ClearTable(this.CT);
 
-            this.ClearTable(this.QueueArrows);
+            //this.ClearTable(this.QueueArrows);
         }
 
         public InputOutputData()
@@ -85,21 +88,26 @@ namespace LPDP.DataSets
             this.QueueArrows = new DataTable("QueueArrows");
 
 
-            this.ClearTable(this.Objects);
-            this.ClearTable(this.Initiators);
-            this.ClearTable(this.Queues);
-            this.ClearTable(this.FTT);
-            this.ClearTable(this.CT);
-
-            this.ClearTable(this.QueueArrows);
+            //this.ClearTable(this.Objects);
+            //this.ClearTable(this.Initiators);
+            //this.ClearTable(this.Queues);
+            //this.ClearTable(this.FTT);
+            //this.ClearTable(this.CT);
+            //this.ClearTable(this.QueueArrows);
 
             this.CreateTable(this.Objects, "Unit", "Name", "Value", "Type");
             this.CreateTable(this.Initiators, "Number", "Name", "Value", "Type");
             this.CreateTable(this.Queues, "Unit", "Label", "Initiators");
-            this.CreateTable(this.FTT, "Time", "Initiator", "Mark", "Unit");
-            this.CreateTable(this.CT, "Condition", "Initiator", "Mark", "Unit");
-
+            this.CreateTable(this.FTT, "Time", "Initiator", "Label", "Unit");
+            this.CreateTable(this.CT, "Condition", "Initiator", "Label", "Unit");
             this.CreateTable(this.QueueArrows, "Position", "First", "Second", "Third");
+
+            this.RenameTable(this.Objects, "Блок", "Объект", "Значение", "Тип");
+            this.RenameTable(this.Initiators, "Номер", "Инициатор", "Значение", "Тип");
+            this.RenameTable(this.Queues, "Блок", "Метка", "Инициаторы");
+            this.RenameTable(this.FTT, "Время", "Инициатор", "Метка", "Блок");
+            this.RenameTable(this.CT, "Условие", "Инициатор", "Метка", "Блок");
+            //this.CreateTable(this.QueueArrows, "Position", "First", "Second", "Third");
         }
 
         void CreateTable(DataTable table, params string[] ColumnNames)
@@ -109,12 +117,18 @@ namespace LPDP.DataSets
                 table.Columns.Add(colname);
             }
         }
-        void ClearTable(DataTable table)
+        //void ClearTable(DataTable table)
+        //{
+        //    foreach (DataColumn col in table.Columns)
+        //        col.Dispose();
+        //}
+        void RenameTable(DataTable table, params string[] ColumnNames)
         {
-            foreach (DataColumn col in table.Columns)
-                col.Dispose();
+            for (int i = 0; i< table.Columns.Count;i++)
+            {
+                table.Columns[i].Caption = ColumnNames[i];
+            }
         }
-
 
         void Rewrite_Objects()
         {
@@ -231,7 +245,7 @@ namespace LPDP.DataSets
             foreach (RecordFTT rec in ftt)
             {
                 Label label = this.Model.ST_Cont.LT.FindFirstBySubprogram(rec.Subprogram);
-                FTT.Rows.Add(rec.ActiveTime, rec.Initiator.Number,label.Name, label.Unit);
+                FTT.Rows.Add(Math.Round((double)rec.ActiveTime, this.Precision), rec.Initiator.Number, label.Name, label.Unit);
             }
         }
 
@@ -341,7 +355,7 @@ namespace LPDP.DataSets
             this.Rewrite_QueueArrows();
 
             //this.CodeRtf = 
-            this.CodeTxt = this.Model.Analysis.SourceText;
+            this.CodeTxt = this.Model.Analysis.SourceText;//ResultTxtCode;
 
             
 
@@ -360,6 +374,9 @@ namespace LPDP.DataSets
             {
                 this.NextInitiatorIsFlow = false;
             }
+            this.UnitPosition = this.Model.Executor.GetInitiator().Position.Unit.StartPosition;
+
+            this.InitiatorNumber = this.Model.Executor.GetInitiator().Number;
         }
 
         void Write_Vector_to_DataTable(DataTable DT, List<LPDP.Objects.Object> list)

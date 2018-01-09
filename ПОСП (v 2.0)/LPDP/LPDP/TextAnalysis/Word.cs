@@ -23,5 +23,9 @@ namespace LPDP.TextAnalysis
 
             this.WType = type;
         }
+        public override string ToString()
+        {
+            return this.LValue;
+        }
     }
 }

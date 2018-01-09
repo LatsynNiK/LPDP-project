@@ -35,7 +35,7 @@
         private System.Windows.Forms.TabPage FTT_Tab;
         private System.Windows.Forms.ToolStripMenuItem запускПоВремениToolStripMenuItem;
         private System.Windows.Forms.ToolStripTextBox вводВремениToolStripMenuItem;
-        private System.Windows.Forms.Panel TIME_Indicator;
+        private System.Windows.Forms.Panel General_Indicators;
         private System.Windows.Forms.Label TIME_Value;
         private System.Windows.Forms.ToolStripMenuItem стопToolStripMenuItem;
         private System.Windows.Forms.TabPage CT_Tab;
@@ -76,6 +76,8 @@
         private System.Windows.Forms.Label FileName_label;
         private System.Windows.Forms.Label FilePath_label;
         private System.Windows.Forms.ToolStripMenuItem путьКФайлуToolStripMenuItem;
+        private System.Windows.Forms.Label INITIATOR_Label;
+        private System.Windows.Forms.Label INITIATOR_Value;
 
     }
 }

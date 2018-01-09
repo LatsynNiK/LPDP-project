@@ -16,14 +16,19 @@ namespace LPDP.Structure
     {
         public string Name; 
         public UnitType Type;
+        public int StartPosition;
 
-        public Unit(string name, UnitType type)
+        public Unit(string name, UnitType type , int pos)
         {
             this.Name = name;
             this.Type = type;
+            this.StartPosition = pos;
         }
 
-        public Unit() {}
+        public Unit(int pos) 
+        {
+            this.StartPosition = pos;
+        }
 
         public void SetHeader(string name, UnitType type)
         {

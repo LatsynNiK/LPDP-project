@@ -67,9 +67,9 @@ namespace LPDP.Structure
         }
 
         //UNIT
-        public void CreateUnit()
+        public void CreateUnit(int position)
         {
-            Unit NewUnit = new Unit();
+            Unit NewUnit = new Unit(position);
             this.ParentModel.Units.Add(NewUnit);
             this.CurrentUnit = NewUnit;
         }

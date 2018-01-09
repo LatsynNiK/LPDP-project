@@ -217,8 +217,18 @@ namespace LPDP.TextAnalysis
         //UnknownPhrase
     }
 
-    class ModelTextRules
+    public static class ModelTextRules
     {
+        public static void SetRules()
+        {
+            ModelTextRules.InitializeLexicalTemplates();
+            ModelTextRules.InitializeWordTypes();
+            ModelTextRules.InitializePrimaryPhraseTypes();
+            ModelTextRules.InitializeSyntacticalTemplates();
+            ModelTextRules.InitializeErrorTypes();
+        }
+
+
         //ЛЕКСИЧЕСКИЙ АНАЛИЗ
         #region Lexis
         /// <summary>

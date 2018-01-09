@@ -20,6 +20,8 @@ namespace LPDP.TextAnalysis
         public string ResultTxtCode;
         public string ResultRTFCode;
 
+        List<Phrase> CommentPhrases;
+
         struct Response
         {
             public Phrase BackPhrase;
@@ -41,12 +43,16 @@ namespace LPDP.TextAnalysis
             this.ResultRTFCode = "";
             this.ResultTxtCode = "";
 
+            this.CommentPhrases = new List<Phrase>();
+            
             this.ParentModel = parent_model;
         }
 
         public void Building(string source_text)
         {
             this.AnalyzeText(source_text);
+
+            this.ResultTxtCode = this.RebuildingText(this.ParsedText, this.CommentPhrases);
 
             this.AnalyzeStructure(this.ParsedText);
 
@@ -200,6 +206,86 @@ namespace LPDP.TextAnalysis
             return 1;
         }
 
+        string RebuildingText(Phrase sourse_phrase, List<Phrase> comments)
+        {
+            string result = "";
+
+            if (sourse_phrase.Value != null)
+            {
+                foreach (Phrase ph in sourse_phrase.Value)
+                {
+                    string before = "";
+                    string after = "";
+                    switch (ph.PhType)
+                    {
+                        case PhraseType.Unit:
+                            before = "\n";
+                            after = "\n";
+                            result += before + this.RebuildingText(ph, comments) + after;
+                            break;
+                        case PhraseType.UnitHeader:
+                            before = "\t";
+                            after = "\n";
+                            result += before + this.RebuildingText(ph, comments) + after;
+                            break;
+                        case PhraseType.Description:
+
+                            before = "\t\t";
+                            after = "\n";
+                            break;
+                        case PhraseType.DescriptionLine:
+                            before = "\t\t\t";
+                            break;
+                        case PhraseType.DescriptionEnding:
+                            before = "\t\t";
+                            break;
+                        case PhraseType.Algorithm:
+                            before = "\t\t";
+                            after = "\n";
+                            break;
+                        case PhraseType.AlgorithmLine:
+                            before = "\t\t\t";
+                            break;
+                        case PhraseType.AlgorithmEnding:
+                            before = "\t\t";
+                            break;                        
+                        //case PhraseType.EoL:
+                        //    after = "\n";
+                        //    break;
+                        case PhraseType.UnitEnding:
+                            before = "\t";
+                            break;
+                    }
+
+                    //result += before + this.RebuildingText(ph, comments) + after;
+                }
+            }
+            else
+            {
+                string before = "";
+                string after = "";
+                switch (sourse_phrase.PhType)
+                {
+                    case PhraseType.EoL:
+                        after = "\n";
+                        break;
+
+                    default:
+                        after = " ";
+                        break;
+                }
+                while ((comments.Count > 0) && (comments[0].Start < sourse_phrase.Start))
+                {
+                    before += ((Lexeme)comments[0]).LValue;
+                    comments.RemoveAt(0);
+                }
+                result = before+((Lexeme)sourse_phrase).LValue + after;
+            }      
+     
+
+            return result;
+        }
+
         int AnalyzeStructure(Phrase source_phrase)
         {
             switch (source_phrase.PhType)
@@ -217,7 +303,7 @@ namespace LPDP.TextAnalysis
 
                 case PhraseType.Unit:
                     //this.ParentModel.Executor.TC_Cont.
-                    this.ParentModel.ST_Cont.CreateUnit();
+                    this.ParentModel.ST_Cont.CreateUnit(source_phrase.Start);
                     foreach (Phrase unit_part_ph in source_phrase.Value)
                     {
                         AnalyzeStructure(unit_part_ph);
@@ -765,6 +851,10 @@ namespace LPDP.TextAnalysis
                 {
                     Errors.Add(new Error(ErrorType.UnknownLexeme, ModelTextRules.ErrorTypes[ErrorType.UnknownLexeme] + lex.Value, lex.Line, lex.Start, lex.Length));
                 }
+                if (lex.PhType == PhraseType.Comment)
+                {
+                    this.CommentPhrases.Add((Phrase)lex);
+                }
                 if ((lex.PhType != PhraseType.Empty) && (lex.PhType != PhraseType.Comment))
                     Phrases.Add((Phrase)lex);
             }
@@ -787,9 +877,17 @@ namespace LPDP.TextAnalysis
                     InitialPhrase.Value[i] = MadeStruct(InitialPhrase.Value[i]);
                     if (InitialPhrase.Value[i].PhType == InitialPhrase.PhType)
                     {
-                        int index = InitialPhrase.Value.IndexOf(InitialPhrase.Value[i]);
-                        InitialPhrase.Value.InsertRange(index + 1, InitialPhrase.Value[index].Value);
-                        InitialPhrase.Value.RemoveAt(index);
+                        if ((InitialPhrase.PhType != PhraseType.ArithmeticExpression_1lvl) &&
+                            (InitialPhrase.PhType != PhraseType.ArithmeticExpression_2lvl) &&
+                            (InitialPhrase.PhType != PhraseType.ArithmeticExpression_3lvl) &&
+                            (InitialPhrase.PhType != PhraseType.LogicExpression) &&
+                            (InitialPhrase.PhType != PhraseType.ArithmeticFunction) &&
+                            (InitialPhrase.PhType != PhraseType.VectorNode))
+                        {
+                            int index = InitialPhrase.Value.IndexOf(InitialPhrase.Value[i]);
+                            InitialPhrase.Value.InsertRange(index + 1, InitialPhrase.Value[index].Value);
+                            InitialPhrase.Value.RemoveAt(index);
+                        }
                     }
                 }
             }
@@ -933,6 +1031,7 @@ namespace LPDP.TextAnalysis
             Structure.Action action;
             Phrase destination_ph;
             KeyValuePair<string, string> destination_str;
+            bool firstly = true;
             switch (concret_operator_ph.PhType)
             {
                 case PhraseType.AssignOperator:
@@ -1014,6 +1113,7 @@ namespace LPDP.TextAnalysis
                     result_oper.Name = OperatorName.If;
                     Phrase if_conditions_ph = concret_operator_ph.Value.Find(ph => ph.PhType == PhraseType.IfConditions);
                     if_conditions_ph.Value.Reverse();
+                    
                     foreach (Phrase if_condition_ph in if_conditions_ph.Value)
                     {
                         if (if_condition_ph.PhType == PhraseType.EoL)
@@ -1038,7 +1138,15 @@ namespace LPDP.TextAnalysis
                         destination_str = EjectStringDestination(destination_ph);
                         action.Parameters.Add(destination_str.Key);
                         action.Parameters.Add(destination_str.Value);
-                        action.Parameters.Add(false); //islast
+                        if (firstly)
+                        {
+                            action.Parameters.Add(false); //islast
+                            firstly = false;
+                        }
+                        else
+                        {
+                            action.Parameters.Add(true); //islast
+                        }
                         result_oper.AddAction(action);
                     }
                     break;
@@ -1104,7 +1212,15 @@ namespace LPDP.TextAnalysis
                             destination_str = EjectStringDestination(destination_ph);
                             action.Parameters.Add(destination_str.Key);
                             action.Parameters.Add(destination_str.Value);
-                            action.Parameters.Add(true);
+                            if (firstly)
+                            {
+                                action.Parameters.Add(false); //islast
+                                firstly = false;
+                            }
+                            else
+                            {
+                                action.Parameters.Add(true); //islast
+                            }
                             result_oper.AddAction(action);
                         }
                     }
@@ -1134,5 +1250,15 @@ namespace LPDP.TextAnalysis
 
 
         #endregion
+
+
+        //public static void SetRules()
+        //{
+        //    ModelTextRules.InitializeLexicalTemplates();
+        //    ModelTextRules.InitializeWordTypes();
+        //    ModelTextRules.InitializePrimaryPhraseTypes();
+        //    ModelTextRules.InitializeSyntacticalTemplates();
+        //    ModelTextRules.InitializeErrorTypes();
+        //}
     }
 }

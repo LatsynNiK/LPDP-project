@@ -5,7 +5,7 @@ using System.Text;
 
 namespace LPDP.TextAnalysis
 {
-    class LexemeTypeTemplate
+    public class LexemeTypeTemplate
     {
         public LexemeType LType;
         public LexemeType[] LTemplate;

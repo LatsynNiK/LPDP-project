@@ -31,8 +31,12 @@ namespace ПОСП
             Queues_Tab.Parent = null;
             GraphicModel_Tab.Parent = null;
 
+            LPDP.TextAnalysis.ModelTextRules.SetRules();
+
             ////
             this.DataSets = new InputOutputData();
+            
+            
         }
         private void POSP_Form_Load(object sender, EventArgs e)
         {
@@ -49,7 +53,15 @@ namespace ПОСП
             //LPDP_Data.CreateTable(LPDP_Data.FTT, "Time", "Initiator", "Mark", "Unit");
             //LPDP_Data.CreateTable(LPDP_Data.CT, "Condition", "Initiator", "Mark", "Unit");
 
-            LPDP_Actions.Initialize_LPDP_ModelTextRules();
+            //LPDP_Actions.Initialize_LPDP_ModelTextRules();
+
+
+            TextFormat.UseCaptions(this.Objects_View, this.DataSets.Objects);
+            TextFormat.UseCaptions(this.Initiators_View, this.DataSets.Initiators);
+            TextFormat.UseCaptions(this.FTT_View, this.DataSets.FTT);
+            TextFormat.UseCaptions(this.CT_View, this.DataSets.CT);
+            TextFormat.UseCaptions(this.Queues_View, this.DataSets.Queues);
+
         }
 
         private void InitializeComponent()
@@ -88,7 +100,7 @@ namespace ПОСП
             this.TopContainer = new System.Windows.Forms.SplitContainer();
             this.FilePath_label = new System.Windows.Forms.Label();
             this.CodeField = new System.Windows.Forms.RichTextBox();
-            this.TIME_Indicator = new System.Windows.Forms.Panel();
+            this.General_Indicators = new System.Windows.Forms.Panel();
             this.TIME_Value = new System.Windows.Forms.Label();
             this.TIME_Lable = new System.Windows.Forms.Label();
             this.ResultField = new System.Windows.Forms.TabControl();
@@ -117,6 +129,8 @@ namespace ПОСП
             this.GraphicModel_View = new System.Windows.Forms.PictureBox();
             this.BuildingField = new System.Windows.Forms.RichTextBox();
             this.FileName_label = new System.Windows.Forms.Label();
+            this.INITIATOR_Label = new System.Windows.Forms.Label();
+            this.INITIATOR_Value = new System.Windows.Forms.Label();
             this.MainMenu.SuspendLayout();
             this.MainContainer.Panel1.SuspendLayout();
             this.MainContainer.Panel2.SuspendLayout();
@@ -124,7 +138,7 @@ namespace ПОСП
             this.TopContainer.Panel1.SuspendLayout();
             this.TopContainer.Panel2.SuspendLayout();
             this.TopContainer.SuspendLayout();
-            this.TIME_Indicator.SuspendLayout();
+            this.General_Indicators.SuspendLayout();
             this.ResultField.SuspendLayout();
             this.Objects_Tab.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.Objects_View)).BeginInit();
@@ -425,7 +439,7 @@ namespace ПОСП
             // 
             // TopContainer.Panel2
             // 
-            this.TopContainer.Panel2.Controls.Add(this.TIME_Indicator);
+            this.TopContainer.Panel2.Controls.Add(this.General_Indicators);
             this.TopContainer.Panel2.Controls.Add(this.ResultField);
             this.TopContainer.Size = new System.Drawing.Size(868, 422);
             this.TopContainer.SplitterDistance = 551;
@@ -457,22 +471,24 @@ namespace ПОСП
             this.CodeField.Text = "";
             this.CodeField.WordWrap = false;
             // 
-            // TIME_Indicator
+            // General_Indicators
             // 
-            this.TIME_Indicator.Controls.Add(this.TIME_Value);
-            this.TIME_Indicator.Controls.Add(this.TIME_Lable);
-            this.TIME_Indicator.Dock = System.Windows.Forms.DockStyle.Top;
-            this.TIME_Indicator.Location = new System.Drawing.Point(0, 0);
-            this.TIME_Indicator.Name = "TIME_Indicator";
-            this.TIME_Indicator.Size = new System.Drawing.Size(313, 24);
-            this.TIME_Indicator.TabIndex = 1;
+            this.General_Indicators.Controls.Add(this.INITIATOR_Label);
+            this.General_Indicators.Controls.Add(this.INITIATOR_Value);
+            this.General_Indicators.Controls.Add(this.TIME_Value);
+            this.General_Indicators.Controls.Add(this.TIME_Lable);
+            this.General_Indicators.Dock = System.Windows.Forms.DockStyle.Top;
+            this.General_Indicators.Location = new System.Drawing.Point(0, 0);
+            this.General_Indicators.Name = "General_Indicators";
+            this.General_Indicators.Size = new System.Drawing.Size(313, 24);
+            this.General_Indicators.TabIndex = 1;
             // 
             // TIME_Value
             // 
             this.TIME_Value.AutoSize = true;
             this.TIME_Value.Dock = System.Windows.Forms.DockStyle.Left;
             this.TIME_Value.Font = new System.Drawing.Font("Microsoft Sans Serif", 16F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.TIME_Value.Location = new System.Drawing.Point(224, 0);
+            this.TIME_Value.Location = new System.Drawing.Point(90, 0);
             this.TIME_Value.Name = "TIME_Value";
             this.TIME_Value.Size = new System.Drawing.Size(24, 26);
             this.TIME_Value.TabIndex = 2;
@@ -485,10 +501,10 @@ namespace ПОСП
             this.TIME_Lable.Font = new System.Drawing.Font("Microsoft Sans Serif", 16F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.TIME_Lable.Location = new System.Drawing.Point(0, 0);
             this.TIME_Lable.Name = "TIME_Lable";
-            this.TIME_Lable.Padding = new System.Windows.Forms.Padding(20, 0, 0, 0);
-            this.TIME_Lable.Size = new System.Drawing.Size(224, 26);
+            this.TIME_Lable.Padding = new System.Windows.Forms.Padding(5, 0, 0, 0);
+            this.TIME_Lable.Size = new System.Drawing.Size(90, 26);
             this.TIME_Lable.TabIndex = 1;
-            this.TIME_Lable.Text = "Модельное время:";
+            this.TIME_Lable.Text = "Время:";
             // 
             // ResultField
             // 
@@ -889,6 +905,28 @@ namespace ПОСП
             this.FileName_label.TabIndex = 3;
             this.FileName_label.Text = "Новая модель";
             // 
+            // INITIATOR_Label
+            // 
+            this.INITIATOR_Label.AutoSize = true;
+            this.INITIATOR_Label.Dock = System.Windows.Forms.DockStyle.Right;
+            this.INITIATOR_Label.Font = new System.Drawing.Font("Microsoft Sans Serif", 16F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.INITIATOR_Label.Location = new System.Drawing.Point(160, 0);
+            this.INITIATOR_Label.Name = "INITIATOR_Label";
+            this.INITIATOR_Label.Size = new System.Drawing.Size(129, 26);
+            this.INITIATOR_Label.TabIndex = 3;
+            this.INITIATOR_Label.Text = "Инициатор:";
+            // 
+            // INITIATOR_Value
+            // 
+            this.INITIATOR_Value.AutoSize = true;
+            this.INITIATOR_Value.Dock = System.Windows.Forms.DockStyle.Right;
+            this.INITIATOR_Value.Font = new System.Drawing.Font("Microsoft Sans Serif", 16F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.INITIATOR_Value.Location = new System.Drawing.Point(289, 0);
+            this.INITIATOR_Value.Name = "INITIATOR_Value";
+            this.INITIATOR_Value.Size = new System.Drawing.Size(24, 26);
+            this.INITIATOR_Value.TabIndex = 5;
+            this.INITIATOR_Value.Text = "0";
+            // 
             // POSP_Form
             // 
             this.ClientSize = new System.Drawing.Size(892, 584);
@@ -912,8 +950,8 @@ namespace ПОСП
             this.TopContainer.Panel1.PerformLayout();
             this.TopContainer.Panel2.ResumeLayout(false);
             this.TopContainer.ResumeLayout(false);
-            this.TIME_Indicator.ResumeLayout(false);
-            this.TIME_Indicator.PerformLayout();
+            this.General_Indicators.ResumeLayout(false);
+            this.General_Indicators.PerformLayout();
             this.ResultField.ResumeLayout(false);
             this.Objects_Tab.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.Objects_View)).EndInit();
@@ -1330,10 +1368,17 @@ namespace ПОСП
             this.DataSets.Output_All_Data();
             //CodeField.Rtf = LPDP_Data.CodeRtf;
             CodeField.Text = this.DataSets.CodeTxt;// CodeRtf;
+
             
             Dictionary<int, Color> dict = TextFormat.InsertQueueArrows(CodeField, this.DataSets.QueueArrows);
-            TextFormat.ColorizeArrows(CodeField,dict);
-            TextFormat.ColorizeNextOperator(CodeField, this.DataSets.NextOperatorPosition_Start, this.DataSets.NextOperatorPosition_Length, this.DataSets.NextInitiatorIsFlow);
+            TextFormat.ColorizeAll(CodeField, dict, 
+                this.DataSets.NextOperatorPosition_Start, this.DataSets.NextOperatorPosition_Length, this.DataSets.NextInitiatorIsFlow,
+                this.DataSets.UnitPosition);
+             
+
+
+
+            //TextFormat.ColorizeNextOperator(CodeField, this.DataSets.NextOperatorPosition_Start, this.DataSets.NextOperatorPosition_Length, this.DataSets.NextInitiatorIsFlow);
 
 
             BuildingField.Text = this.DataSets.InfoTxt;
@@ -1341,17 +1386,15 @@ namespace ПОСП
             очередиToolStripMenuItem.Checked = this.DataSets.ShowQueues;
             системныеМеткиToolStripMenuItem.Checked = this.DataSets.ShowSysMark;
 
-            TIME_Value.Text = Convert.ToString(Math.Round(this.DataSets.TIME, 2));
+            TIME_Value.Text = Convert.ToString(Math.Round(this.DataSets.TIME, this.DataSets.Precision));
+            INITIATOR_Value.Text = Convert.ToString(this.DataSets.InitiatorNumber);
             
             this.Objects_View.DataSource = this.DataSets.Objects;
             this.Initiators_View.DataSource = this.DataSets.Initiators;
             this.FTT_View.DataSource = this.DataSets.FTT;
             this.CT_View.DataSource = this.DataSets.CT;
-
             this.Queues_View.DataSource = this.DataSets.Queues;
-
-
-            //this.Queues_View.DataSource = this.DataSets.Queues;
+            
         }
 
 
@@ -1896,7 +1939,7 @@ namespace ПОСП
 
             string CellID = Initiators_View[0, Row_index].Value.ToString();
             string CellValue = Initiators_View[1, Row_index].Value.ToString();
-            string CellType = Initiators_View[2, Row_index].Value.ToString();
+            string CellType = Initiators_View[3, Row_index].Value.ToString();
 
             if (CellType == "Вектор")
             {
