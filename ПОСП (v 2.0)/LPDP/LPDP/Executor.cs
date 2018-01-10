@@ -64,6 +64,12 @@ namespace LPDP
             //while(this.SUBPROGRAM.)
         }
 
+        public void Stop()
+        {
+            this.ParentModel.Built = false;
+            this.SetCurrentUnit(this.ParentModel.Units[0]);
+        }
+
         void SetState()
         {
             RecordEvent next_event = this.TC_Cont.FindNextEvent();

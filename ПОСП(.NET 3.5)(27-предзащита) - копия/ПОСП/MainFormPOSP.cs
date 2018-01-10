@@ -978,355 +978,6 @@ namespace ПОСП
             }
 
         }
-        //private void CodeField_TextChanged(object sender, EventArgs e)
-        //{
-        //    if (LPDP_Data.Model_Is_Built == false)
-        //    {
-        //        ModelTextIsModified = true;
-
-                
-
-        //        int CursorPosition = CodeField.SelectionStart;
-
-        //        int StartWord = CursorPosition;
-        //        //определение начала слова
-        //        //if (CursorPosition == CodeField.Text.Length) CursorPosition--;
-        //        //char NewChar = CodeField.Text[CursorPosition];
-        //        while ((StartWord > 0) && (LPDP_Core.SplitterSimbols.Contains(CodeField.Text[StartWord - 1]) == false) )
-        //            StartWord--;
-
-        //        //определение конца слова
-        //        int LenWord = 0;
-        //        //NewChar = CodeField.Text[StartWord];
-        //        while ((StartWord+LenWord < CodeField.Text.Length) && (LPDP_Core.SplitterSimbols.Contains(CodeField.Text[StartWord + LenWord]) == false))
-        //            LenWord++;
-
-        //        string Word = CodeField.Text.Substring(StartWord, LenWord);
-
-        //        CodeField.SelectionStart = StartWord;
-        //        CodeField.SelectionLength = LenWord;
-
-        //        if (LPDP_Data.FunctionWord.Contains(Word))
-        //        {
-        //            CodeField.Rtf = LPDP_Data.Colorize_FunctionWord(CodeField);
-        //            //CodeField.SelectionStart = StartWord + LenWord;
-        //            //CodeField.SelectionLength = 0;
-        //            //CodeField.Rtf = LPDP_Code.Colorize_OrdinaryWord(CodeField);
-        //        }
-                    
-        //        else
-        //            CodeField.Rtf = LPDP_Code.Colorize_OrdinaryWord(CodeField);
-        //        CodeField.DeselectAll();                
-        //        CodeField.SelectionStart = CursorPosition;
-        //        CodeField.Rtf = LPDP_Code.Colorize_OrdinaryWord(CodeField);
-
-        //        //RichTextBox ReservRTB = new RichTextBox();
-        //        //ReservRTB.Font = new Font("Microsoft Sans Serif", 12);
-        //        //ReservRTB.ForeColor = Color.Black;
-        //        //ReservRTB.BackColor = Color.White;
-        //        //ReservRTB.Paste();
-
-        //        //CodeField.SelectAll();
-        //        //CodeField.SelectionFont = CodeField.Font;// new Font("Microsoft Sans Serif", 12);
-        //        //CodeField.SelectionColor = CodeField.ForeColor;// Color.Black;
-        //        //CodeField.SelectionBackColor = CodeField.BackColor;// Color.White;
-        //        //CodeField.DeselectAll();
-
-        //        //ReservRTB.SelectAll();
-        //        //ReservRTB.Copy();
-        //        //ReservRTB.Dispose();
-        //    }
-        //}
-
-        //internal DataGridView Write_Vector_to_Objects_View(DataGridView Grid, List<LPDP_Object> list)
-        //{
-        //    for (int i = 0; i < list.Count; i++)
-        //    {
-        //        string type = "";
-        //        switch (list[i].Type)
-        //        {
-        //            case LPDP_Object.ObjectType.Scalar:
-        //                type = "Скаляр";
-        //                break;
-        //            case LPDP_Object.ObjectType.Link:
-        //                type = "Ссылка";
-        //                break;
-        //            case LPDP_Object.ObjectType.Vector:
-        //                type = "Вектор";
-        //                break;
-        //        }
-
-
-        //        if (list[i].Type == LPDP_Object.ObjectType.Vector)
-        //        {
-        //            Vector Subvec = (Vector)list[i];
-        //            Grid.Rows.Add(Subvec.Unit, Subvec.Name, Subvec.GetTree(), type);
-        //            Grid.Rows.SharedRow(Grid.Rows.Count - 1).Cells[0].Style.ForeColor = Color.White;
-        //            Grid.Rows[Grid.RowCount - 1].Visible = false;
-        //            Grid = Write_Vector_to_Objects_View(Grid, Subvec.Value);
-        //        }
-        //        else
-        //        {
-        //            Grid.Rows.Add(list[i].Unit, list[i].Name, list[i].GetValue(), type);
-        //            Grid.Rows[Grid.RowCount - 1].Visible = false;
-        //            Grid.Rows.SharedRow(Grid.Rows.Count-1).Cells[0].Style.ForeColor = Color.White;
-
-        //            //if (LPDP_Core.IsNumber((string)list[i].GetValue()))
-        //            //    Grid.Rows.Add("", list[i].Name, Convert.ToDouble(list[i].GetValue()), type);
-        //            //else
-        //            //    Grid.Rows.Add("", list[i].Name, list[i].GetValue(), type);
-        //        }
-                    
-        //    }
-        //    return Grid;
-        //}
-        //internal void Rewrite_Objects_View()
-        //{
-        //    this.Objects_View.Rows.Clear();
-        //    for (int i = 0; i < LPDP_Core.GlobalVar_Table.Count; i++)
-        //    {
-        //        LPDP_Object Var = LPDP_Core.GlobalVar_Table[i];
-
-        //        if (LPDP_Core.Pairs.Exists(rec => (rec.Name == Var.Name) && (rec.To == Var.Unit)) == false)
-        //        {                    
-        //            string name = Var.Name;
-        //            string unit = Var.Unit;
-        //            string type = "";
-        //            switch (Var.Type)
-        //            {
-        //                case LPDP_Object.ObjectType.Scalar:
-        //                    type = "Скаляр";
-        //                    break;
-        //                case LPDP_Object.ObjectType.Link:
-        //                    type = "Ссылка";
-        //                    break;
-        //                case LPDP_Object.ObjectType.Vector:
-        //                    type = "Вектор";
-        //                    break;
-        //            }
-
-        //            if (Var.Type == LPDP_Object.ObjectType.Vector)
-        //            {
-        //                Vector Vec = (Vector)Var;
-        //                this.Objects_View.Rows.Add(unit, name, Vec.GetTree(), type);
-        //                Vector SubVector = (Vector)Vec;
-        //                this.Objects_View = Write_Vector_to_Objects_View(this.Objects_View, SubVector.Value);
-        //            }
-        //            else
-        //            {
-        //                string value = Var.GetValue();
-        //                this.Objects_View.Rows.Add(unit, name, value, type);
-        //                //if (LPDP_Core.IsNumber(value))
-        //                //    this.Objects_View.Rows.Add(unit, name, Convert.ToDouble(value), type);
-        //                //else
-        //                //    this.Objects_View.Rows.Add(unit, name, value, type);
-        //            }
-        //        }
-        //    }
-        //    Objects_View.ClearSelection();
-        //}
-
-        //internal DataGridView Write_Vector_to_Initiators_View(DataGridView Grid, List<LPDP_Object> list, int ID)
-        //{
-        //    for (int i = 0; i < list.Count; i++)
-        //    {
-        //        string type = "";
-        //        switch (list[i].Type)
-        //        {
-        //            case LPDP_Object.ObjectType.Scalar:
-        //                type = "Скаляр";
-        //                break;
-        //            case LPDP_Object.ObjectType.Link:
-        //                type = "Ссылка";
-        //                break;
-        //            case LPDP_Object.ObjectType.Vector:
-        //                type = "Вектор";
-        //                break;
-        //        }
-
-        //        if (list[i].Type == LPDP_Object.ObjectType.Vector)
-        //        {
-        //            Vector Subvec = (Vector)list[i];
-        //            Grid.Rows.Add("   " + ID + " -> "+ Subvec.Name, Subvec.GetValue(), type);
-        //            Grid.Rows[Grid.RowCount - 1].Visible = false;
-        //            Grid = Write_Vector_to_Initiators_View(Grid, Subvec.Value, ID);
-        //        }
-        //        else
-        //        {
-        //            Grid.Rows.Add("   " + ID + " -> " + list[i].Name, list[i].GetValue(), type);
-        //            Grid.Rows[Grid.RowCount - 1].Visible = false;
-        //        }
-
-        //    }
-        //    return Grid;
-        //}
-        //internal void Rewrite_Initiators_View()
-        //{
-        //    this.Initiators_View.Rows.Clear();
-        //    for (int i = 0; i < LPDP_Core.LocalArea_Table.Count; i++)
-        //    {
-        //        int ID = LPDP_Core.LocalArea_Table[i].ID;
-
-        //        LPDP_Object Var = LPDP_Core.LocalArea_Table[i].Value;
-
-        //        string type = "";
-        //        switch (Var.Type)
-        //        {
-        //            case LPDP_Object.ObjectType.Scalar:
-        //                type = "Скаляр";
-        //                break;
-        //            case LPDP_Object.ObjectType.Link:
-        //                type = "Ссылка";
-        //                break;
-        //            case LPDP_Object.ObjectType.Vector:
-        //                type = "Вектор";
-        //                break;
-        //        }
-
-        //        if (Var.Type == LPDP_Object.ObjectType.Vector)
-        //        {
-        //            Vector Vec = (Vector)Var;
-        //            this.Initiators_View.Rows.Add(" " + ID + " -> ", Vec.GetValue(), type);
-        //            Vector SubVector = (Vector)Vec;
-        //            this.Initiators_View = Write_Vector_to_Initiators_View(this.Initiators_View, SubVector.Value, ID);
-        //        }
-        //        else
-        //        {
-        //            this.Initiators_View.Rows.Add(" " + ID + " -> ", Var.GetValue(), type);
-        //        }
-        //    }
-        //    Initiators_View.ClearSelection();
-        //}
-        //internal void Rewrite_Queues_View()
-        //{
-        //    this.Queues_View.Rows.Clear();
-
-        //    for (int q = 0; q < LPDP_Core.Queues.Count; q++)
-        //    {
-        //        if (LPDP_Core.Queues[q].Queue.Count > 0)
-        //        {
-        //            if (LPDP_Core.Queues[q].Queue[0].Initiator != -1)
-        //            {
-        //                //заголовочная запись
-        //                string initiators_order = "";
-        //                for (int i = 0; i < LPDP_Core.Queues[q].Queue.Count - 1; i++)
-        //                    initiators_order += LPDP_Core.Queues[q].Queue[i].Initiator + " << ";
-        //                initiators_order += LPDP_Core.Queues[q].Queue[LPDP_Core.Queues[q].Queue.Count - 1].Initiator;
-
-        //                LPDP_Core.record_MARK NewMark = LPDP_Core.MARKS.Find(m => m.Subprogram_Index == q);
-        //                this.Queues_View.Rows.Add(q, NewMark.Unit, NewMark.Name, initiators_order); 
-
-        //                //развертка
-        //                for (int i = 0; i < LPDP_Core.Queues[q].Queue.Count; i++)
-        //                {
-        //                    Vector Init = (Vector) LPDP_Core.LocalArea_Table.Find(la => la.ID == LPDP_Core.Queues[q].Queue[i].Initiator).Value;
-        //                    this.Queues_View.Rows.Add(q, "", "", LPDP_Core.Queues[q].Queue[i].Initiator + " -> " + Init.GetValue());
-        //                    this.Queues_View.Rows[this.Queues_View.Rows.Count - 1].Visible = false;
-        //                }
-        //            }
-        //        }
-        //    }
-        //    Queues_View.ClearSelection();
-
-        //        //for (int i = 0; i < LPDP_Core.LocalArea_Table.Count; i++)
-        //        //{
-        //        //    int ID = LPDP_Core.LocalArea_Table[i].ID;
-
-        //        //    LPDP_Object Var = LPDP_Core.LocalArea_Table[i].Value;
-
-        //        //    string type = "";
-        //        //    switch (Var.Type)
-        //        //    {
-        //        //        case LPDP_Object.ObjectType.Scalar:
-        //        //            type = "Скаляр";
-        //        //            break;
-        //        //        case LPDP_Object.ObjectType.Link:
-        //        //            type = "Ссылка";
-        //        //            break;
-        //        //        case LPDP_Object.ObjectType.Vector:
-        //        //            type = "Вектор";
-        //        //            break;
-        //        //    }
-
-        //        //    if (Var.Type == LPDP_Object.ObjectType.Vector)
-        //        //    {
-        //        //        Vector Vec = (Vector)Var;
-        //        //        this.Initiators_View.Rows.Add(" " + ID + " -> ", Vec.GetValue(), type);
-        //        //        Vector SubVector = (Vector)Vec;
-        //        //        this.Initiators_View = Write_Vector_to_Initiators_View(this.Initiators_View, SubVector.Value, ID);
-        //        //    }
-        //        //    else
-        //        //    {
-        //        //        this.Initiators_View.Rows.Add(" " + ID + " -> ", Var.GetValue(), type);
-        //        //    }
-        //        //}
-                
- 
-        //}
-        //internal void Rewrite_FTT_View()
-        //{
-        //    this.FTT_View.Rows.Clear();
-        //    for (int i = 0; i < LPDP_Core.FTT.Count; i++)
-        //    {
-        //        LPDP_Core.record_MARK NewMark = LPDP_Core.MARKS.Find(name => name.Subprogram_Index == LPDP_Core.FTT[i].Subprogram_Index);
-        //        this.FTT_View.Rows.Add(LPDP_Core.FTT[i].ActiveTime, LPDP_Core.FTT[i].Initiator, NewMark.Name, NewMark.Unit);
-        //    }
-
-        //    if (FTT_View.Rows.Count > 0)
-        //    {            
-        //        double min_time = (double)this.FTT_View.Rows.SharedRow(0).Cells[0].Value;
-        //        int PaintedIndex = 0;
-        //        for (int i = 1; i < this.FTT_View.Rows.Count; i++)
-        //        {
-        //            if ((double)this.FTT_View.Rows.SharedRow(i).Cells[0].Value < min_time)
-        //            {
-        //                PaintedIndex = i;
-        //                min_time = (double)this.FTT_View.Rows.SharedRow(i).Cells[0].Value;
-        //            } 
-        //        }
-        //        FTT_View.Rows.SharedRow(PaintedIndex).Cells[0].Style.ForeColor = Color.Green;
-        //        FTT_View.Rows.SharedRow(PaintedIndex).Cells[0].Style.SelectionForeColor = Color.Green;
-        //        FTT_View.ClearSelection();
-        //    }
-
-        //}
-        //internal void Rewrite_CT_View()
-        //{
-        //    this.CT_View.Rows.Clear();
-        //    for (int i = 0; i < LPDP_Core.CT.Count; i++)
-        //    {
-        //        LPDP_Core.record_MARK NewMark = LPDP_Core.MARKS.Find(name => name.Subprogram_Index == LPDP_Core.CT[i].Subprogram_Index);
-        //        this.CT_View.Rows.Add(LPDP_Core.CT[i].Condition, LPDP_Core.CT[i].Initiator, NewMark.Name, NewMark.Unit);
-        //    }
-
-        //    if (CT_View.Rows.Count > 0)
-        //    {
-        //        for (int i = 0; i < this.CT_View.Rows.Count; i++)
-        //        {
-        //            int SaveInitiatior = LPDP_Core.INITIATOR;
-        //            LPDP_Core.INITIATOR = LPDP_Core.CT[i].Initiator;
-        //            if (LPDP_Core.Logic_Expression(LPDP_Core.CT[i].Condition, LPDP_Core.CT[i].FromUnit) == true)
-        //            {
-        //                CT_View.Rows.SharedRow(i).Cells[0].Style.ForeColor = Color.Green;
-        //                CT_View.Rows.SharedRow(i).Cells[0].Style.SelectionForeColor = Color.Green;
-        //                CT_View.ClearSelection();
-        //            }
-        //            LPDP_Core.INITIATOR = SaveInitiatior;
-        //        }
-        //    }
-
-        //}
-
-        //internal void Rewrite_All_Views()
-        //{
-        //    Rewrite_FTT_View();
-        //    Rewrite_CT_View();
-        //    Rewrite_Objects_View();
-        //    Rewrite_Initiators_View();
-        //    Rewrite_Queues_View();
-
-        //    this.GraphicModel_View.Refresh();
-        //}
 
         void UpDate()
         {
@@ -1620,7 +1271,9 @@ namespace ПОСП
         {
             this.UpDate();
 
-            LPDP_Actions.Stop();
+            //LPDP_Actions.Stop();
+            //this.ExploredModel.Built = false;
+            this.ExploredModel.Executor.Stop();
 
             this.UpLoad();
 
@@ -1733,9 +1386,9 @@ namespace ПОСП
         //отображения
         private void отображенияToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            системныеМеткиToolStripMenuItem.Enabled = LPDP_Data.GetModelIsBuilt();
-            следующийОператорToolStripMenuItem.Enabled = LPDP_Data.GetModelIsBuilt();
-            очередиToolStripMenuItem.Enabled = LPDP_Data.GetModelIsBuilt();
+            системныеМеткиToolStripMenuItem.Enabled = this.Output.ModelIsBuilt;
+            следующийОператорToolStripMenuItem.Enabled = this.Output.ModelIsBuilt;
+            очередиToolStripMenuItem.Enabled = this.Output.ModelIsBuilt;
         }
         private void системныеМеткиToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -1764,7 +1417,7 @@ namespace ПОСП
 
             отображенияToolStripMenuItem.ShowDropDown();
             //CodeField.Rtf = LPDP_Code.Rewrite_Initiators_RTF(CodeField.Rtf, следующийОператорToolStripMenuItem.Checked, очередиToolStripMenuItem.Checked);
-            LPDP_Actions.UpGradeCode();
+            //LPDP_Actions.UpGradeCode();
         }
         private void очередиToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -1780,7 +1433,7 @@ namespace ПОСП
             //CodeField.Rtf = LPDP_Code.Rewrite_Initiators_RTF(CodeField.Rtf, следующийОператорToolStripMenuItem.Checked, очередиToolStripMenuItem.Checked);
             //LPDP_Actions.Building(this.DataSets.CodeTxt);
             //LPDP_Graphics.Reload_Values_and_Queues(очередиToolStripMenuItem.Checked);
-            GraphicModel_View.Refresh();
+            //GraphicModel_View.Refresh();
         }
 
         private void путьКФайлуToolStripMenuItem_Click(object sender, EventArgs e)
