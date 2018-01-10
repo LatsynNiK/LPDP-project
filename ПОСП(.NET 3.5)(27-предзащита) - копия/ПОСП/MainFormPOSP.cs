@@ -966,15 +966,25 @@ namespace ПОСП
         {
             if (e.KeyData == Keys.F5)
             {
-                if (LPDP_Data.GetModelIsBuilt() == false) построениеToolStripMenuItem_Click(sender, e);
-                else запускПоВремениToolStripMenuItem_Click(sender, e);
+                if ((this.Output == null) || (this.Output.ModelIsBuilt == false))
+                {
+                    построениеToolStripMenuItem_Click(sender, e);
+                }
+                else
+                {
+                    запускПоВремениToolStripMenuItem_Click(sender, e);
+                }
             }
             if (e.KeyCode == Keys.S && (e.Control))
             {
-                if (LPDP_Data.GetModelIsBuilt())
+                if (this.Output.ModelIsBuilt)
+                {
                     BuildingField.Text = "Для сохранения модели необходимо остановить моделирование.";
+                }
                 else
+                {
                     сохранитьToolStripMenuItem.PerformClick();
+                }
             }
 
         }
@@ -998,16 +1008,19 @@ namespace ПОСП
             CodeField.Text = out_data.CodeTxt;// CodeRtf;
 
 
-            Dictionary<int, Color> dict = TextFormat.InsertQueueArrows(CodeField, out_data.QueueArrows);
-            TextFormat.ColorizeAll(CodeField, dict,
-                out_data.NextOperatorPosition_Start, out_data.NextOperatorPosition_Length, out_data.NextInitiatorIsFlow,
-                out_data.UnitPosition);
-             
-
-
-
-            //TextFormat.ColorizeNextOperator(CodeField, this.DataSets.NextOperatorPosition_Start, this.DataSets.NextOperatorPosition_Length, this.DataSets.NextInitiatorIsFlow);
-
+            int shifting = 0;
+            if (this.Input.ShowQueues)
+            {
+                shifting = TextFormat.InsertColorQueueArrows(this.CodeField, out_data.QueueArrows, out_data.NextOperatorPosition_Start);
+            }
+            if (this.Input.ShowNextOperator)
+            {
+                TextFormat.ColorizeNextOperator(this.CodeField, 
+                    out_data.NextOperatorPosition_Start + shifting, 
+                    out_data.NextOperatorPosition_Length, 
+                    out_data.NextInitiatorIsFlow,
+                    out_data.UnitPosition);
+            }
 
             BuildingField.Text = out_data.InfoTxt;
             //следующийОператорToolStripMenuItem.Checked = this.DataSets.ShowNextOperator;
@@ -1248,7 +1261,7 @@ namespace ПОСП
         private void выполнениеКОСToolStripMenuItem_Click(object sender, EventArgs e)
         {
             this.UpDate();
-            double LaunchTime = Convert.ToDouble(вводВремениToolStripMenuItem.Text);
+            //double LaunchTime = Convert.ToDouble(вводВремениToolStripMenuItem.Text);
             this.ExploredModel.Executor.StartSEC();
             if (this.Output.ModelIsBuilt == false)
                 стопToolStripMenuItem.PerformClick();
@@ -1418,6 +1431,8 @@ namespace ПОСП
             отображенияToolStripMenuItem.ShowDropDown();
             //CodeField.Rtf = LPDP_Code.Rewrite_Initiators_RTF(CodeField.Rtf, следующийОператорToolStripMenuItem.Checked, очередиToolStripMenuItem.Checked);
             //LPDP_Actions.UpGradeCode();
+            this.UpDate();
+            this.UpLoad();
         }
         private void очередиToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -1434,6 +1449,8 @@ namespace ПОСП
             //LPDP_Actions.Building(this.DataSets.CodeTxt);
             //LPDP_Graphics.Reload_Values_and_Queues(очередиToolStripMenuItem.Checked);
             //GraphicModel_View.Refresh();
+            this.UpDate();
+            this.UpLoad();
         }
 
         private void путьКФайлуToolStripMenuItem_Click(object sender, EventArgs e)
@@ -1487,32 +1504,62 @@ namespace ПОСП
             string CellName = Objects_View[1, Row_index].Value.ToString();
             string CellType = Objects_View[3, Row_index].Value.ToString();
 
+            //if (CellType == "Вектор")
+            //{
+            //    // развернуть
+            //    if (Objects_View[1, Row_index + 1].Visible == false)
+            //    {
+            //        for (int i = 0; i < Objects_View.RowCount; i++)
+            //        {
+            //            if ((Objects_View[1, i].Value.ToString().Contains(CellName)) && (Objects_View[0, i].Value.ToString() == CellUnit) &&
+            //                (Objects_View[1, i].Value.ToString().Count(ch => ch == '.') == CellName.Count(ch => ch == '.') + 1))
+            //            {
+            //                Objects_View.Rows[i].Visible = true;
+            //            }
+            //        }
+            //    }
+            //    //свернуть
+            //    else
+            //    {
+            //        for (int i = 0; i < Objects_View.RowCount; i++)
+            //        {
+            //            if ((Objects_View[1, i].Value.ToString().Contains(CellName)) && (Objects_View[0, i].Value.ToString() == CellUnit) &&
+            //                (Objects_View[1, i].Value.ToString() != CellName))
+            //            {
+            //                //Objects_View.Rows.RemoveAt(i);
+            //                Objects_View.Rows[i].Visible = false;
+            //                //i--;
+            //            }
+            //        }
+            //    }
             if (CellType == "Вектор")
             {
                 // развернуть
                 if (Objects_View[1, Row_index + 1].Visible == false)
                 {
-                    for (int i = 0; i < Objects_View.RowCount; i++)
+                    for (int i = Row_index + 1; i < Objects_View.RowCount; i++)
                     {
-                        if ((Objects_View[1, i].Value.ToString().Contains(CellName)) && (Objects_View[0, i].Value.ToString() == CellUnit) &&
-                            (Objects_View[1, i].Value.ToString().Count(ch => ch == '.') == CellName.Count(ch => ch == '.') + 1))
+                        if (Objects_View[0, i].Value.ToString()=="")
                         {
                             Objects_View.Rows[i].Visible = true;
                         }
+                        else
+                            break;
                     }
                 }
                 //свернуть
                 else
                 {
-                    for (int i = 0; i < Objects_View.RowCount; i++)
+                    for (int i = Row_index + 1; i < Objects_View.RowCount; i++)
                     {
-                        if ((Objects_View[1, i].Value.ToString().Contains(CellName)) && (Objects_View[0, i].Value.ToString() == CellUnit) &&
-                            (Objects_View[1, i].Value.ToString() != CellName))
+                        if (Objects_View[0, i].Value.ToString() == "")
                         {
                             //Objects_View.Rows.RemoveAt(i);
                             Objects_View.Rows[i].Visible = false;
                             //i--;
                         }
+                        else
+                            break;
                     }
                 }
             }
@@ -1532,24 +1579,27 @@ namespace ПОСП
                 // развернуть
                 if (Initiators_View[1, Row_index + 1].Visible == false)
                 {
-                    for (int i = 0; i < Initiators_View.RowCount; i++)
+                    for (int i = Row_index + 1; i < Initiators_View.RowCount; i++)
                     {
-                        if ((Initiators_View[0, i].Value.ToString().Contains(CellID)) &&
-                            (Initiators_View[0, i].Value.ToString().Count(ch => ch == '.') == CellID.Count(ch => ch == '.') + 1))
+                        if (Initiators_View[0, i].Value.ToString() == "")
                         {
                             Initiators_View.Rows[i].Visible = true;
                         }
+                        else
+                            break;
                     }
                 }
                 //свернуть
                 else
                 {
-                    for (int i = 0; i < Initiators_View.RowCount; i++)
+                    for (int i = Row_index + 1; i < Initiators_View.RowCount; i++)
                     {
-                        if ((Initiators_View[0, i].Value.ToString().Contains(CellID)) && (Initiators_View[0, i].Value.ToString() != CellID))
+                        if (Initiators_View[0, i].Value.ToString() == "")
                         {
                             Initiators_View.Rows[i].Visible = false;
                         }
+                        else
+                            break;
                     }
                 }
             }
@@ -1558,40 +1608,40 @@ namespace ПОСП
 
         private void Queues_View_MouseDoubleClick(object sender, MouseEventArgs e)
         {
-            int Row_index = Queues_View.CurrentCellAddress.Y;
-            int Column_index = Queues_View.CurrentCellAddress.X;
+        //    int Row_index = Queues_View.CurrentCellAddress.Y;
+        //    int Column_index = Queues_View.CurrentCellAddress.X;
 
-            string CellID = Queues_View[0, Row_index].Value.ToString();
-            string CellUnit = Queues_View[1, Row_index].Value.ToString();
-            string CellMark = Queues_View[2, Row_index].Value.ToString();
-            string CellInitiatiorsOrder = Queues_View[3, Row_index].Value.ToString();
+        //    string CellID = Queues_View[0, Row_index].Value.ToString();
+        //    string CellUnit = Queues_View[1, Row_index].Value.ToString();
+        //    string CellMark = Queues_View[2, Row_index].Value.ToString();
+        //    string CellInitiatiorsOrder = Queues_View[3, Row_index].Value.ToString();
 
-            if ((CellUnit != "")&&(CellMark!=""))
-            {
-                // развернуть
-                if (Queues_View[1, Row_index + 1].Visible == false)
-                {
-                    for (int i = 0; i < Queues_View.RowCount; i++)
-                    {
-                        if (Queues_View[0, i].Value.ToString() == Queues_View[0, Row_index].Value.ToString())
-                        {
-                            Queues_View.Rows[i].Visible = true;
-                            Queues_View.Columns[0].Visible = false;
-                        }
-                    }
-                }
-                //свернуть
-                else
-                {
-                    for (int i = 0; i < Queues_View.RowCount; i++)
-                    {
-                        if ((Queues_View[0, i].Value.ToString() == Queues_View[0, Row_index].Value.ToString())&&(i!=Row_index))
-                        {
-                            Queues_View.Rows[i].Visible = false;
-                        }
-                    }
-                }
-            }
+        //    if ((CellUnit != "")&&(CellMark!=""))
+        //    {
+        //        // развернуть
+        //        if (Queues_View[1, Row_index + 1].Visible == false)
+        //        {
+        //            for (int i = 0; i < Queues_View.RowCount; i++)
+        //            {
+        //                if (Queues_View[0, i].Value.ToString() == Queues_View[0, Row_index].Value.ToString())
+        //                {
+        //                    Queues_View.Rows[i].Visible = true;
+        //                    Queues_View.Columns[0].Visible = false;
+        //                }
+        //            }
+        //        }
+        //        //свернуть
+        //        else
+        //        {
+        //            for (int i = 0; i < Queues_View.RowCount; i++)
+        //            {
+        //                if ((Queues_View[0, i].Value.ToString() == Queues_View[0, Row_index].Value.ToString())&&(i!=Row_index))
+        //                {
+        //                    Queues_View.Rows[i].Visible = false;
+        //                }
+        //            }
+        //        }
+        //    }
 
         }
 
@@ -1659,8 +1709,13 @@ namespace ПОСП
                     for (int i = 0; i < Initiators_View.RowCount; i++)
                     {
                         string str_ID = Convert.ToString(Initiators_View[0, i].Value);
-                        str_ID = str_ID.Replace(" ", "");
-                        str_ID = str_ID.Substring(0, str_ID.IndexOf("->"));
+                        if (str_ID == "")
+                        {
+                            Initiators_View.Rows[i].Visible = false;
+                            continue;
+                        }
+                        //str_ID = str_ID.Replace(" ", "");
+                        //str_ID = str_ID.Substring(0, str_ID.IndexOf("->"));
                         int ID = Convert.ToInt32(str_ID);
 
                         if (Displayed_list.Contains(ID))
@@ -1698,9 +1753,9 @@ namespace ПОСП
         //        {
         //            Displayed_initiators_list = Get_DisplayedList(request);
 
-        //            for (int q = 0; q < LPDP_Core.Queues.Count; q++)
+        //            for (int q = 0; q < this.Queues_View.RowCount; q++)
         //            {
-        //                if (LPDP_Core.Queues[q].Queue.Exists(init => Displayed_initiators_list.Contains(init.Initiator)))
+        //                if (Queues_View.Rows[q].Cells[2].Value.ToString().Contains(init => Displayed_initiators_list.Contains(init.Initiator)))
         //                {
         //                    Displayed_list.Add(q);
         //                }
@@ -1713,7 +1768,7 @@ namespace ПОСП
         //                if (Displayed_list.Contains(ID))
         //                {
         //                    Queues_View.Rows[i].Visible = true;
-                            
+
         //                    string CellID = Queues_View[0, i].Value.ToString();
         //                    string CellUnit = Queues_View[1, i].Value.ToString();
         //                    string CellMark = Queues_View[2, i].Value.ToString();
@@ -1739,13 +1794,13 @@ namespace ПОСП
         //                        }
         //                    }
         //                }
-                            
+
         //                else
         //                    Queues_View.Rows[i].Visible = false;
         //            }
         //        }
         //        catch { }
-        //    }     
+        //    }
         //}
         private void Search_initiator_in_queues_textBox_KeyDown(object sender, KeyEventArgs e)
         {
@@ -1778,23 +1833,23 @@ namespace ПОСП
                 switch (NewClosing_Form.Result)
                 {
                     case Closing_Form.ResultType.Save:
-                        if (LPDP_Data.GetModelIsBuilt()) 
+                        if (this.Output.ModelIsBuilt) 
                             стопToolStripMenuItem.PerformClick();
                         сохранитьToolStripMenuItem.PerformClick();
 
-                        LPDP_Data.ClearTable(LPDP_Data.Objects);
-                        LPDP_Data.ClearTable(LPDP_Data.Initiators);
-                        LPDP_Data.ClearTable(LPDP_Data.Queues);
-                        LPDP_Data.ClearTable(LPDP_Data.FTT);
-                        LPDP_Data.ClearTable(LPDP_Data.CT);
+                        //LPDP_Data.ClearTable(LPDP_Data.Objects);
+                        //LPDP_Data.ClearTable(LPDP_Data.Initiators);
+                        //LPDP_Data.ClearTable(LPDP_Data.Queues);
+                        //LPDP_Data.ClearTable(LPDP_Data.FTT);
+                        //LPDP_Data.ClearTable(LPDP_Data.CT);
 
                         break;
                     case Closing_Form.ResultType.NoSave:
-                        LPDP_Data.ClearTable(LPDP_Data.Objects);
-                        LPDP_Data.ClearTable(LPDP_Data.Initiators);
-                        LPDP_Data.ClearTable(LPDP_Data.Queues);
-                        LPDP_Data.ClearTable(LPDP_Data.FTT);
-                        LPDP_Data.ClearTable(LPDP_Data.CT);
+                        //LPDP_Data.ClearTable(LPDP_Data.Objects);
+                        //LPDP_Data.ClearTable(LPDP_Data.Initiators);
+                        //LPDP_Data.ClearTable(LPDP_Data.Queues);
+                        //LPDP_Data.ClearTable(LPDP_Data.FTT);
+                        //LPDP_Data.ClearTable(LPDP_Data.CT);
                         break;
                     case Closing_Form.ResultType.Cancel:
                         e.Cancel = true;

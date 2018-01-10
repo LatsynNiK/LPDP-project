@@ -14,8 +14,8 @@ namespace LPDP
     {
         public Model ParentModel;
 
-        Subprogram SUBPROGRAM;
-        Operator NEXT_OPERATOR;
+        //Subprogram SUBPROGRAM;
+        //Operator NEXT_OPERATOR; 
         Initiator INITIATOR;
         double TIME;
 
@@ -40,27 +40,28 @@ namespace LPDP
             
 
             this.TIME = 0;
-            this.SUBPROGRAM = null;
-            this.NEXT_OPERATOR = null;
+            //this.SUBPROGRAM = null;
+            //this.NEXT_OPERATOR = null;
             this.INITIATOR = null;
             this.RAND = new Random();
         }
 
         public void StartUntil(double time)
         {
-            while (this.TIME < time)
+            while (this.TIME <= time)
             {
-                this.ExecuteSubprogram(this.SUBPROGRAM);
+                this.ExecuteSubprogram(this.INITIATOR.NextOperator.ParentSubprogram);
             }
         }
 
         public void StartStep()
         {
-            this.ExecuteOperator(this.NEXT_OPERATOR);
+            this.ExecuteOperator(this.INITIATOR.NextOperator);
         }
 
         public void StartSEC()
         {
+            this.StartUntil(this.TIME);
             //while(this.SUBPROGRAM.)
         }
 
@@ -68,6 +69,8 @@ namespace LPDP
         {
             this.ParentModel.Built = false;
             this.SetCurrentUnit(this.ParentModel.Units[0]);
+            this.QT = new QueueTable(this);
+            this.TIME = 0;
         }
 
         void SetState()
@@ -77,10 +80,12 @@ namespace LPDP
             {
                 this.TC_Cont.DeleteRecords(next_event.ID);
                 this.INITIATOR = next_event.Initiator;
-                this.SUBPROGRAM = next_event.Subprogram;
-                this.NEXT_OPERATOR = this.SUBPROGRAM.Operators[0];
+                //this.SUBPROGRAM = next_event.Subprogram;
+                //this.NEXT_OPERATOR = this.SUBPROGRAM.Operators[0];
 
-                this.INITIATOR.Position = this.SUBPROGRAM;
+                this.INITIATOR.NextOperator = next_event.Subprogram.Operators[0];
+
+                //this.INITIATOR.NextOperator = this.SUBPROGRAM;
                 if (next_event.GetType() == typeof(RecordFTT))
                 {
                     double active_time = ((RecordFTT)next_event).ActiveTime;
@@ -96,8 +101,9 @@ namespace LPDP
         public void SetCurrentUnit(Unit unit)
         {
             this.INITIATOR = new Initiator(InitiatorType.Description);
-            this.INITIATOR.Position = new Subprogram();
-            this.INITIATOR.Position.Unit = unit;
+            this.INITIATOR.NextOperator = new Operator();
+            this.INITIATOR.NextOperator.ParentSubprogram = new Subprogram();
+            this.INITIATOR.NextOperator.ParentSubprogram.Unit = unit;
             //this.SUBPROGRAM = new Subprogram();
             //this.SUBPROGRAM.Unit = unit;
         }
@@ -114,7 +120,7 @@ namespace LPDP
 
         int ExecuteSubprogram(Subprogram subprogram)
         {
-            this.SUBPROGRAM = subprogram;
+            //this.SUBPROGRAM = subprogram;
 
             foreach (Operator oper in subprogram.Operators)
             {
@@ -124,7 +130,7 @@ namespace LPDP
             //this.INITIATOR = next_event.Initiator;
             //this.SUBPROGRAM = this.TC_Cont.FindNextEvent().Subprogram;
             //this.NEXT_OPERATOR = this.SUBPROGRAM.Operators[0];
-            this.SetState();
+            //this.SetState();
 
 
 
@@ -145,7 +151,8 @@ namespace LPDP
             }
             else
             {
-                this.NEXT_OPERATOR = oper.ParentSubprogram.Operators[next_oper_index];
+                //this.NEXT_OPERATOR = oper.ParentSubprogram.Operators[next_oper_index];
+                this.INITIATOR.NextOperator = oper.ParentSubprogram.Operators[next_oper_index];
             }
             //Очереди            
             this.QT.Update(this.INITIATOR);
@@ -183,7 +190,7 @@ namespace LPDP
                     if (vartype_ph.Value.Exists(ph => ph.PhType == PhraseType.VectorVarType_Word))
                     {
                         Phrase description_line_ph = vartype_ph.Value.Find(ph => ph.PhType == PhraseType.DescriptionLine);
-                        new_obj = new Objects.Vector(var_name, unit_name, this.ParentModel.Analysis.CreateObjectsFromDesciptionLine(description_line_ph,this.SUBPROGRAM.Unit.Name));
+                        new_obj = new Objects.Vector(var_name, unit_name, this.ParentModel.Analysis.CreateObjectsFromDesciptionLine(description_line_ph,this.INITIATOR.NextOperator.ParentSubprogram.Unit.Name));
                     }
                     //для ссылки
                     if (vartype_ph.Value.Exists(ph => ph.PhType == PhraseType.LinkVarType_Word))
@@ -195,7 +202,8 @@ namespace LPDP
                     {
 
                     }
-                    this.ParentModel.O_Cont.CreateObject(new_obj,this.SUBPROGRAM.Unit.Name);
+                    //this.ParentModel.O_Cont.CreateObject(new_obj,this.INITIATOR.NextOperator.ParentSubprogram SUBPROGRAM.Unit.Name);
+                    this.ParentModel.O_Cont.CreateObject(new_obj,this.INITIATOR.NextOperator.ParentSubprogram.Unit.Name);
 
                     //list.Add(new_obj);
                     break;
@@ -208,8 +216,10 @@ namespace LPDP
                     }
                     else
                     {
-                        Objects.Object del_obj= this.ParentModel.O_Cont.GetObjectByName(deleted_name,this.SUBPROGRAM.Unit.Name);
-                        if (del_obj.Unit == this.SUBPROGRAM.Unit.Name)
+                        //Objects.Object del_obj= this.ParentModel.O_Cont.GetObjectByName(deleted_name,this.SUBPROGRAM.Unit.Name);
+                        Objects.Object del_obj = this.ParentModel.O_Cont.GetObjectByName(deleted_name, this.INITIATOR.NextOperator.ParentSubprogram.Unit.Name);
+                        //if (del_obj.Unit == this.SUBPROGRAM.Unit.Name)
+                        if (del_obj.Unit == this.INITIATOR.NextOperator.ParentSubprogram.Unit.Name)
                         {
                             this.ParentModel.O_Cont.DeleteObjectByID(del_obj.ID);
                         }
@@ -242,9 +252,11 @@ namespace LPDP
                     }
                     else 
                     {
-                        init = this.ParentModel.O_Cont.ActivateFromLink(link_name, this.SUBPROGRAM.Unit.Name);
+                        //init = this.ParentModel.O_Cont.ActivateFromLink(link_name, this.SUBPROGRAM.Unit.Name);
+                        init = this.ParentModel.O_Cont.ActivateFromLink(link_name, this.INITIATOR.NextOperator.ParentSubprogram.Unit.Name);
                     }
-                    init.Position = subp;
+                    //init.NextOperator = subp;
+                    init.NextOperator = subp.Operators[0];
 
                     if (to_the_begining)
                     {
@@ -467,7 +479,7 @@ namespace LPDP
                                 //error
                             }
                             p1 = param_values[0];
-                            return Convert.ToString(Convert.ToInt32(Convert.ToDouble(p1)));
+                            return Convert.ToString(Convert.ToInt32(Math.Truncate(Convert.ToDouble(p1))));
                             break;
                         case "ln":
                             if (param_values.Count < 1)
@@ -637,35 +649,13 @@ namespace LPDP
                 case PhraseType.Name:
                     string var_name = ((Lexeme)var).LValue;
 
-                    result = this.ParentModel.O_Cont.GetObjectByName (var_name, this.INITIATOR.Position.Unit.Name);
-
+                    //result = this.ParentModel.O_Cont.GetObjectByName (var_name, this.INITIATOR.NextOperator.Unit.Name);
+                    result = this.ParentModel.O_Cont.GetObjectByName(var_name, this.INITIATOR.NextOperator.ParentSubprogram.Unit.Name);
                     
-                    //if (this.ParentModel.O_Cont.GVT.Vars[this.SUBPROGRAM.Unit.Name].
-                    //    Exists(v => (v.Name == var_name) && (v.Type == Objects.ObjectType.Scalar)))
-                    //{
-                    //    result = this.ParentModel.O_Cont.GetScalar(var_name, this.SUBPROGRAM.Unit.Name);
-                    //}
-                    //if (this.ParentModel.O_Cont.GVT.Vars[this.SUBPROGRAM.Unit.Name].
-                    //    Exists(v => (v.Name == var_name) && (v.Type == Objects.ObjectType.Link)))
-                    //{
-                    //    result = this.ParentModel.O_Cont.GetLink(var_name, this.SUBPROGRAM.Unit.Name);
-                    //}
-                    //if (this.ParentModel.O_Cont.GVT.Vars[this.SUBPROGRAM.Unit.Name].
-                    //    Exists(v => (v.Name == var_name) && (v.Type == Objects.ObjectType.Scalar)))
-                    //{
-                    //    result = this.ParentModel.O_Cont.GetScalar(var_name, this.SUBPROGRAM.Unit.Name);
-                    //}
-                    //if (this.ParentModel.O_Cont.GVT.Vars[this.SUBPROGRAM.Unit.Name].
-                    //    Exists(v => (v.Name == var_name) && (v.Type == Objects.ObjectType.Vector)))
-                    //{
-                    //    result = this.ParentModel.O_Cont.Get(var_name, this.SUBPROGRAM.Unit.Name);
-                    //}
-                    //this.ParentModel.O_Cont.SetValueToScalar(var_name, unit_name, value_obj);
-
                     break;
                 case PhraseType.VectorNode:
-                    //this.ParentModel.O_Cont.SetValueToVector(var, unit_name, value_obj);
-                    result = this.ParentModel.O_Cont.GetVectorNode(var, this.SUBPROGRAM.Unit.Name);
+                    //result = this.ParentModel.O_Cont.GetVectorNode(var, this.SUBPROGRAM.Unit.Name);
+                    result = this.ParentModel.O_Cont.GetVectorNode(var, this.INITIATOR.NextOperator.ParentSubprogram.Unit.Name);
                     break;
                 case PhraseType.ValueFromLink:
                     Objects.Object var_from_link = this.GetObjectFromLink(var.Value[0]);
@@ -691,7 +681,8 @@ namespace LPDP
                 default:
                     //error
                     var_name = ((Lexeme)var).LValue;
-                    result = this.ParentModel.O_Cont.GetObjectByName(var_name, this.SUBPROGRAM.Unit.Name);
+                    //result = this.ParentModel.O_Cont.GetObjectByName(var_name, this.SUBPROGRAM.Unit.Name);
+                    result = this.ParentModel.O_Cont.GetObjectByName(var_name, this.INITIATOR.NextOperator.ParentSubprogram.Unit.Name);
                     break;
             }
             return result;
@@ -708,7 +699,8 @@ namespace LPDP
             }
             else
             {
-                cell_id = this.ParentModel.O_Cont.GetLinkValue((((Lexeme)link_name).LValue), this.SUBPROGRAM.Unit.Name);
+                //cell_id = this.ParentModel.O_Cont.GetLinkValue((((Lexeme)link_name).LValue), this.SUBPROGRAM.Unit.Name);
+                cell_id = this.ParentModel.O_Cont.GetLinkValue((((Lexeme)link_name).LValue), this .INITIATOR.NextOperator.ParentSubprogram.Unit.Name);
             }
             result = this.ParentModel.O_Cont.GetObjectByID(cell_id);
             return result;
@@ -721,14 +713,15 @@ namespace LPDP
             return this.TIME;
         }
 
-        public LPDP.DataSets.Selection GetNextOperatorPosition()
-        {
-            return this.NEXT_OPERATOR.Position;
-        }
+        //public LPDP.DataSets.Selection GetNextOperatorPosition()
+        //{
+        //    //return this.NEXT_OPERATOR.Position;
+        //    return this.INITIATOR.NextOperator.Position;
+        //}
 
-        public InitiatorType GetInitiatorType()
-        {
-            return this.INITIATOR.Type;
-        }
+        //public InitiatorType GetInitiatorType()
+        //{
+        //    return this.INITIATOR.Type;
+        //}
     }
 }

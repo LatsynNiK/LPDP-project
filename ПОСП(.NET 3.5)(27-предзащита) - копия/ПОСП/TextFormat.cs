@@ -22,8 +22,12 @@ namespace ПОСП
         static Color ready_color = Color.Green;
 
 
-        public static void ColorizeNextOperator(RichTextBox rtb, int start, int len, bool is_flow)
+        public static void ColorizeNextOperator(RichTextBox rtb, int start, int len, bool is_flow, int unit_pos)
         {
+
+            rtb.Select(unit_pos, 0);
+            rtb.ScrollToCaret();
+
             rtb.Select(start, len);
             Color color;
             if (is_flow)
@@ -40,7 +44,7 @@ namespace ПОСП
             //return rtb;
         }
 
-        public static Dictionary<int,Color> InsertQueueArrows(RichTextBox rtb, DataTable dt)
+        static Dictionary<int,Color> InsertQueueArrows(RichTextBox rtb, DataTable dt)
         {
             string full_arrow = "\u27A4";
             string half_arrow = "\u27A2";
@@ -128,13 +132,12 @@ namespace ПОСП
             return result;
         }
 
-        public static void ColorizeAll(RichTextBox rtb,
-            Dictionary<int, Color> dict,// для стрелок
-            int start, int len, bool is_flow,// для оператора
-            int unit_position)
+        public static int InsertColorQueueArrows(RichTextBox rtb,DataTable dt, int start)
         {
+            Dictionary<int, Color> dict = InsertQueueArrows(rtb, dt);
+
             int shifting = 0;
-            //int save_cursor = rtb.SelectionStart;
+            int save_cursor = rtb.SelectionStart;
             foreach (int position in dict.Keys)
             {
                 if (position <= start + shifting)
@@ -149,10 +152,8 @@ namespace ПОСП
                 rtb.Select(position, 1);
                 rtb.SelectionColor = dict[position];
             }
-
-            rtb.Select(unit_position, 0);
-            rtb.ScrollToCaret();
-            TextFormat.ColorizeNextOperator(rtb, start + shifting, len, is_flow);
+            rtb.Select(save_cursor, 0);
+            return shifting;
         }
 
         public static void UseCaptions(DataGridView dgv, DataTable dt)

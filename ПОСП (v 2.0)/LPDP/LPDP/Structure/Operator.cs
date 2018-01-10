@@ -40,6 +40,7 @@ namespace LPDP.Structure
         {
             //this.Params = new Dictionary<string, object>();
             this.Actions = new List<Action>();
+            this.Position = new Selection();
         }
 
         public void AddAction(Action act)

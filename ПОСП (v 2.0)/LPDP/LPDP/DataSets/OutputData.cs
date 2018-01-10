@@ -314,11 +314,12 @@ namespace LPDP.DataSets
 
             this.TIME = this.Model.Executor.GetTIME();
 
-            this.NextOperatorPosition_Start = this.Model.Executor.GetNextOperatorPosition().Start;
-            this.NextOperatorPosition_Length = this.Model.Executor.GetNextOperatorPosition().Length;
+
+            this.NextOperatorPosition_Start = this.Model.Executor.GetInitiator().NextOperator.Position.Start;// GetNextOperatorPosition().Start;
+            this.NextOperatorPosition_Length = this.Model.Executor.GetInitiator().NextOperator.Position.Length;// .GetNextOperatorPosition().Length;
 
 
-            if (this.Model.Executor.GetInitiatorType() == InitiatorType.Flow)
+            if (this.Model.Executor.GetInitiator().Type == InitiatorType.Flow)
             {
                 this.NextInitiatorIsFlow = true;
             }
@@ -326,7 +327,7 @@ namespace LPDP.DataSets
             {
                 this.NextInitiatorIsFlow = false;
             }
-            this.UnitPosition = this.Model.Executor.GetInitiator().Position.Unit.StartPosition;
+            this.UnitPosition = this.Model.Executor.GetInitiator().NextOperator.ParentSubprogram.Unit.StartPosition;
 
             this.InitiatorNumber = this.Model.Executor.GetInitiator().Number;
         }

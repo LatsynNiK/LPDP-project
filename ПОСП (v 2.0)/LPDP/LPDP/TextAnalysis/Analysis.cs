@@ -418,7 +418,7 @@ namespace LPDP.TextAnalysis
                     Phrase true_ph = new Phrase(PhraseType.True);
                     Initiator new_init = this.ParentModel.O_Cont.CreateInitiator(unit.Name);
                     Subprogram to_subp = this.ParentModel.ST_Cont.Tracks.Find(sp => sp.Unit == unit);
-                    new_init.Position = to_subp;
+                    new_init.NextOperator = to_subp.Operators[0];
 
                     this.ParentModel.Executor.TC_Cont.AddConditionRecord(true_ph, new_init, to_subp, false);
                 }

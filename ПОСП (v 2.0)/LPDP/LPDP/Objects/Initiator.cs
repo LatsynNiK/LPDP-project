@@ -13,7 +13,7 @@ namespace LPDP.Objects
         public int ID_of_MemoryCell;
         public InitiatorType Type;
 
-        public Subprogram Position;
+        public Operator NextOperator;
 
         public Initiator(InitiatorType type)
         {
