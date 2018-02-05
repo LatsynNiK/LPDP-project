@@ -296,40 +296,40 @@ namespace LPDP.DataSets
 
         public void Output_All_Data()
         {
-            this.Rewrite_Objects();
-            this.Rewrite_Initiators();
-            this.Rewrite_FTT();
-            this.Rewrite_CT();
-            this.Rewrite_Queues();
-
-            this.Rewrite_QueueArrows();
-
-            //this.CodeRtf = 
-            this.CodeTxt = this.Model.Analysis.SourceText;//ResultTxtCode;
-
-
-
-            //this.InfoTxt = this.Model.Analysis.
             this.ModelIsBuilt = this.Model.Built;
-
-            this.TIME = this.Model.Executor.GetTIME();
-
-
-            this.NextOperatorPosition_Start = this.Model.Executor.GetInitiator().NextOperator.Position.Start;// GetNextOperatorPosition().Start;
-            this.NextOperatorPosition_Length = this.Model.Executor.GetInitiator().NextOperator.Position.Length;// .GetNextOperatorPosition().Length;
-
-
-            if (this.Model.Executor.GetInitiator().Type == InitiatorType.Flow)
+            if (this.ModelIsBuilt)
             {
-                this.NextInitiatorIsFlow = true;
-            }
-            else
-            {
-                this.NextInitiatorIsFlow = false;
-            }
-            this.UnitPosition = this.Model.Executor.GetInitiator().NextOperator.ParentSubprogram.Unit.StartPosition;
+                this.Rewrite_Objects();
+                this.Rewrite_Initiators();
+                this.Rewrite_FTT();
+                this.Rewrite_CT();
+                this.Rewrite_Queues();
 
-            this.InitiatorNumber = this.Model.Executor.GetInitiator().Number;
+                this.Rewrite_QueueArrows();
+
+                this.TIME = this.Model.Executor.GetTIME();
+
+
+                this.NextOperatorPosition_Start = this.Model.Executor.GetInitiator().NextOperator.Position.Start;// GetNextOperatorPosition().Start;
+                this.NextOperatorPosition_Length = this.Model.Executor.GetInitiator().NextOperator.Position.Length;// .GetNextOperatorPosition().Length;
+
+
+                if (this.Model.Executor.GetInitiator().Type == InitiatorType.Flow)
+                {
+                    this.NextInitiatorIsFlow = true;
+                }
+                else
+                {
+                    this.NextInitiatorIsFlow = false;
+                }
+                this.UnitPosition = this.Model.Executor.GetInitiator().NextOperator.ParentSubprogram.Unit.StartPosition;
+
+                this.InitiatorNumber = this.Model.Executor.GetInitiator().Number;
+
+            }
+            this.CodeTxt = this.Model.Analysis.SourceText;//ResultTxtCode;
+            this.InfoTxt = this.Model.Analysis.ResultInfo;
+            
         }
 
         void Write_Vector_to_DataTable(DataTable DT, List<LPDP.Objects.Object> list)

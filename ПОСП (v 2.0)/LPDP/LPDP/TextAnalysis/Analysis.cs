@@ -19,9 +19,11 @@ namespace LPDP.TextAnalysis
         public Phrase ParsedText;
         public string ResultTxtCode;
         public string ResultRTFCode;
-
+        public string ResultInfo;
+        
+        Model ParentModel;
+        
         List<Phrase> CommentPhrases;
-
         struct Response
         {
             public Phrase BackPhrase;
@@ -29,10 +31,8 @@ namespace LPDP.TextAnalysis
             public List<Error> Finded_Errors;
             public int ConcattedLexemes;
         }
-
-        Error CurrentError;
-
-        Model ParentModel;
+        //Error CurrentError;
+        
 
         public Analysis(Model parent_model)
         {
@@ -42,6 +42,7 @@ namespace LPDP.TextAnalysis
             this.ParsedText = new Phrase();
             this.ResultRTFCode = "";
             this.ResultTxtCode = "";
+            //this.ResultInfo = "";
 
             this.CommentPhrases = new List<Phrase>();
             
@@ -50,160 +51,195 @@ namespace LPDP.TextAnalysis
 
         public void Building(string source_text)
         {
-            this.AnalyzeText(source_text);
+            try
+            {
+                this.AnalyzeText(source_text);
 
-            this.ResultTxtCode = this.RebuildingText(this.ParsedText, this.CommentPhrases);
+                this.ResultTxtCode = this.RebuildingText(this.ParsedText, this.CommentPhrases);
 
-            this.AnalyzeStructure(this.ParsedText);
+                this.AnalyzeStructure(this.ParsedText);
 
-            this.LaunchPreparation();
+                this.LaunchPreparation();
+
+                this.ResultInfo = "Модель построена успешно.";
+            }
+            catch (Error e)
+            {
+                this.ResultInfo = this.OutputErrors(e);
+            }
         }
 
         #region main functions
 
         List<Lexeme> LexicalAnalysis(string Text)
         {
-            Text = Text.Replace('ё', 'е');
             List<Lexeme> Stack = new List<Lexeme>();
-            if (Text.Length == 0)
+            try
             {
-                Errors.Add(new Error(ErrorType.EmptyText, ModelTextRules.ErrorTypes[ErrorType.EmptyText], 0, 0, 0));
-                return Stack;
-            }
-            int line_counter = 1;
-            int position = 0;
+                Text = Text.Replace('ё', 'е');
+                
+                //if (Text.Length == 0)
+                //{
+                //    Errors.Add(new EmptyTextError());
+                //    //Errors.Add(new Error(ErrorType.EmptyText, ModelTextRules.ErrorTypes[ErrorType.EmptyText], 0, 0, 0));
+                //    return Stack;
+                //}
+                int line_counter = 1;
+                int position = 0;
 
-            while (Text.Length != 0)
-            {
-                char ch = Text[0];
-                if (ModelTextRules.DetermineSymbol(ch) == LexemeType.Unknown_Symbol)
+                while (Text.Length != 0)
                 {
-                    Stack.Add(new Lexeme(LexemeType.Unknown_Symbol, "" + ch, line_counter, position, 1));
-                    Errors.Add(new Error(ErrorType.UnknownSimbol, ModelTextRules.ErrorTypes[ErrorType.UnknownSimbol] + ch, line_counter, position, 1));
-                }
-                else
-                {
-                    Stack.Add(new Lexeme(ModelTextRules.DetermineSymbol(ch), "" + ch, line_counter, position, 1));
-                    if (ModelTextRules.DetermineSymbol(ch) == LexemeType.Enter)
+                    char ch = Text[0];
+                    if (ModelTextRules.DetermineSymbol(ch) == LexemeType.Unknown_Symbol)
                     {
-                        line_counter++;
+                        Stack.Add(new Lexeme(LexemeType.Unknown_Symbol, "" + ch, line_counter, position, 1));
+                        //Errors.Add(new UnknownLexemeError(ErrorType.UnknownSimbol, ModelTextRules.ErrorTypes[ErrorType.UnknownSimbol] + ch, line_counter, position, 1));
+                        throw new UnknownLexemeError(ch, position, 1, line_counter);
                     }
-                }
-                Text = Text.Remove(0, 1);
-                position++;
-                bool modified = true;
-                while (modified)
-                {
-                    modified = false;
-                    int start;
-                    foreach (LexemeTypeTemplate temp in ModelTextRules.LexicalTemplates)
+                    else
                     {
-                        bool to_concat = true;
-                        start = Stack.Count - temp.ConcatedLexemes;
-                        if (start < 0)
+                        Stack.Add(new Lexeme(ModelTextRules.DetermineSymbol(ch), "" + ch, line_counter, position, 1));
+                        if (ModelTextRules.DetermineSymbol(ch) == LexemeType.Enter)
                         {
-                            continue;
+                            line_counter++;
                         }
-                        List<Lexeme> LexemeList = new List<Lexeme>();
-                        for (int i = 0; i < temp.ConcatedLexemes; i++)
+                    }
+                    Text = Text.Remove(0, 1);
+                    position++;
+                    bool modified = true;
+                    while (modified)
+                    {
+                        modified = false;
+                        int start;
+                        foreach (LexemeTypeTemplate temp in ModelTextRules.LexicalTemplates)
                         {
-                            if ((Stack[start + i].LType == temp.LTemplate[i]) ||
-                                (temp.LTemplate[i] == LexemeType.Anything))
+                            bool to_concat = true;
+                            start = Stack.Count - temp.ConcatedLexemes;
+                            if (start < 0)
                             {
-                                LexemeList.Add(Stack[start + i]);
+                                continue;
                             }
-                            else
+                            List<Lexeme> LexemeList = new List<Lexeme>();
+                            for (int i = 0; i < temp.ConcatedLexemes; i++)
                             {
-                                to_concat = false;
+                                if ((Stack[start + i].LType == temp.LTemplate[i]) ||
+                                    (temp.LTemplate[i] == LexemeType.Anything))
+                                {
+                                    LexemeList.Add(Stack[start + i]);
+                                }
+                                else
+                                {
+                                    to_concat = false;
+                                    break;
+                                }
+                            }
+                            if (to_concat)
+                            {
+                                Lexeme NewLexeme = new Lexeme(temp.LType,
+                                        LexemeList[0].LValue,
+                                        LexemeList[0].Line,
+                                        LexemeList[0].Start,
+                                        LexemeList[0].Length);
+                                for (int j = 1; j < LexemeList.Count; j++)
+                                {
+                                    NewLexeme = new Lexeme(
+                                        temp.LType,
+                                        NewLexeme.LValue + LexemeList[j].LValue,
+                                        NewLexeme.Line,
+                                        NewLexeme.Start,
+                                        NewLexeme.Length + LexemeList[j].Length);
+                                }
+                                Stack.RemoveRange(start, temp.ConcatedLexemes);
+                                Stack.Add(NewLexeme);
+                                modified = true;
                                 break;
                             }
                         }
-                        if (to_concat)
-                        {
-                            Lexeme NewLexeme = new Lexeme(temp.LType,
-                                    LexemeList[0].LValue,
-                                    LexemeList[0].Line,
-                                    LexemeList[0].Start,
-                                    LexemeList[0].Length);
-                            for (int j = 1; j < LexemeList.Count; j++)
-                            {
-                                NewLexeme = new Lexeme(
-                                    temp.LType,
-                                    NewLexeme.LValue + LexemeList[j].LValue,
-                                    NewLexeme.Line,
-                                    NewLexeme.Start,
-                                    NewLexeme.Length + LexemeList[j].Length);
-                            }
-                            Stack.RemoveRange(start, temp.ConcatedLexemes);
-                            Stack.Add(NewLexeme);
-                            modified = true;
-                            break;
-                        }
                     }
-                }
-                if (Stack[Stack.Count - 1].LType == LexemeType.Word)
-                {
-                    Word NewWord;
-                    PhraseType PhType = ModelTextRules.DetermineWord(Stack[Stack.Count - 1]);
-                    switch (PhType)
+                    if (Stack[Stack.Count - 1].LType == LexemeType.Word)
                     {
-                        case PhraseType.Time_Word:
-                            NewWord = new Word(WordType.SystemVar, Stack[Stack.Count - 1]);
-                            break;
-                        case PhraseType.Initiator_Word:
-                            NewWord = new Word(WordType.SystemVar, Stack[Stack.Count - 1]);
-                            break;
-                        case PhraseType.Rand_Word:
-                            NewWord = new Word(WordType.SystemVar, Stack[Stack.Count - 1]);
-                            break;
-                        case PhraseType.Name:
-                            NewWord = new Word(WordType.Name, Stack[Stack.Count - 1]);
-                            break;
-                        case PhraseType.ArithmeticFunction_Word:
-                            NewWord = new Word(WordType.ArithmeticFunction, Stack[Stack.Count - 1]);
-                            break;
-                        default:
-                            NewWord = new Word(WordType.KeyWord, Stack[Stack.Count - 1]);
-                            break;
+                        Word NewWord;
+                        PhraseType PhType = ModelTextRules.DetermineWord(Stack[Stack.Count - 1]);
+                        switch (PhType)
+                        {
+                            case PhraseType.Time_Word:
+                                NewWord = new Word(WordType.SystemVar, Stack[Stack.Count - 1]);
+                                break;
+                            case PhraseType.Initiator_Word:
+                                NewWord = new Word(WordType.SystemVar, Stack[Stack.Count - 1]);
+                                break;
+                            case PhraseType.Rand_Word:
+                                NewWord = new Word(WordType.SystemVar, Stack[Stack.Count - 1]);
+                                break;
+                            case PhraseType.Name:
+                                NewWord = new Word(WordType.Name, Stack[Stack.Count - 1]);
+                                break;
+                            case PhraseType.ArithmeticFunction_Word:
+                                NewWord = new Word(WordType.ArithmeticFunction, Stack[Stack.Count - 1]);
+                                break;
+                            default:
+                                NewWord = new Word(WordType.KeyWord, Stack[Stack.Count - 1]);
+                                break;
+                        }
+                        Stack.RemoveAt(Stack.Count - 1);
+                        Stack.Add(NewWord);
                     }
-                    Stack.RemoveAt(Stack.Count - 1);
-                    Stack.Add(NewWord);
                 }
+                
             }
-
+            catch (LexicalError e)
+            {
+                throw new LexicalError(e);
+            }
             return Stack;
         }
 
         int AnalyzeText(string SourceText) // возвращает 1 если успешно
         {
-            this.SourceText = SourceText;
-            //this.Errors = new List<Error>();
-
-            // Пустой текст модели
-            //if (SourceText == "")
-            //{
-            //    Errors.Add(new Error(ErrorType.EmptyText, ModelTextRules.ErrorTypes[ErrorType.EmptyText], 0, 0, 0));
-            //}
-
-            this.Lexemes = LexicalAnalysis(this.SourceText);
-            if (Errors.Count > 0)
+            try
             {
+                this.SourceText = SourceText;
+                //this.Errors = new List<Error>();
+
+                // Пустой текст модели
+                if (SourceText == string.Empty)
+                {
+                    //Errors.Add(new EmptyTextError());
+                    throw new EmptyTextError();
+                }
+
+                this.Lexemes = LexicalAnalysis(this.SourceText);
+                //if (Errors.Count > 0)
+                //{
+                //    throw new LexicalError();
+                //    return 0;
+                //}
+                this.ParsedText = SyntacticalAnalysis(this.Lexemes);
+                if (Errors.Count > 0)
+                {
+                    return 0;
+                }
+                this.ParsedText = MadeStruct(this.ParsedText);
+                if (Errors.Count > 0)
+                {
+                    return 0;
+                }
+
+                this.ResultTxtCode = "";
+                this.ResultRTFCode = "";
+                return 1;
+            }
+            catch (UserError e)
+            {
+                throw new UserError(e);
                 return 0;
             }
-            this.ParsedText = SyntacticalAnalysis(this.Lexemes);
-            if (Errors.Count > 0)
+            catch (SystemError e)
             {
+                throw new SystemError(e);
                 return 0;
             }
-            this.ParsedText = MadeStruct(this.ParsedText);
-            if (Errors.Count > 0)
-            {
-                return 0;
-            }
-
-            this.ResultTxtCode = "";
-            this.ResultRTFCode = "";
-            return 1;
+            
         }
 
         string RebuildingText(Phrase sourse_phrase, List<Phrase> comments)
@@ -431,6 +467,20 @@ namespace LPDP.TextAnalysis
 
         #endregion
 
+        string OutputErrors(Error source_error)
+        {
+            string result = "";
+
+            result += source_error.GetErrorStack();
+            foreach (Error e in this.Errors)
+            {
+                result += "\n" + e.GetErrorStack();
+            }
+            return result;
+        }
+
+
+
         #region for Syntactical Analysis
         enum ScanningState
         {
@@ -471,11 +521,11 @@ namespace LPDP.TextAnalysis
                     //////*****
 
                     result.Finded_Errors = new List<Error>();
-                    result.Finded_Errors.Add(new Error(ErrorType.ExpectedPhrase,
-                        ModelTextRules.ErrorTypes[ErrorType.ExpectedPhrase] + template.PhType.ToString(),
-                        //ListNewPhrase[i-1].Line,ListNewPhrase[i-1].Start,ListNewPhrase[i-1].Length
-                        0, 0, 0
-                        ));
+                    //!!!result.Finded_Errors.Add(new Error(ErrorType.ExpectedPhrase,
+                    //    ModelTextRules.ErrorTypes[ErrorType.ExpectedPhrase] + template.PhType.ToString(),
+                    //    //ListNewPhrase[i-1].Line,ListNewPhrase[i-1].Start,ListNewPhrase[i-1].Length
+                    //    0, 0, 0
+                    //    ));
                     result.ScanState = ScanningState.Fallen;
                     return result;
                 }
@@ -506,9 +556,9 @@ namespace LPDP.TextAnalysis
                         if (TryToReplace(PhrasesCopy, i, template))
                         {
                             result.Finded_Errors = new List<Error>();
-                            result.Finded_Errors.Add(new Error(ErrorType.Replacing,
-                                ModelTextRules.ErrorTypes[ErrorType.Replacing] + template.PhTemplate[i].ToString(),
-                                Phrases[0].Line, Phrases[0].Start, Phrases[0].Length));
+                            //!!!result.Finded_Errors.Add(new Error(ErrorType.Replacing,
+                            //    ModelTextRules.ErrorTypes[ErrorType.Replacing] + template.PhTemplate[i].ToString(),
+                            //    Phrases[0].Line, Phrases[0].Start, Phrases[0].Length));
 
                             ListNewPhrase[i] = Phrases[0];
                             result.ConcattedLexemes++;
@@ -538,9 +588,9 @@ namespace LPDP.TextAnalysis
                         //////*****
 
                         result.Finded_Errors = new List<Error>();
-                        result.Finded_Errors.Add(new Error(ErrorType.ExpectedPhrase,
-                            ModelTextRules.ErrorTypes[ErrorType.ExpectedPhrase] + "111" + template.PhTemplate[i].ToString(),
-                            Phrases[0].Line, Phrases[0].Start, Phrases[0].Length));
+                        //!!!result.Finded_Errors.Add(new Error(ErrorType.ExpectedPhrase,
+                        //    ModelTextRules.ErrorTypes[ErrorType.ExpectedPhrase] + "111" + template.PhTemplate[i].ToString(),
+                        //    Phrases[0].Line, Phrases[0].Start, Phrases[0].Length));
                         result.ScanState = ScanningState.Fallen;
                         return result;
                     }
@@ -574,11 +624,11 @@ namespace LPDP.TextAnalysis
                         //////*****
 
                         result.Finded_Errors = new List<Error>();
-                        result.Finded_Errors.Add(new Error(ErrorType.ExpectedPhrase,
-                            ModelTextRules.ErrorTypes[ErrorType.ExpectedPhrase] + template.PhType.ToString(),
-                            //ListNewPhrase[i-1].Line,ListNewPhrase[i-1].Start,ListNewPhrase[i-1].Length
-                            0, 0, 0
-                            ));
+                        //!!!result.Finded_Errors.Add(new Error(ErrorType.ExpectedPhrase,
+                        //    ModelTextRules.ErrorTypes[ErrorType.ExpectedPhrase] + template.PhType.ToString(),
+                        //    //ListNewPhrase[i-1].Line,ListNewPhrase[i-1].Start,ListNewPhrase[i-1].Length
+                        //    0, 0, 0
+                        //    ));
                         result.ScanState = ScanningState.Fallen;
                         return result;
                     }
@@ -678,9 +728,9 @@ namespace LPDP.TextAnalysis
                             else
                             {
                                 result.Finded_Errors = new List<Error>();
-                                result.Finded_Errors.Add(new Error(ErrorType.ExpectedPhrase,
-                                    ModelTextRules.ErrorTypes[ErrorType.ExpectedPhrase] + template.PhTemplate[i].ToString(),
-                                    Phrases[0].Line, Phrases[0].Start, Phrases[0].Length));
+                                //!!!result.Finded_Errors.Add(new Error(ErrorType.ExpectedPhrase,
+                                //    ModelTextRules.ErrorTypes[ErrorType.ExpectedPhrase] + template.PhTemplate[i].ToString(),
+                                //    Phrases[0].Line, Phrases[0].Start, Phrases[0].Length));
                             }
                         }
                         else
@@ -844,7 +894,7 @@ namespace LPDP.TextAnalysis
                 lex.PhType = ModelTextRules.DeterminePhrase(lex);
                 if (lex.PhType == PhraseType.UnknownLexeme)
                 {
-                    Errors.Add(new Error(ErrorType.UnknownLexeme, ModelTextRules.ErrorTypes[ErrorType.UnknownLexeme] + lex.Value, lex.Line, lex.Start, lex.Length));
+                    //!!!Errors.Add(new Error(ErrorType.UnknownLexeme, ModelTextRules.ErrorTypes[ErrorType.UnknownLexeme] + lex.Value, lex.Line, lex.Start, lex.Length));
                 }
                 if (lex.PhType == PhraseType.Comment)
                 {
@@ -857,7 +907,7 @@ namespace LPDP.TextAnalysis
             Response resp = FindTemplate(ModelTextRules.SyntacticalTemplates[0], Phrases);
 
 
-            this.Errors.AddRange(resp.Finded_Errors);
+            //!!!this.Errors.AddRange(resp.Finded_Errors);
             return resp.BackPhrase;
         }
 

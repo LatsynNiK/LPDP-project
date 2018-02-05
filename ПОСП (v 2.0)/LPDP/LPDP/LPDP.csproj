@@ -55,6 +55,11 @@
     <Compile Include="Dynamics\Queue.cs" />
     <Compile Include="Dynamics\QueueTable.cs" />
     <Compile Include="Dynamics\RecordEvent.cs" />
+    <Compile Include="Errors\EmptyTextError.cs" />
+    <Compile Include="Errors\LexicalErrors\LexicalError.cs" />
+    <Compile Include="Errors\LexicalErrors\UnknownLexemeError.cs" />
+    <Compile Include="Errors\SystemError.cs" />
+    <Compile Include="Errors\UserError.cs" />
     <Compile Include="Executor.cs" />
     <Compile Include="Objects\InitiatorsTable.cs" />
     <Compile Include="Structure\Action.cs" />
@@ -91,7 +96,7 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="Structure\Unit.cs" />
-    <Compile Include="TextAnalysis\Error.cs" />
+    <Compile Include="Errors\Error.cs" />
     <Compile Include="TextAnalysis\Lexeme.cs" />
     <Compile Include="TextAnalysis\LexemeTypeTemplate.cs" />
     <Compile Include="TextAnalysis\ModelTextRules.cs" />

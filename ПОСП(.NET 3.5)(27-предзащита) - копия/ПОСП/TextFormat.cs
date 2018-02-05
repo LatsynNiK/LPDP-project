@@ -24,7 +24,7 @@ namespace ПОСП
 
         public static void ColorizeNextOperator(RichTextBox rtb, int start, int len, bool is_flow, int unit_pos)
         {
-
+            Color save_color = rtb.SelectionBackColor; 
             rtb.Select(unit_pos, 0);
             rtb.ScrollToCaret();
 
@@ -41,6 +41,8 @@ namespace ПОСП
             
             rtb.SelectionBackColor = color;
             rtb.DeselectAll();
+
+            rtb.SelectionBackColor = save_color;
             //return rtb;
         }
 
