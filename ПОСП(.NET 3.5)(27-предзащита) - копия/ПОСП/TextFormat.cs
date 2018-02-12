@@ -21,32 +21,116 @@ namespace ПОСП
         static Color waittime_color = Color.Yellow;
         static Color ready_color = Color.Green;
 
+        static Color comment_color = Color.Green;
+        static Color string_color = Color.Firebrick;
+        static Color keyword_color = Color.Navy;
 
-        public static void ColorizeNextOperator(RichTextBox rtb, int start, int len, bool is_flow, int unit_pos)
+        static Color initialfont_color = Color.Black;
+        static Color initialback_color = Color.White;
+
+
+        //public static void ColorizeNextOperator(RichTextBox rtb, int start, int len, bool is_flow, int unit_pos)
+        //{
+        //    Color save_color = rtb.SelectionBackColor; 
+        //    rtb.Select(unit_pos, 0);
+        //    rtb.ScrollToCaret();
+
+        //    rtb.Select(start, len);
+        //    Color color;
+        //    if (is_flow)
+        //    {
+        //        color = next_operator_color;
+        //    }
+        //    else
+        //    {
+        //        color = next_operator_aggregat_color;
+        //    }
+            
+        //    rtb.SelectionBackColor = color;
+        //    rtb.DeselectAll();
+
+        //    rtb.SelectionBackColor = save_color;
+        //    //return rtb;
+        //}
+
+        public static void ColorizeTextSelection(RichTextBox rtb, DataTable dt, int unit_pos, bool show_next_oper)
         {
-            Color save_color = rtb.SelectionBackColor; 
+            //Color save_color = rtb.SelectionColor;
+            //Color save_bcolor = rtb.SelectionBackColor;
+            
             rtb.Select(unit_pos, 0);
             rtb.ScrollToCaret();
 
-            rtb.Select(start, len);
-            Color color;
-            if (is_flow)
-            {
-                color = next_operator_color;
-            }
-            else
-            {
-                color = next_operator_aggregat_color;
-            }
-            
-            rtb.SelectionBackColor = color;
-            rtb.DeselectAll();
+            bool built = false;
 
-            rtb.SelectionBackColor = save_color;
-            //return rtb;
+            foreach (DataRow row in dt.Rows)
+            {
+                int start = Convert.ToInt32(row.ItemArray[0]);
+                int len = Convert.ToInt32(row.ItemArray[1]);
+                string type = Convert.ToString(row.ItemArray[2]);
+
+                Color font_color = rtb.SelectionColor;
+                Color back_color = rtb.SelectionBackColor;
+                Font font = new Font(rtb.SelectionFont,FontStyle.Regular);
+
+                switch (type)
+                {
+                    case "Error":
+                        font_color = error_color;// Color.White;
+                        //back_color = rtb.SelectionBackColor;// Color.Red;   
+                        font = new Font(rtb.SelectionFont, FontStyle.Underline);
+                        break;
+                    case "Comment":                        
+                        font = new Font(rtb.SelectionFont, FontStyle.Italic);
+                        font_color = comment_color;
+                        break;
+                    case "String":
+                        //font = new Font(rtb.SelectionFont, FontStyle.Italic);
+                        font_color = string_color;
+                        break;
+                    case "KeyWord":
+                        //font = new Font(rtb.SelectionFont, FontStyle.Italic);
+                        font_color = keyword_color;
+                        font = new Font(rtb.SelectionFont, FontStyle.Bold);
+                        break;
+                    case "NextAggregateOperator":
+                        if (show_next_oper)
+                        {
+                            back_color = next_operator_aggregat_color;
+                        }
+                        built = true;
+                        break;
+                    case "NextOperator":
+                        if (show_next_oper)
+                        {
+                            back_color = next_operator_color;
+                        }
+                        built = true;
+                        break;
+                    default:
+                        break;
+                }
+                rtb.SelectionStart = start;
+                rtb.SelectionLength = len;
+                rtb.SelectionColor = font_color;
+                rtb.SelectionBackColor = back_color;
+                rtb.SelectionFont = font;                
+            }
+
+
+            if (built == false)
+            {
+                rtb.Select(unit_pos, 0);
+                rtb.ScrollToCaret();
+            }
+
+            rtb.DeselectAll();
+            rtb.ForeColor = initialfont_color;
+            rtb.BackColor = initialback_color;            
         }
 
-        static Dictionary<int,Color> InsertQueueArrows(RichTextBox rtb, DataTable dt)
+
+        static Dictionary<int, Color> InsertQueueArrows(RichTextBox rtb, DataTable arrs, DataTable text_selections)
         {
             string full_arrow = "\u27A4";
             string half_arrow = "\u27A2";
@@ -55,7 +139,7 @@ namespace ПОСП
             Dictionary<int, Color> result = new Dictionary<int, Color>();
 
             int shifting = 0;
-            foreach (DataRow row in dt.Rows)
+            foreach (DataRow row in arrs.Rows)
             {
                 int position = Convert.ToInt32(row["Position"]);
                 string[] arrows = new string[3];
@@ -115,6 +199,7 @@ namespace ПОСП
                     {
                         int new_position = position + shifting;
                         rtb.Text = rtb.Text.Insert(new_position, arrows[i]);
+                        TextFormat.Shift(text_selections, new_position);
                         shifting += arrows[i].Length;
                         result.Add(new_position, colors[i]);
                     }
@@ -134,28 +219,30 @@ namespace ПОСП
             return result;
         }
 
-        public static int InsertColorQueueArrows(RichTextBox rtb,DataTable dt, int start)
+        public static void InsertColorQueueArrows(RichTextBox rtb, DataTable arrows, DataTable text_selections)//, int start)
         {
-            Dictionary<int, Color> dict = InsertQueueArrows(rtb, dt);
+            Dictionary<int, Color> dict = InsertQueueArrows(rtb, arrows, text_selections);
 
-            int shifting = 0;
+            //int shifting = 0;
             int save_cursor = rtb.SelectionStart;
             foreach (int position in dict.Keys)
             {
-                if (position <= start + shifting)
-                {
-                    shifting++;
-                }
-                //else
+                //if (position <= start + shifting)
                 //{
-
+                //    shifting++;
                 //}
+                ////else
+                ////{
+
+                ////}
+                //text_selections
 
                 rtb.Select(position, 1);
                 rtb.SelectionColor = dict[position];
             }
             rtb.Select(save_cursor, 0);
-            return shifting;
+            //return shifting;
+            rtb.DeselectAll();
         }
 
         public static void UseCaptions(DataGridView dgv, DataTable dt)
@@ -166,6 +253,16 @@ namespace ПОСП
             }
         }
         
+        public static void Shift(DataTable text_sel, int start)
+        {
+            foreach (DataRow row in text_sel.Rows)
+            {
+                if (Convert.ToInt32(row[0]) >= start)
+                {
+                    row[0] = Convert.ToInt32(row[0]) + 1;
+                }
+            }
+        }
 
         //static void InsertArrow(RichTextBox rtb, int position, string arrow, Color color)
         //{

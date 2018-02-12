@@ -17,15 +17,27 @@ namespace LPDP
         public UserError(Exception inner):base(inner)
         {
             this.Text = "Пользовательская ошибка";
+            if (inner is ErrorList)
+            {
+                this.Start = 0;
+                this.Length = 0;
+                this.Line = 0;
+            }
+            else
+            {
+                this.Start = ((UserError)inner).Start;
+                this.Length = ((UserError)inner).Length;
+                this.Line = ((UserError)inner).Line;
+            }
         }
 
-        //public UserError(int start, int len, int line):base(text)
-        //{
-        //    this.Text = text;
-        //    this.Start = start;
-        //    this.Length = len;
-        //    this.Line = line;
-        //}
+        public UserError(int start, int len, int line)
+        {
+            //this.Text = text;
+            this.Start = start;
+            this.Length = len;
+            this.Line = line;
+        }
         
     }
 }

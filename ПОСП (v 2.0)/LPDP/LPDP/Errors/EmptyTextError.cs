@@ -10,7 +10,7 @@ namespace LPDP
         //public string Text;
         public EmptyTextError()
         {
-            this.Text = "Нет текста модели.";
+            this.Text = "Нет текста модели";
         }
     }
 }

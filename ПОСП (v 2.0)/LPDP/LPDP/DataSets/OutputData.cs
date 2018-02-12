@@ -7,6 +7,7 @@ using System.Data;
 using LPDP.Dynamics;
 using LPDP.Objects;
 using LPDP.Structure;
+using LPDP.TextAnalysis;
 
 namespace LPDP.DataSets
 {
@@ -26,6 +27,7 @@ namespace LPDP.DataSets
         public DataTable CT;
 
         public DataTable QueueArrows;
+        public DataTable TextSelections;
 
         public double TIME;
         public bool ModelIsBuilt;
@@ -48,14 +50,18 @@ namespace LPDP.DataSets
             this.Queues = new DataTable("Queues");
             this.FTT = new DataTable("FTT");
             this.CT = new DataTable("CT");
+
             this.QueueArrows = new DataTable("QueueArrows");
+            this.TextSelections = new DataTable("TextSelection");
 
             this.CreateTable(this.Objects, "Unit", "Name", "Value", "Type");
             this.CreateTable(this.Initiators, "Number", "Name", "Value", "Type");
             this.CreateTable(this.Queues, "Unit", "Label", "Initiators");
             this.CreateTable(this.FTT, "Time", "Initiator", "Label", "Unit");
             this.CreateTable(this.CT, "Condition", "Initiator", "Label", "Unit");
+
             this.CreateTable(this.QueueArrows, "Position", "First", "Second", "Third");
+            this.CreateTable(this.TextSelections, "Start", "Length", "Type");
 
             this.RenameTable(this.Objects, "Блок", "Объект", "Значение", "Тип");
             this.RenameTable(this.Initiators, "Номер", "Инициатор", "Значение", "Тип");
@@ -132,7 +138,6 @@ namespace LPDP.DataSets
                 }
             }
         }
-
         void Rewrite_Initiators()
         {
             InitiatorsTable IT = this.Model.O_Cont.IT;
@@ -186,7 +191,6 @@ namespace LPDP.DataSets
             }
 
         }
-
         void Rewrite_FTT()
         {
             List<RecordFTT> ftt = this.Model.Executor.TC_Cont.FutureTimesTable;
@@ -198,7 +202,6 @@ namespace LPDP.DataSets
                 FTT.Rows.Add(Math.Round((double)rec.ActiveTime, this.Precision), rec.Initiator.Number, label.Name, label.Unit);
             }
         }
-
         void Rewrite_CT()
         {
             List<RecordCT> ct = this.Model.Executor.TC_Cont.ConditionsTable;
@@ -210,7 +213,6 @@ namespace LPDP.DataSets
                 CT.Rows.Add(rec.Condition, rec.Initiator.Number, label.Name, label.Unit);
             }
         }
-
         void Rewrite_Queues()
         {
             this.Queues.Rows.Clear();
@@ -252,6 +254,34 @@ namespace LPDP.DataSets
                 }
                 this.QueueArrows.Rows.Add(position, first, second, third);
             }
+        }
+        void Rewrite_TextSelections()
+        {
+            this.TextSelections.Rows.Clear();
+            List<TextSelection> ts_list = this.Model.Analysis.Selections.SelectionList; 
+            foreach (TextSelection ts in ts_list)
+            {
+                this.TextSelections.Rows.Add(ts.Start,ts.Length,ts.Type.ToString());
+            }
+
+            if (this.ModelIsBuilt)
+            {
+                int start_op = this.Model.Executor.GetInitiator().NextOperator.Position.Start;// GetNextOperatorPosition().Start;
+                int length_op = this.Model.Executor.GetInitiator().NextOperator.Position.Length;// .GetNextOperatorPosition().Length;
+                string type;
+                if (this.Model.Executor.GetInitiator().Type == InitiatorType.Aggregate)
+                {
+                    type = TextSelectionType.NextAggregateOperator.ToString();
+                    //this.NextInitiatorIsFlow = true;
+                }
+                else
+                {
+                    //this.NextInitiatorIsFlow = false;
+                    type = TextSelectionType.NextOperator.ToString();
+                }
+                this.TextSelections.Rows.Add(start_op, length_op, type);
+            }
+
         }
 
         int GetArrowType(Queue queue, int index)
@@ -306,12 +336,15 @@ namespace LPDP.DataSets
                 this.Rewrite_Queues();
 
                 this.Rewrite_QueueArrows();
+                
 
                 this.TIME = this.Model.Executor.GetTIME();
 
 
                 this.NextOperatorPosition_Start = this.Model.Executor.GetInitiator().NextOperator.Position.Start;// GetNextOperatorPosition().Start;
                 this.NextOperatorPosition_Length = this.Model.Executor.GetInitiator().NextOperator.Position.Length;// .GetNextOperatorPosition().Length;
+
+                //this.TextSelections.Row
 
 
                 if (this.Model.Executor.GetInitiator().Type == InitiatorType.Flow)
@@ -327,8 +360,11 @@ namespace LPDP.DataSets
                 this.InitiatorNumber = this.Model.Executor.GetInitiator().Number;
 
             }
+            this.Rewrite_TextSelections();
+            
             this.CodeTxt = this.Model.Analysis.SourceText;//ResultTxtCode;
-            this.InfoTxt = this.Model.Analysis.ResultInfo;
+
+            this.InfoTxt = this.Model.StatusInfo;// Out.InfoTxt;
             
         }
 

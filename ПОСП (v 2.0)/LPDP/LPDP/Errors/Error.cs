@@ -20,7 +20,7 @@ namespace LPDP
         {
             if (this.InnerException == null)
             {
-                return this.Text + ";";
+                return this.Text;// + ";";
             }
             else
             {

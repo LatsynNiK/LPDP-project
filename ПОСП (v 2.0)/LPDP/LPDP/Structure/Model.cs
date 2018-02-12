@@ -32,7 +32,9 @@ namespace LPDP.Structure
 
         public Analysis Analysis;
 
-        public LPDP.DataSets.OutputData Out;
+        public string StatusInfo;
+
+        //public LPDP.DataSets.OutputData Out;
         
         //double TIME;
         //Initiator INITIATOR;
@@ -57,6 +59,10 @@ namespace LPDP.Structure
             this.Built = false;
 
             this.Analysis = new Analysis(this);
+
+            this.StatusInfo = "";
+
+            //this.Out = new DataSets.OutputData();
 
         }
 

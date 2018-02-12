@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
+using System.ComponentModel;
+
 namespace LPDP.TextAnalysis
 {
     /// <summary>
@@ -80,6 +82,8 @@ namespace LPDP.TextAnalysis
         UnitType_Word,
         DescriptionBracketOpen_Word,
         AlgorithmBracketOpen_Word,
+
+        //[Description("всё")]
         ThatIsAll_Word,
 
         ScalarVarType_Word,
@@ -89,6 +93,8 @@ namespace LPDP.TextAnalysis
         RefToUnit_Word,
 
         LabelSeparator,          // :
+
+        //[Description("--")]
         TypeSeparator,          // --
 
         Round_Bracket_Open,     // (
@@ -805,13 +811,13 @@ namespace LPDP.TextAnalysis
         {
             ErrorTypes = new Dictionary<ErrorType, string>()
             {
-                {ErrorType.EmptyText, "Не найден текст модели."},
-                {ErrorType.UnknownSimbol, "Неизвестный символ: "},
-                {ErrorType.UnknownLexeme, "Неизвестнная лексема: "},
+                //{ErrorType.EmptyText, "Не найден текст модели."},
+                //{ErrorType.UnknownSimbol, "Неизвестный символ: "},
+                //{ErrorType.UnknownLexeme, "Неизвестнная лексема: "},
 
-                {ErrorType.ExpectedPhrase, "Ожидаемая фраза: "},
+                //{ErrorType.ExpectedPhrase, "Ожидаемая фраза: "},
 
-                {ErrorType.Replacing, "На этом месте ожидалось: "},
+                //{ErrorType.Replacing, "На этом месте ожидалось: "},
 
                 //{ErrorType.UnknownPhrase, "Неизвестнная конструкция: "}
             };

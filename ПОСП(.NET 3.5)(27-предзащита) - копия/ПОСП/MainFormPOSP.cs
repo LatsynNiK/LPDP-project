@@ -38,10 +38,12 @@ namespace ПОСП
             //Initiators_Tab.Parent = null;
             //Queues_Tab.Parent = null;
             GraphicModel_Tab.Parent = null;
+            this.CodeField.ReadOnly = false;
         }
         private void POSP_Form_Load(object sender, EventArgs e)
         {
-            
+            this.ExploredModel = new Model();
+            this.UpLoad();
         }
 
         private void InitializeComponent()
@@ -436,10 +438,13 @@ namespace ПОСП
             this.CodeField.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.CodeField.BackColor = System.Drawing.SystemColors.Window;
             this.CodeField.EnableAutoDragDrop = true;
-            this.CodeField.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.CodeField.Font = new System.Drawing.Font("Consolas", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.CodeField.ForeColor = System.Drawing.SystemColors.WindowText;
             this.CodeField.Location = new System.Drawing.Point(0, 16);
             this.CodeField.Name = "CodeField";
+            this.CodeField.ReadOnly = true;
             this.CodeField.Size = new System.Drawing.Size(551, 406);
             this.CodeField.TabIndex = 0;
             this.CodeField.Text = "";
@@ -883,7 +888,7 @@ namespace ПОСП
             // BuildingField
             // 
             this.BuildingField.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.BuildingField.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.BuildingField.Font = new System.Drawing.Font("Consolas", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.BuildingField.Location = new System.Drawing.Point(0, 0);
             this.BuildingField.Name = "BuildingField";
             this.BuildingField.ReadOnly = true;
@@ -1000,41 +1005,44 @@ namespace ПОСП
         }
         void UpLoad()
         {
-            this.Output = new OutputData(this.precision, this.ExploredModel);
-            OutputData out_data = this.Output;
-            out_data.Output_All_Data();
-            
-            //CodeField.Rtf = LPDP_Data.CodeRtf;
-            CodeField.Text = out_data.CodeTxt;// CodeRtf;
+            this.Output = new OutputData(this.precision, this.ExploredModel);            
+            this.Output.Output_All_Data();
 
-
-            int shifting = 0;
+            CodeField.Clear();
+            CodeField.Text = this.Output.CodeTxt;// CodeRtf;
             if (this.Input.ShowQueues)
-            {
-                shifting = TextFormat.InsertColorQueueArrows(this.CodeField, out_data.QueueArrows, out_data.NextOperatorPosition_Start);
+            {               
+                TextFormat.InsertColorQueueArrows(this.CodeField, this.Output.QueueArrows, this.Output.TextSelections);
             }
-            if (this.Input.ShowNextOperator)
-            {
-                TextFormat.ColorizeNextOperator(this.CodeField, 
-                    out_data.NextOperatorPosition_Start + shifting, 
-                    out_data.NextOperatorPosition_Length, 
-                    out_data.NextInitiatorIsFlow,
-                    out_data.UnitPosition);
-            }
+            //if (this.Input.ShowNextOperator)
+            //{
+                
+            //    //TextFormat.ColorizeNextOperator(this.CodeField,
+            //    //    this.Output.NextOperatorPosition_Start + shifting,
+            //    //    this.Output.NextOperatorPosition_Length,
+            //    //    this.Output.NextInitiatorIsFlow,
+            //    //    this.Output.UnitPosition);
+            //}
+            TextFormat.ColorizeTextSelection(
+                this.CodeField,
+                this.Output.TextSelections,
+                this.Output.UnitPosition,
+                this.Input.ShowNextOperator
+                );
 
-            BuildingField.Text = out_data.InfoTxt;
+            BuildingField.Text = this.Output.InfoTxt;
             //следующийОператорToolStripMenuItem.Checked = this.DataSets.ShowNextOperator;
             //очередиToolStripMenuItem.Checked = this.DataSets.ShowQueues;
             //системныеМеткиToolStripMenuItem.Checked = this.DataSets.ShowSysMark;
 
-            TIME_Value.Text = Convert.ToString(Math.Round(out_data.TIME, out_data.Precision));
-            INITIATOR_Value.Text = Convert.ToString(out_data.InitiatorNumber);
+            TIME_Value.Text = Convert.ToString(Math.Round(this.Output.TIME, this.Output.Precision));
+            INITIATOR_Value.Text = Convert.ToString(this.Output.InitiatorNumber);
 
-            this.Objects_View.DataSource = out_data.Objects;
-            this.Initiators_View.DataSource = out_data.Initiators;
-            this.FTT_View.DataSource = out_data.FTT;
-            this.CT_View.DataSource = out_data.CT;
-            this.Queues_View.DataSource = out_data.Queues;
+            this.Objects_View.DataSource = this.Output.Objects;
+            this.Initiators_View.DataSource = this.Output.Initiators;
+            this.FTT_View.DataSource = this.Output.FTT;
+            this.CT_View.DataSource = this.Output.CT;
+            this.Queues_View.DataSource = this.Output.Queues;
             UseAllCaptions();
         }
 
@@ -1399,9 +1407,9 @@ namespace ПОСП
         //отображения
         private void отображенияToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            системныеМеткиToolStripMenuItem.Enabled = this.Output.ModelIsBuilt;
-            следующийОператорToolStripMenuItem.Enabled = this.Output.ModelIsBuilt;
-            очередиToolStripMenuItem.Enabled = this.Output.ModelIsBuilt;
+            //системныеМеткиToolStripMenuItem.Enabled = this.Output.ModelIsBuilt;
+            //следующийОператорToolStripMenuItem.Enabled = this.Output.ModelIsBuilt;
+            //очередиToolStripMenuItem.Enabled = this.Output.ModelIsBuilt;
         }
         private void системныеМеткиToolStripMenuItem_Click(object sender, EventArgs e)
         {

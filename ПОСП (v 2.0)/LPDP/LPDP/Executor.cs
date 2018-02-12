@@ -428,25 +428,25 @@ namespace LPDP
                             break;
                         case PhraseType.VectorNode:
                             return Convert.ToString(this.GetObject(first_exp_ph).GetValue());
-                            break;
+                            //break;
                         case PhraseType.Name:
                             return Convert.ToString(this.GetObject(first_exp_ph).GetValue());
-                            break;
+                            //break;
                         case PhraseType.LinkVarType_Word:
                             last_exp_ph = ar_exp.Value[2];//ссылка на Name
                             return Convert.ToString(this.GetObject(last_exp_ph).ID);
-                            break;
+                            //break;
                         case PhraseType.Rand_Word:
                             return Convert.ToString(this.RAND.NextDouble());
-                            break;
+                            //break;
                         case PhraseType.Time_Word:
                             return Convert.ToString(this.TIME);
-                            break;
+                            //break;
                         case PhraseType.Number:
                             string double_str = ((Lexeme)first_exp_ph).LValue;
                             double_str = double_str.Replace('.', ',');
                             return Convert.ToString(double_str);
-                            break;     
+                            //break;     
                         case PhraseType.String:
                             return ((Lexeme)first_exp_ph).LValue;
 
@@ -470,7 +470,7 @@ namespace LPDP
                         }
                     }
 
-                    string p1, p2, p3;
+                    string p1, p2;//, p3;
                     switch (func_type)
                     {
                         case "ЦЕЛОЕ":
@@ -480,7 +480,7 @@ namespace LPDP
                             }
                             p1 = param_values[0];
                             return Convert.ToString(Convert.ToInt32(Math.Truncate(Convert.ToDouble(p1))));
-                            break;
+                            //break;
                         case "ln":
                             if (param_values.Count < 1)
                             {
@@ -488,7 +488,7 @@ namespace LPDP
                             }
                             p1 = param_values[0];
                             return Convert.ToString( Math.Log(Convert.ToDouble(p1)));
-                            break;
+                            //break;
                         case "log":
                             if (param_values.Count < 2)
                             {
@@ -497,7 +497,7 @@ namespace LPDP
                             p1 = param_values[0];
                             p2 = param_values[1];
                             return Convert.ToString(Math.Log(Convert.ToDouble(p1),Convert.ToDouble(p2)));
-                            break;
+                            //break;
                         case "lg":
                             if (param_values.Count < 1)
                             {
@@ -505,7 +505,7 @@ namespace LPDP
                             }
                             p1 = param_values[0];
                             return Convert.ToString(Math.Log10(Convert.ToDouble(p1)));
-                            break;
+                            //break;
                     }
                     #endregion
                     break;

@@ -13,17 +13,20 @@ namespace LPDP.TextAnalysis
     public class Analysis
     {
         public string SourceText;
-        public List<Error> Errors;
+        //public List<Error> Errors;
         List<Lexeme> Lexemes;
         //List<Phrase> Phrases;
-        public Phrase ParsedText;
+        Phrase ParsedText;
         public string ResultTxtCode;
         public string ResultRTFCode;
-        public string ResultInfo;
+        //public string ResultInfo;
         
         Model ParentModel;
         
         List<Phrase> CommentPhrases;
+
+        public TextSelectionTable Selections;
+
         struct Response
         {
             public Phrase BackPhrase;
@@ -37,7 +40,7 @@ namespace LPDP.TextAnalysis
         public Analysis(Model parent_model)
         {
             this.SourceText = "";
-            this.Errors = new List<Error>();
+            //this.Errors = new List<Error>();
             this.Lexemes = new List<Lexeme>();
             this.ParsedText = new Phrase();
             this.ResultRTFCode = "";
@@ -45,6 +48,8 @@ namespace LPDP.TextAnalysis
             //this.ResultInfo = "";
 
             this.CommentPhrases = new List<Phrase>();
+
+            this.Selections = new TextSelectionTable();
             
             this.ParentModel = parent_model;
         }
@@ -61,11 +66,14 @@ namespace LPDP.TextAnalysis
 
                 this.LaunchPreparation();
 
-                this.ResultInfo = "Модель построена успешно.";
+                //this.ParentModel.Out.InfoTxt = "Модель построена успешно.";
             }
             catch (Error e)
             {
-                this.ResultInfo = this.OutputErrors(e);
+                this.Selections.AddError(e);
+                this.ParentModel.StatusInfo = e.GetErrorStack();
+                //this.ResultInfo = this.OutputErrors(e);
+                //this.ParentModel.Out.InfoTxt = this.OutputErrors(e);
             }
         }
 
@@ -87,6 +95,8 @@ namespace LPDP.TextAnalysis
                 int line_counter = 1;
                 int position = 0;
 
+                List<Error> Errors = new List<Error>();
+
                 while (Text.Length != 0)
                 {
                     char ch = Text[0];
@@ -94,7 +104,8 @@ namespace LPDP.TextAnalysis
                     {
                         Stack.Add(new Lexeme(LexemeType.Unknown_Symbol, "" + ch, line_counter, position, 1));
                         //Errors.Add(new UnknownLexemeError(ErrorType.UnknownSimbol, ModelTextRules.ErrorTypes[ErrorType.UnknownSimbol] + ch, line_counter, position, 1));
-                        throw new UnknownLexemeError(ch, position, 1, line_counter);
+                        //throw new UnknownLexemeError(ch, position, 1, line_counter);
+                        Errors.Add(new UnknownLexemeError(ch, position, 1, line_counter));
                     }
                     else
                     {
@@ -104,6 +115,7 @@ namespace LPDP.TextAnalysis
                             line_counter++;
                         }
                     }
+
                     Text = Text.Remove(0, 1);
                     position++;
                     bool modified = true;
@@ -178,14 +190,23 @@ namespace LPDP.TextAnalysis
                                 NewWord = new Word(WordType.ArithmeticFunction, Stack[Stack.Count - 1]);
                                 break;
                             default:
-                                NewWord = new Word(WordType.KeyWord, Stack[Stack.Count - 1]);
+                                NewWord = new Word(WordType.KeyWord, Stack[Stack.Count - 1]);                                
                                 break;
                         }
+                        
                         Stack.RemoveAt(Stack.Count - 1);
                         Stack.Add(NewWord);
                     }
                 }
-                
+
+                if (Errors.Count > 0)
+                {
+                    throw new ErrorList(Errors);
+                }                
+            }
+            catch (ErrorList e)
+            {
+                throw new LexicalError(e);
             }
             catch (LexicalError e)
             {
@@ -209,21 +230,16 @@ namespace LPDP.TextAnalysis
                 }
 
                 this.Lexemes = LexicalAnalysis(this.SourceText);
+                this.ParsedText = SyntacticalAnalysis(this.Lexemes);
                 //if (Errors.Count > 0)
                 //{
-                //    throw new LexicalError();
                 //    return 0;
                 //}
-                this.ParsedText = SyntacticalAnalysis(this.Lexemes);
-                if (Errors.Count > 0)
-                {
-                    return 0;
-                }
                 this.ParsedText = MadeStruct(this.ParsedText);
-                if (Errors.Count > 0)
-                {
-                    return 0;
-                }
+                //if (Errors.Count > 0)
+                //{
+                //    return 0;
+                //}
 
                 this.ResultTxtCode = "";
                 this.ResultRTFCode = "";
@@ -231,17 +247,19 @@ namespace LPDP.TextAnalysis
             }
             catch (UserError e)
             {
-                throw new UserError(e);
-                return 0;
+                
+                throw new UserError(e);                
+                //return 0;
             }
             catch (SystemError e)
             {
                 throw new SystemError(e);
-                return 0;
+                //return 0;
             }
             
         }
 
+        //Не используется
         string RebuildingText(Phrase sourse_phrase, List<Phrase> comments)
         {
             string result = "";
@@ -460,26 +478,14 @@ namespace LPDP.TextAnalysis
                 }
             }
             this.ParentModel.Executor.Preparetion();
+            
             this.ParentModel.Built = true;
+            this.ParentModel.StatusInfo = "Модель построена успешно.";
 
             return 1;
         }
 
         #endregion
-
-        string OutputErrors(Error source_error)
-        {
-            string result = "";
-
-            result += source_error.GetErrorStack();
-            foreach (Error e in this.Errors)
-            {
-                result += "\n" + e.GetErrorStack();
-            }
-            return result;
-        }
-
-
 
         #region for Syntactical Analysis
         enum ScanningState
@@ -521,11 +527,13 @@ namespace LPDP.TextAnalysis
                     //////*****
 
                     result.Finded_Errors = new List<Error>();
-                    //!!!result.Finded_Errors.Add(new Error(ErrorType.ExpectedPhrase,
-                    //    ModelTextRules.ErrorTypes[ErrorType.ExpectedPhrase] + template.PhType.ToString(),
-                    //    //ListNewPhrase[i-1].Line,ListNewPhrase[i-1].Start,ListNewPhrase[i-1].Length
-                    //    0, 0, 0
-                    //    ));
+                    result.Finded_Errors.Add(
+                        new ExpectedPhraseError(template.PhType,0,0,0));
+                        //new Error(ErrorType.ExpectedPhrase,
+                        //ModelTextRules.ErrorTypes[ErrorType.ExpctedPhrase] + template.PhType.ToString(),
+                        ////ListNewPhrase[i-1].Line,ListNewPhrase[i-1].Start,ListNewPhrase[i-1].Length
+                        //0, 0, 0
+                        //));
                     result.ScanState = ScanningState.Fallen;
                     return result;
                 }
@@ -555,7 +563,12 @@ namespace LPDP.TextAnalysis
 
                         if (TryToReplace(PhrasesCopy, i, template))
                         {
+
                             result.Finded_Errors = new List<Error>();
+                            result.Finded_Errors.Add(
+                                new ReplacingError(template.PhType, Phrases[0].Start, Phrases[0].Length, Phrases[0].Line));
+
+                            //result.Finded_Errors = new List<Error>();
                             //!!!result.Finded_Errors.Add(new Error(ErrorType.Replacing,
                             //    ModelTextRules.ErrorTypes[ErrorType.Replacing] + template.PhTemplate[i].ToString(),
                             //    Phrases[0].Line, Phrases[0].Start, Phrases[0].Length));
@@ -588,6 +601,9 @@ namespace LPDP.TextAnalysis
                         //////*****
 
                         result.Finded_Errors = new List<Error>();
+                        result.Finded_Errors.Add(
+                            new ExpectedPhraseError(template.PhTemplate[i], Phrases[0].Start, Phrases[0].Length, Phrases[0].Line));
+                        //result.Finded_Errors = new List<Error>();
                         //!!!result.Finded_Errors.Add(new Error(ErrorType.ExpectedPhrase,
                         //    ModelTextRules.ErrorTypes[ErrorType.ExpectedPhrase] + "111" + template.PhTemplate[i].ToString(),
                         //    Phrases[0].Line, Phrases[0].Start, Phrases[0].Length));
@@ -624,6 +640,9 @@ namespace LPDP.TextAnalysis
                         //////*****
 
                         result.Finded_Errors = new List<Error>();
+                        result.Finded_Errors.Add(
+                            new ExpectedPhraseError(template.PhType,0,0,0));
+                        //result.Finded_Errors = new List<Error>();
                         //!!!result.Finded_Errors.Add(new Error(ErrorType.ExpectedPhrase,
                         //    ModelTextRules.ErrorTypes[ErrorType.ExpectedPhrase] + template.PhType.ToString(),
                         //    //ListNewPhrase[i-1].Line,ListNewPhrase[i-1].Start,ListNewPhrase[i-1].Length
@@ -728,6 +747,9 @@ namespace LPDP.TextAnalysis
                             else
                             {
                                 result.Finded_Errors = new List<Error>();
+                                result.Finded_Errors.Add(
+                                    new ExpectedPhraseError(template.PhTemplate[i], Phrases[0].Start, Phrases[0].Length, Phrases[0].Line));
+                                //result.Finded_Errors = new List<Error>();
                                 //!!!result.Finded_Errors.Add(new Error(ErrorType.ExpectedPhrase,
                                 //    ModelTextRules.ErrorTypes[ErrorType.ExpectedPhrase] + template.PhTemplate[i].ToString(),
                                 //    Phrases[0].Line, Phrases[0].Start, Phrases[0].Length));
@@ -888,26 +910,55 @@ namespace LPDP.TextAnalysis
         Phrase SyntacticalAnalysis(List<Lexeme> Lexemes)
         {
             List<Phrase> Phrases = new List<Phrase>();
-            this.Errors = new List<Error>();
-            foreach (Lexeme lex in Lexemes)
+            List<Error> Errors = new List<Error>();
+            Response resp = new Response();
+            try
             {
-                lex.PhType = ModelTextRules.DeterminePhrase(lex);
-                if (lex.PhType == PhraseType.UnknownLexeme)
+                foreach (Lexeme lex in Lexemes)
                 {
-                    //!!!Errors.Add(new Error(ErrorType.UnknownLexeme, ModelTextRules.ErrorTypes[ErrorType.UnknownLexeme] + lex.Value, lex.Line, lex.Start, lex.Length));
+                    lex.PhType = ModelTextRules.DeterminePhrase(lex);
+                    if (lex.PhType == PhraseType.UnknownLexeme)
+                    {
+                        //!!!Errors.Add(new Error(ErrorType.UnknownLexeme, ModelTextRules.ErrorTypes[ErrorType.UnknownLexeme] + lex.Value, lex.Line, lex.Start, lex.Length));
+                    }
+                    if (lex.PhType == PhraseType.Comment)
+                    {
+                        this.CommentPhrases.Add((Phrase)lex);
+                        this.Selections.Add(lex.Start, lex.Length, TextSelectionType.Comment);
+                    }
+                    if (lex.PhType == PhraseType.String)
+                    {
+                        this.Selections.Add(lex.Start, lex.Length, TextSelectionType.String);
+                    }
+                    if (lex is Word)
+                    {
+                        if (((Word)lex).WType == WordType.KeyWord)
+                        {
+                            this.Selections.Add(lex.Start, lex.Length, TextSelectionType.KeyWord);
+                        }
+                    }
+                    if ((lex.PhType != PhraseType.Empty) && (lex.PhType != PhraseType.Comment))
+                        Phrases.Add((Phrase)lex);
                 }
-                if (lex.PhType == PhraseType.Comment)
+
+                resp = FindTemplate(ModelTextRules.SyntacticalTemplates[0], Phrases);
+
+
+                Errors.AddRange(resp.Finded_Errors);
+
+                if (Errors.Count > 0)
                 {
-                    this.CommentPhrases.Add((Phrase)lex);
+                    throw new ErrorList(Errors);
                 }
-                if ((lex.PhType != PhraseType.Empty) && (lex.PhType != PhraseType.Comment))
-                    Phrases.Add((Phrase)lex);
             }
-
-            Response resp = FindTemplate(ModelTextRules.SyntacticalTemplates[0], Phrases);
-
-
-            //!!!this.Errors.AddRange(resp.Finded_Errors);
+            catch (ErrorList e)
+            {
+                throw new SyntacticalError(e);
+            }
+            catch (SyntacticalError e)
+            {
+                throw new SyntacticalError(e);
+            }
             return resp.BackPhrase;
         }
 
@@ -936,6 +987,12 @@ namespace LPDP.TextAnalysis
                     }
                 }
             }
+
+            //if (Errors.Count > 0)
+            //{
+            //    throw new ErrorList(Errors);
+            //} 
+
             return InitialPhrase;
         }
         #endregion
