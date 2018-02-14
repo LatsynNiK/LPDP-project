@@ -23,7 +23,7 @@
         private System.Windows.Forms.ToolStripMenuItem построениеToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem запускToolStripMenuItem;
         private System.Windows.Forms.SplitContainer MainContainer;
-        private System.Windows.Forms.RichTextBox BuildingField;
+        private System.Windows.Forms.RichTextBox InfoField;
         private System.Windows.Forms.SplitContainer TopContainer;
         private System.Windows.Forms.RichTextBox CodeField;
         private System.Windows.Forms.ToolStripMenuItem шагToolStripMenuItem;

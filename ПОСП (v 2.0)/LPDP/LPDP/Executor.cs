@@ -52,22 +52,26 @@ namespace LPDP
             {
                 this.ExecuteSubprogram(this.INITIATOR.NextOperator.ParentSubprogram);
             }
+            this.ParentModel.StatusInfo = "Выполнено моделирование до времени: " + this.TIME+".";
         }
 
         public void StartStep()
         {
             this.ExecuteOperator(this.INITIATOR.NextOperator);
+            this.ParentModel.StatusInfo = "Выполнен шаг.";
         }
 
         public void StartSEC()
         {
             this.StartUntil(this.TIME);
+            this.ParentModel.StatusInfo = "Выполнены все одновременные события во момент времени: "+ this.TIME+".";
             //while(this.SUBPROGRAM.)
         }
 
         public void Stop()
         {
             this.ParentModel.Built = false;
+            this.ParentModel.StatusInfo = "Модель остановлена.";
             this.SetCurrentUnit(this.ParentModel.Units[0]);
             this.QT = new QueueTable(this);
             this.TIME = 0;

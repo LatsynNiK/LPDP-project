@@ -28,13 +28,14 @@ namespace LPDP.DataSets
 
         public DataTable QueueArrows;
         public DataTable TextSelections;
+        public DataTable HiddenLabel;
 
         public double TIME;
         public bool ModelIsBuilt;
 
-        public int NextOperatorPosition_Start;
-        public int NextOperatorPosition_Length;
-        public bool NextInitiatorIsFlow;
+        //public int NextOperatorPosition_Start;
+        //public int NextOperatorPosition_Length;
+        //public bool NextInitiatorIsFlow;
         public int UnitPosition;
 
         public int InitiatorNumber;
@@ -53,6 +54,7 @@ namespace LPDP.DataSets
 
             this.QueueArrows = new DataTable("QueueArrows");
             this.TextSelections = new DataTable("TextSelection");
+            this.HiddenLabel = new DataTable("HiddenLabel");
 
             this.CreateTable(this.Objects, "Unit", "Name", "Value", "Type");
             this.CreateTable(this.Initiators, "Number", "Name", "Value", "Type");
@@ -62,6 +64,7 @@ namespace LPDP.DataSets
 
             this.CreateTable(this.QueueArrows, "Position", "First", "Second", "Third");
             this.CreateTable(this.TextSelections, "Start", "Length", "Type");
+            this.CreateTable(this.HiddenLabel, "Name", "Position");
 
             this.RenameTable(this.Objects, "Блок", "Объект", "Значение", "Тип");
             this.RenameTable(this.Initiators, "Номер", "Инициатор", "Значение", "Тип");
@@ -284,6 +287,21 @@ namespace LPDP.DataSets
 
         }
 
+        void Rewrite_HiddenLabel()
+        {
+            this.HiddenLabel.Clear();
+            foreach (Subprogram subp in this.Model.ST_Cont.Tracks)
+            {
+                Label label = this.Model.ST_Cont.LT.FindFirstBySubprogram(subp);
+                if (label.Visible == false)
+                {
+                    int start = subp.Operators[0].Position.Start;
+                    this.HiddenLabel.Rows.Add(label.Name, start);
+                    //this.Model.Analysis.Selections.Add(start, label.Name.Length, TextSelectionType.SystemLabel);
+                }
+            }            
+        }
+
         int GetArrowType(Queue queue, int index)
         {
             int arrow = (int)Queue.ArrowType.None;
@@ -336,25 +354,26 @@ namespace LPDP.DataSets
                 this.Rewrite_Queues();
 
                 this.Rewrite_QueueArrows();
+                this.Rewrite_HiddenLabel();
                 
 
                 this.TIME = this.Model.Executor.GetTIME();
 
 
-                this.NextOperatorPosition_Start = this.Model.Executor.GetInitiator().NextOperator.Position.Start;// GetNextOperatorPosition().Start;
-                this.NextOperatorPosition_Length = this.Model.Executor.GetInitiator().NextOperator.Position.Length;// .GetNextOperatorPosition().Length;
+                //this.NextOperatorPosition_Start = this.Model.Executor.GetInitiator().NextOperator.Position.Start;// GetNextOperatorPosition().Start;
+                //this.NextOperatorPosition_Length = this.Model.Executor.GetInitiator().NextOperator.Position.Length;// .GetNextOperatorPosition().Length;
 
                 //this.TextSelections.Row
 
 
-                if (this.Model.Executor.GetInitiator().Type == InitiatorType.Flow)
-                {
-                    this.NextInitiatorIsFlow = true;
-                }
-                else
-                {
-                    this.NextInitiatorIsFlow = false;
-                }
+                //if (this.Model.Executor.GetInitiator().Type == InitiatorType.Flow)
+                //{
+                //    this.NextInitiatorIsFlow = true;
+                //}
+                //else
+                //{
+                //    this.NextInitiatorIsFlow = false;
+                //}
                 this.UnitPosition = this.Model.Executor.GetInitiator().NextOperator.ParentSubprogram.Unit.StartPosition;
 
                 this.InitiatorNumber = this.Model.Executor.GetInitiator().Number;

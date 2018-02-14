@@ -110,7 +110,7 @@ namespace ПОСП
             this.GraphicModel_Tab = new System.Windows.Forms.TabPage();
             this.GraphicModel_Panel = new System.Windows.Forms.Panel();
             this.GraphicModel_View = new System.Windows.Forms.PictureBox();
-            this.BuildingField = new System.Windows.Forms.RichTextBox();
+            this.InfoField = new System.Windows.Forms.RichTextBox();
             this.FileName_label = new System.Windows.Forms.Label();
             this.MainMenu.SuspendLayout();
             this.MainContainer.Panel1.SuspendLayout();
@@ -394,7 +394,7 @@ namespace ПОСП
             // 
             // MainContainer.Panel2
             // 
-            this.MainContainer.Panel2.Controls.Add(this.BuildingField);
+            this.MainContainer.Panel2.Controls.Add(this.InfoField);
             this.MainContainer.Panel2.RightToLeft = System.Windows.Forms.RightToLeft.No;
             this.MainContainer.RightToLeft = System.Windows.Forms.RightToLeft.No;
             this.MainContainer.Size = new System.Drawing.Size(868, 527);
@@ -885,16 +885,16 @@ namespace ПОСП
             this.GraphicModel_View.TabIndex = 0;
             this.GraphicModel_View.TabStop = false;
             // 
-            // BuildingField
+            // InfoField
             // 
-            this.BuildingField.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.BuildingField.Font = new System.Drawing.Font("Consolas", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.BuildingField.Location = new System.Drawing.Point(0, 0);
-            this.BuildingField.Name = "BuildingField";
-            this.BuildingField.ReadOnly = true;
-            this.BuildingField.Size = new System.Drawing.Size(868, 101);
-            this.BuildingField.TabIndex = 0;
-            this.BuildingField.Text = "";
+            this.InfoField.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.InfoField.Font = new System.Drawing.Font("Consolas", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.InfoField.Location = new System.Drawing.Point(0, 0);
+            this.InfoField.Name = "InfoField";
+            this.InfoField.ReadOnly = true;
+            this.InfoField.Size = new System.Drawing.Size(868, 101);
+            this.InfoField.TabIndex = 0;
+            this.InfoField.Text = "";
             // 
             // FileName_label
             // 
@@ -984,7 +984,7 @@ namespace ПОСП
             {
                 if (this.Output.ModelIsBuilt)
                 {
-                    BuildingField.Text = "Для сохранения модели необходимо остановить моделирование.";
+                    InfoField.Text = "Для сохранения модели необходимо остановить моделирование.";
                 }
                 else
                 {
@@ -1005,6 +1005,7 @@ namespace ПОСП
         }
         void UpLoad()
         {
+            this.CodeField.Enabled = false;
             this.Output = new OutputData(this.precision, this.ExploredModel);            
             this.Output.Output_All_Data();
 
@@ -1013,7 +1014,7 @@ namespace ПОСП
 
             if (this.Input.ShowSysLabel)
             {
-
+                TextFormat.InsertSystemLabel(this.CodeField, this.Output.HiddenLabel, this.Output.TextSelections);
             }
 
             ///Метод должен быть последним, изменяющим текст и первым, закрашивающим текст
@@ -1034,10 +1035,11 @@ namespace ПОСП
                 this.CodeField,
                 this.Output.TextSelections,
                 this.Output.UnitPosition,
-                this.Input.ShowNextOperator
+                this.Input.ShowNextOperator,
+                this.Input.ShowSysLabel
                 );
 
-            BuildingField.Text = this.Output.InfoTxt;
+            InfoField.Text = this.Output.InfoTxt;
             //следующийОператорToolStripMenuItem.Checked = this.DataSets.ShowNextOperator;
             //очередиToolStripMenuItem.Checked = this.DataSets.ShowQueues;
             //системныеМеткиToolStripMenuItem.Checked = this.DataSets.ShowSysMark;
@@ -1051,6 +1053,7 @@ namespace ПОСП
             this.CT_View.DataSource = this.Output.CT;
             this.Queues_View.DataSource = this.Output.Queues;
             UseAllCaptions();
+            this.CodeField.Enabled = true;
         }
 
 
@@ -1109,7 +1112,7 @@ namespace ПОСП
                     CodeField.Clear();
                     CodeField.Text = ModelText;
 
-                    BuildingField.Text = "Файл " + "\"" + SelectedFile + "\" успешно открыт.";
+                    InfoField.Text = "Файл " + "\"" + SelectedFile + "\" успешно открыт.";
 
                     //this.ExploredModel = new Model();
                 }
@@ -1157,7 +1160,7 @@ namespace ПОСП
                         }
                     }
                     ModelTextIsModified = false;
-                    BuildingField.Text = "Файл " + "\"" + SavedFile + "\" успешно сохранен.";
+                    InfoField.Text = "Файл " + "\"" + SavedFile + "\" успешно сохранен.";
                 }
                 catch (Exception ex)
                 {
@@ -1212,7 +1215,7 @@ namespace ПОСП
                     FileName_label.Text = FileName;
                     FilePath_label.Text = SavedFile;
                     MessageBox.Show("Файл успешно сохранен");
-                    BuildingField.Text = "Файл " + "\"" + SavedFile + "\" успешно сохранен.";
+                    InfoField.Text = "Файл " + "\"" + SavedFile + "\" успешно сохранен.";
                 }
                 catch (Exception ex)
                 {
@@ -1224,6 +1227,8 @@ namespace ПОСП
         //построение
         private void построениеToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            this.InfoField.Text = "Выполняется построение модели.";
+            this.InfoField.Refresh();
             this.UpDate();
             this.ExploredModel = new Model();
             //this.DataSets.SetParentModel(this.ExploredModel);
@@ -1326,7 +1331,7 @@ namespace ПОСП
             {
                 объектыToolStripMenuItem.Checked = true;
                 Objects_Tab.Parent = ResultField;
-                BuildingField.Focus();
+                InfoField.Focus();
             }
             else
             {
@@ -1341,7 +1346,7 @@ namespace ПОСП
             {
                 инициаторыToolStripMenuItem.Checked = true;
                 Initiators_Tab.Parent = ResultField;
-                BuildingField.Focus();
+                InfoField.Focus();
             }
             else
             {
@@ -1356,7 +1361,7 @@ namespace ПОСП
             {
                 таблицаБудущихВременToolStripMenuItem.Checked = true;
                 FTT_Tab.Parent = ResultField;
-                BuildingField.Focus();
+                InfoField.Focus();
             }
             else
             {
@@ -1371,7 +1376,7 @@ namespace ПОСП
             {
                 таблицаУсловийToolStripMenuItem.Checked = true;
                 CT_Tab.Parent = ResultField;
-                BuildingField.Focus();
+                InfoField.Focus();
             }
             else
             {
@@ -1386,7 +1391,7 @@ namespace ПОСП
             {
                 очереди_окноToolStripMenuItem.Checked = true;
                 Queues_Tab.Parent = ResultField;
-                BuildingField.Focus();
+                InfoField.Focus();
             }
             else
             {
@@ -1423,12 +1428,14 @@ namespace ПОСП
             if (системныеМеткиToolStripMenuItem.Checked == false)
             {
                 системныеМеткиToolStripMenuItem.Checked = true;
-                BuildingField.Focus();
+                InfoField.Focus();
             }
             else
                 системныеМеткиToolStripMenuItem.Checked = false;
 
             отображенияToolStripMenuItem.ShowDropDown();
+            this.UpDate();
+            this.UpLoad();
             //LPDP_Actions.Building(this.DataSets.CodeTxt);
             //CodeField.Rtf = LPDP_Code.Build_RTF_Code(системныеМеткиToolStripMenuItem.Checked);
             //CodeField.Rtf = LPDP_Code.Rewrite_Initiators_RTF(CodeField.Rtf, следующийОператорToolStripMenuItem.Checked, очередиToolStripMenuItem.Checked);
@@ -1438,7 +1445,7 @@ namespace ПОСП
             if (следующийОператорToolStripMenuItem.Checked == false)
             {
                 следующийОператорToolStripMenuItem.Checked = true;
-                BuildingField.Focus();
+                InfoField.Focus();
             }
             else
                 следующийОператорToolStripMenuItem.Checked = false;
@@ -1454,7 +1461,7 @@ namespace ПОСП
             if (очередиToolStripMenuItem.Checked == false)
             {
                 очередиToolStripMenuItem.Checked = true;
-                BuildingField.Focus();
+                InfoField.Focus();
             }
             else
                 очередиToolStripMenuItem.Checked = false;
@@ -1480,7 +1487,7 @@ namespace ПОСП
                 путьКФайлуToolStripMenuItem.Checked = false;
                 FilePath_label.Visible = false;
             }
-            BuildingField.Focus();
+            InfoField.Focus();
             отображенияToolStripMenuItem.ShowDropDown();
         }
 

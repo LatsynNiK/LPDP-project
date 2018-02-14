@@ -12,7 +12,8 @@ namespace LPDP.TextAnalysis
         Error,
         String,
         NextOperator,
-        NextAggregateOperator
+        NextAggregateOperator,
+        SystemLabel
     }
 
     public struct TextSelection

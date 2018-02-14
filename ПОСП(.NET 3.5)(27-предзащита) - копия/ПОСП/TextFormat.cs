@@ -28,7 +28,7 @@ namespace ПОСП
         static Color initialfont_color = Color.Black;
         static Color initialback_color = Color.White;
 
-        static Color system_label_color;
+        static Color system_label_color = Color.Gray;
 
 
         //public static void ColorizeNextOperator(RichTextBox rtb, int start, int len, bool is_flow, int unit_pos)
@@ -55,13 +55,12 @@ namespace ПОСП
         //    //return rtb;
         //}
 
-        public static void ColorizeTextSelection(RichTextBox rtb, DataTable dt, int unit_pos, bool show_next_oper)
+        public static void ColorizeTextSelection(RichTextBox rtb, DataTable dt, int unit_pos, bool show_next_oper, bool show_sys_label)
         {
             //Color save_color = rtb.SelectionColor;
             //Color save_bcolor = rtb.SelectionBackColor;
             
-            rtb.Select(unit_pos, 0);
-            rtb.ScrollToCaret();
+            
 
             bool built = false;
 
@@ -71,8 +70,8 @@ namespace ПОСП
                 int len = Convert.ToInt32(row.ItemArray[1]);
                 string type = Convert.ToString(row.ItemArray[2]);
 
-                Color font_color = rtb.SelectionColor;
-                Color back_color = rtb.SelectionBackColor;
+                Color font_color = initialfont_color;// rtb.SelectionColor;
+                Color back_color = initialback_color;// rtb.SelectionBackColor;
                 Font font = new Font(rtb.SelectionFont,FontStyle.Regular);
 
                 switch (type)
@@ -98,18 +97,30 @@ namespace ПОСП
                     case "NextAggregateOperator":
                         if (show_next_oper)
                         {
+                            rtb.Select(unit_pos, 0);
+                            rtb.ScrollToCaret();
                             font_color = initialfont_color;
                             back_color = next_operator_aggregat_color;
                         }
                         built = true;
                         break;
+                    
                     case "NextOperator":
                         if (show_next_oper)
                         {
+                            rtb.Select(unit_pos, 0);
+                            rtb.ScrollToCaret();
                             font_color = initialfont_color;
                             back_color = next_operator_color;
                         }
                         built = true;
+                        break;
+                    case "SystemLabel":
+                        if (show_sys_label)
+                        {
+                            font_color = system_label_color;
+                            //back_color = next_operator_aggregat_color;
+                        }
                         break;
                     default:
                         break;
@@ -228,6 +239,25 @@ namespace ПОСП
             return result;
         }
 
+        public static void InsertSystemLabel(RichTextBox rtb, DataTable sys_label_tabel, DataTable text_selection)
+        {
+            foreach (DataRow row in sys_label_tabel.Rows)
+            {
+                string name = row["Name"].ToString()+":";
+                int position = Convert.ToInt32( row["Position"].ToString());
+                position -= 4*3; // 3 tab 
+                rtb.Text = rtb.Text.Remove(position,name.Length);
+                rtb.Text = rtb.Text.Insert(position, name);
+
+                DataRow new_row = text_selection.NewRow();
+                new_row["Start"] = position;
+                
+                new_row["Length"] = name.Length;
+                new_row["Type"] = "SystemLabel";
+                text_selection.Rows.InsertAt(new_row,0);
+            }
+        }
+
         public static void InsertColorQueueArrows(RichTextBox rtb, DataTable arrows, DataTable text_selections)//, int start)
         {
             Dictionary<int, Color> dict = InsertQueueArrows(rtb, arrows, text_selections);
@@ -262,40 +292,15 @@ namespace ПОСП
             }
         }
         
-        public static void Shift(DataTable text_sel, int start)
-        {
-            foreach (DataRow row in text_sel.Rows)
-            {
-                if (Convert.ToInt32(row[0]) >= start)
-                {
-                    row[0] = Convert.ToInt32(row[0]) + 1;
-                }
-            }
-        }
-
-        //static void InsertArrow(RichTextBox rtb, int position, string arrow, Color color)
+        //public static void Shift(DataTable text_sel, int start)
         //{
-        //    int new_position = position;
-        //    //if (rtb.Text[position - 1] == '\t')
-        //    //{
-        //    //    new_position = position - 1;
-        //    //}
-        //    rtb.Text. = rtb.Text.Insert(new_position, arrow);
-        //    rtb.Select(new_position, arrow.Length);
-        //    rtb.SelectionColor = color;
-        //    rtb.DeselectAll();
-        //}
-        //        static void InsertArrow(RichTextBox rtb, int position, string arrow, Color color)
-        //{
-        //    int new_position = position;
-        //    //if (rtb.Text[position - 1] == '\t')
-        //    //{
-        //    //    new_position = position - 1;
-        //    //}
-        //    rtb.Text. = rtb.Text.Insert(new_position, arrow);
-        //    rtb.Select(new_position, arrow.Length);
-        //    rtb.SelectionColor = color;
-        //    rtb.DeselectAll();
-        //}
+        //    foreach (DataRow row in text_sel.Rows)
+        //    {
+        //        if (Convert.ToInt32(row[0]) >= start)
+        //        {
+        //            row[0] = Convert.ToInt32(row[0]) + 1;
+        //        }
+        //    }
+        //}        
     }
 }
