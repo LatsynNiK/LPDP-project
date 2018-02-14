@@ -28,6 +28,8 @@ namespace ПОСП
         static Color initialfont_color = Color.Black;
         static Color initialback_color = Color.White;
 
+        static Color system_label_color;
+
 
         //public static void ColorizeNextOperator(RichTextBox rtb, int start, int len, bool is_flow, int unit_pos)
         //{
@@ -96,6 +98,7 @@ namespace ПОСП
                     case "NextAggregateOperator":
                         if (show_next_oper)
                         {
+                            font_color = initialfont_color;
                             back_color = next_operator_aggregat_color;
                         }
                         built = true;
@@ -103,6 +106,7 @@ namespace ПОСП
                     case "NextOperator":
                         if (show_next_oper)
                         {
+                            font_color = initialfont_color;
                             back_color = next_operator_color;
                         }
                         built = true;
@@ -134,21 +138,23 @@ namespace ПОСП
         {
             string full_arrow = "\u27A4";
             string half_arrow = "\u27A2";
-            string several = "-";
+            string several = "..";
 
             Dictionary<int, Color> result = new Dictionary<int, Color>();
 
-            int shifting = 0;
+            //int shifting = 0;
             foreach (DataRow row in arrs.Rows)
             {
+                int shifting = 0;
                 int position = Convert.ToInt32(row["Position"]);
+                position -= 4; // сдвиг для tab
                 string[] arrows = new string[3];
                 Color[] colors = new Color[3];
 
                 for (int j = 1; j < row.ItemArray.Length; j++)
                 {
                     string arrow ="";
-                    Color color = Color.Black;
+                    Color color = initialfont_color;
 
                     int type = Convert.ToInt32(row[j]);
                     if (type == 0) //None
@@ -158,8 +164,9 @@ namespace ПОСП
                     }
                     if (type == 100)
                     {
-                        arrow = several;
+                        arrows[j - 1] = several;
                         type -= 100;
+                        continue;
                     }
                     
                     if (type < 20) //Full
@@ -174,9 +181,9 @@ namespace ПОСП
                     }
                     switch (type)
                     {
-                        case 0:
-                            color = Color.Black;
-                            break;
+                        //case 0:
+                        //    color = Color.Black;
+                        //    break;
                         case 1:
                             color = ready_color;
                             break;
@@ -198,8 +205,10 @@ namespace ПОСП
                     if (arrows[i].Length > 0)
                     {
                         int new_position = position + shifting;
+
+                        rtb.Text = rtb.Text.Remove(new_position, arrows[i].Length); //удаление пробела для вставки стрелки
                         rtb.Text = rtb.Text.Insert(new_position, arrows[i]);
-                        TextFormat.Shift(text_selections, new_position);
+                        //TextFormat.Shift(text_selections, new_position);
                         shifting += arrows[i].Length;
                         result.Add(new_position, colors[i]);
                     }

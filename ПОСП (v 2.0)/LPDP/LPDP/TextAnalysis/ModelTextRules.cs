@@ -77,11 +77,11 @@ namespace LPDP.TextAnalysis
         Name,
         Number,
 
-        ModelBracketOpen_Word,
-        UnitBracketOpen_Word,
+        ModelBracket_Word,
+        UnitBracket_Word,
         UnitType_Word,
-        DescriptionBracketOpen_Word,
-        AlgorithmBracketOpen_Word,
+        DescriptionBracket_Word,
+        AlgorithmBracket_Word,
 
         //[Description("всё")]
         ThatIsAll_Word,
@@ -360,10 +360,10 @@ namespace LPDP.TextAnalysis
         {
             WordTypes = new Dictionary<string, PhraseType>()
             {
-                {"модель",PhraseType.ModelBracketOpen_Word},
-                {"блок",PhraseType.UnitBracketOpen_Word},
-                {"описание",PhraseType.DescriptionBracketOpen_Word},
-                {"алгоритм",PhraseType.AlgorithmBracketOpen_Word},
+                {"модель",PhraseType.ModelBracket_Word},
+                {"блок",PhraseType.UnitBracket_Word},
+                {"описание",PhraseType.DescriptionBracket_Word},
+                {"алгоритм",PhraseType.AlgorithmBracket_Word},
                 {"все",PhraseType.ThatIsAll_Word},
 
                 {"контроллер",PhraseType.UnitType_Word},
@@ -432,11 +432,11 @@ namespace LPDP.TextAnalysis
                 {PhraseType. Name,true},
                 {PhraseType.Number,true},
                 
-                {PhraseType.ModelBracketOpen_Word,true},
-                {PhraseType.UnitBracketOpen_Word,true},
+                {PhraseType.ModelBracket_Word,true},
+                {PhraseType.UnitBracket_Word,true},
                 {PhraseType.UnitType_Word,true},
-                {PhraseType.DescriptionBracketOpen_Word,true},
-                {PhraseType.AlgorithmBracketOpen_Word,true},
+                {PhraseType.DescriptionBracket_Word,true},
+                {PhraseType.AlgorithmBracket_Word,true},
                 {PhraseType.ThatIsAll_Word,true},
                 
                 {PhraseType.ScalarVarType_Word,true},
@@ -630,19 +630,19 @@ namespace LPDP.TextAnalysis
             SyntacticalTemplates = new List<PhraseTypeTemplate>();
 
             //заголовки и хвосты
-            SyntacticalTemplates.Add(new PhraseTypeTemplate(PhraseType.Model, PhraseType.ModelBracketOpen_Word, PhraseType.Name, PhraseType.Units));
+            SyntacticalTemplates.Add(new PhraseTypeTemplate(PhraseType.Model, PhraseType.ModelBracket_Word, PhraseType.Name, PhraseType.Units));
 
             //блок
             SyntacticalTemplates.Add(new PhraseTypeTemplate(PhraseType.Units, PhraseType.Unit, PhraseType.Units));
             SyntacticalTemplates.Add(new PhraseTypeTemplate(PhraseType.Units, PhraseType.ModelEnding));
             SyntacticalTemplates.Add(new PhraseTypeTemplate(PhraseType.Unit, PhraseType.UnitHeader, PhraseType.Description, PhraseType.Algorithm, PhraseType.UnitEnding));
-            SyntacticalTemplates.Add(new PhraseTypeTemplate(PhraseType.UnitHeader, PhraseType.UnitBracketOpen_Word, PhraseType.UnitType_Word, PhraseType.Name));
-            SyntacticalTemplates.Add(new PhraseTypeTemplate(PhraseType.UnitEnding, PhraseType.ThatIsAll_Word, PhraseType.UnitBracketOpen_Word));
-            SyntacticalTemplates.Add(new PhraseTypeTemplate(PhraseType.ModelEnding, PhraseType.ThatIsAll_Word, PhraseType.ModelBracketOpen_Word));
+            SyntacticalTemplates.Add(new PhraseTypeTemplate(PhraseType.UnitHeader, PhraseType.UnitBracket_Word, PhraseType.UnitType_Word, PhraseType.Name));
+            SyntacticalTemplates.Add(new PhraseTypeTemplate(PhraseType.UnitEnding, PhraseType.ThatIsAll_Word, PhraseType.UnitBracket_Word));
+            SyntacticalTemplates.Add(new PhraseTypeTemplate(PhraseType.ModelEnding, PhraseType.ThatIsAll_Word, PhraseType.ModelBracket_Word));
 
             //описание
-            SyntacticalTemplates.Add(new PhraseTypeTemplate(PhraseType.Description, PhraseType.DescriptionBracketOpen_Word, PhraseType.DescriptionLines/*, PhraseType.DescriptionEnding*/));
-            SyntacticalTemplates.Add(new PhraseTypeTemplate(PhraseType.DescriptionEnding, PhraseType.ThatIsAll_Word, PhraseType.DescriptionBracketOpen_Word));
+            SyntacticalTemplates.Add(new PhraseTypeTemplate(PhraseType.Description, PhraseType.DescriptionBracket_Word, PhraseType.DescriptionLines/*, PhraseType.DescriptionEnding*/));
+            SyntacticalTemplates.Add(new PhraseTypeTemplate(PhraseType.DescriptionEnding, PhraseType.ThatIsAll_Word, PhraseType.DescriptionBracket_Word));
 
             //строка описания
             SyntacticalTemplates.Add(new PhraseTypeTemplate(PhraseType.DescriptionLines, PhraseType.DescriptionLine, PhraseType.EoL, PhraseType.DescriptionLines));
@@ -677,8 +677,8 @@ namespace LPDP.TextAnalysis
             SyntacticalTemplates.Add(new PhraseTypeTemplate(PhraseType.Names, PhraseType.Name));
 
             //алгоритм
-            SyntacticalTemplates.Add(new PhraseTypeTemplate(PhraseType.Algorithm, PhraseType.AlgorithmBracketOpen_Word, PhraseType.AlgorithmLines));
-            SyntacticalTemplates.Add(new PhraseTypeTemplate(PhraseType.AlgorithmEnding, PhraseType.ThatIsAll_Word, PhraseType.AlgorithmBracketOpen_Word));
+            SyntacticalTemplates.Add(new PhraseTypeTemplate(PhraseType.Algorithm, PhraseType.AlgorithmBracket_Word, PhraseType.AlgorithmLines));
+            SyntacticalTemplates.Add(new PhraseTypeTemplate(PhraseType.AlgorithmEnding, PhraseType.ThatIsAll_Word, PhraseType.AlgorithmBracket_Word));
 
             //строка алгоритма
             SyntacticalTemplates.Add(new PhraseTypeTemplate(PhraseType.AlgorithmLines, PhraseType.AlgorithmLine, PhraseType.AlgorithmLines));
@@ -773,6 +773,7 @@ namespace LPDP.TextAnalysis
             //SyntacticalTemplates.Add(new PhraseTypeTemplate(PhraseType.LogicExpression, PhraseType.Round_Bracket_Open, PhraseType.String, PhraseType.ComparisonOperator, PhraseType.String, PhraseType.Round_Bracket_Close));
             SyntacticalTemplates.Add(new PhraseTypeTemplate(PhraseType.LogicExpression, PhraseType.Round_Bracket_Open, PhraseType.LogicExpression, PhraseType.LogicOperator, PhraseType.LogicExpression, PhraseType.Round_Bracket_Close));
             SyntacticalTemplates.Add(new PhraseTypeTemplate(PhraseType.LogicExpression, PhraseType.Round_Bracket_Open, PhraseType.LogicExpression, PhraseType.Round_Bracket_Close));
+           // SyntacticalTemplates.Add(new PhraseTypeTemplate(PhraseType.LogicExpression, PhraseType.LogicExpression, PhraseType.LogicOperator, PhraseType.LogicExpression));//!!!
 
             //WaitOperator
             //SyntacticalTemplates.Add(new PhraseTypeTemplate(PhraseType.WaitOperator, PhraseType.WaitCondition, PhraseType.WaitConditions));

@@ -8,7 +8,7 @@ namespace LPDP.DataSets
     public class InputData : InputOutputData
     {
         public string CodeTxt;
-        public bool ShowSysMark;
+        public bool ShowSysLabel;
         public bool ShowNextOperator;
         public bool ShowQueues;
 
@@ -17,7 +17,7 @@ namespace LPDP.DataSets
             this.CodeTxt = "";
             this.ShowNextOperator = false;
             this.ShowQueues = false;
-            this.ShowSysMark = false;
+            this.ShowSysLabel = false;
             base.Precision = precision;
         }
 

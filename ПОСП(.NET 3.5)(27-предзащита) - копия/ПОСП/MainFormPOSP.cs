@@ -1001,7 +1001,7 @@ namespace ПОСП
             //this.DataSets.InfoTxt = BuildingField.Text;
             this.Input.ShowNextOperator = следующийОператорToolStripMenuItem.Checked;
             this.Input.ShowQueues = очередиToolStripMenuItem.Checked;
-            this.Input.ShowSysMark = системныеМеткиToolStripMenuItem.Checked;
+            this.Input.ShowSysLabel = системныеМеткиToolStripMenuItem.Checked;
         }
         void UpLoad()
         {
@@ -1010,6 +1010,13 @@ namespace ПОСП
 
             CodeField.Clear();
             CodeField.Text = this.Output.CodeTxt;// CodeRtf;
+
+            if (this.Input.ShowSysLabel)
+            {
+
+            }
+
+            ///Метод должен быть последним, изменяющим текст и первым, закрашивающим текст
             if (this.Input.ShowQueues)
             {               
                 TextFormat.InsertColorQueueArrows(this.CodeField, this.Output.QueueArrows, this.Output.TextSelections);

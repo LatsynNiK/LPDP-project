@@ -61,6 +61,7 @@ namespace LPDP.TextAnalysis
                 this.AnalyzeText(source_text);
 
                 this.ResultTxtCode = this.RebuildingText(this.ParsedText, this.CommentPhrases);
+                this.AnalyzeText(this.ResultTxtCode);
 
                 this.AnalyzeStructure(this.ParsedText);
 
@@ -215,15 +216,16 @@ namespace LPDP.TextAnalysis
             return Stack;
         }
 
-        int AnalyzeText(string SourceText) // возвращает 1 если успешно
+        int AnalyzeText(string source_text) // возвращает 1 если успешно
         {
             try
             {
-                this.SourceText = SourceText;
+                this.Selections = new TextSelectionTable();
+                this.SourceText = source_text;
                 //this.Errors = new List<Error>();
 
                 // Пустой текст модели
-                if (SourceText == string.Empty)
+                if (source_text == string.Empty)
                 {
                     //Errors.Add(new EmptyTextError());
                     throw new EmptyTextError();
@@ -263,10 +265,14 @@ namespace LPDP.TextAnalysis
         string RebuildingText(Phrase sourse_phrase, List<Phrase> comments)
         {
             string result = "";
+            string tab = "    ";
 
             if (sourse_phrase.Value != null)
             {
-                foreach (Phrase ph in sourse_phrase.Value)
+                List<Phrase> reverse = sourse_phrase.Value;
+                reverse.Reverse();
+                //sourse_phrase.Value
+                foreach (Phrase ph in reverse)
                 {
                     string before = "";
                     string after = "";
@@ -275,43 +281,91 @@ namespace LPDP.TextAnalysis
                         case PhraseType.Unit:
                             before = "\n";
                             after = "\n";
-                            result += before + this.RebuildingText(ph, comments) + after;
+                            //result += before + this.RebuildingText(ph, comments) + after;
+                            result = result.Insert(0, before + this.RebuildingText(ph, comments) + after);
                             break;
                         case PhraseType.UnitHeader:
-                            before = "\t";
+                            before = tab;
                             after = "\n";
-                            result += before + this.RebuildingText(ph, comments) + after;
+                            //result += before + this.RebuildingText(ph, comments) + after;
+                            result = result.Insert(0, before + this.RebuildingText(ph, comments) + after);
                             break;
                         case PhraseType.Description:
 
-                            before = "\t\t";
-                            after = "\n";
+                            before = tab+tab;
+                            //after = "\n";
+                            result = result.Insert(0, before + this.RebuildingText(ph, comments) + after);
                             break;
                         case PhraseType.DescriptionLine:
-                            before = "\t\t\t";
+                            if (reverse.IndexOf(ph) < reverse.Count - 1)
+                            {
+                                if (reverse[reverse.IndexOf(ph) + 1].PhType == PhraseType.Round_Bracket_Open)
+                                {
+                                    result = result.Insert(0, before + this.RebuildingText(ph, comments) + after);
+                                    break;
+                                }
+                            }                            
+                            before = tab+tab+tab;
+                            result = result.Insert(0, before + this.RebuildingText(ph, comments) + after);
                             break;
                         case PhraseType.DescriptionEnding:
-                            before = "\t\t";
+                            before = tab + tab;
+                            result = result.Insert(0, before + this.RebuildingText(ph, comments) + after);
                             break;
                         case PhraseType.Algorithm:
-                            before = "\t\t";
-                            after = "\n";
+                            before = tab + tab;
+                            result = result.Insert(0, before + this.RebuildingText(ph, comments) + after);
+                            //after = "\n";
                             break;
                         case PhraseType.AlgorithmLine:
-                            before = "\t\t\t";
+                            if (ph.Value[0].PhType != PhraseType.Label)
+                            {
+                                before = tab + tab + tab;
+                            }                            
+                            result = result.Insert(0, before + this.RebuildingText(ph, comments) + after);
                             break;
                         case PhraseType.AlgorithmEnding:
-                            before = "\t\t";
+                            before = tab + tab;
+                            result = result.Insert(0, before + this.RebuildingText(ph, comments) + after);
                             break;                        
                         //case PhraseType.EoL:
                         //    after = "\n";
                         //    break;
                         case PhraseType.UnitEnding:
-                            before = "\t";
+                            before = tab;
+                            result = result.Insert(0, before + this.RebuildingText(ph, comments) + after);
+                            break;
+                        case PhraseType.Label:
+                            after = tab + tab + tab;
+                            while (ph.Length > after.Length)
+                            {
+                                after += tab;
+                            }
+                            after = after.Remove(0, ph.Length);
+                            result = result.Insert(0, before + this.RebuildingText(ph, comments) + after);
+
+                            break;
+                        case PhraseType.Name:
+                            if (sourse_phrase.PhType == PhraseType.Label)
+                            {
+                                result = result.Insert(0, before + ph.ToString() + after);
+                                break;
+                            }
+                            if (sourse_phrase.PhType == PhraseType.Names)
+                            {
+                                result = result.Insert(0, before + ph.ToString() + after);
+                                break;
+                            }
+                            result = result.Insert(0, before + this.RebuildingText(ph, comments) + after);
+                            break;
+                        default:
+                            result = result.Insert(0, before + this.RebuildingText(ph, comments) + after);
                             break;
                     }
 
                     //result += before + this.RebuildingText(ph, comments) + after;
+                    
+                    //result = result.Insert(0, before + this.RebuildingText(ph, comments) + after);
                 }
             }
             else
@@ -323,15 +377,37 @@ namespace LPDP.TextAnalysis
                     case PhraseType.EoL:
                         after = "\n";
                         break;
+                    case PhraseType.DescriptionBracket_Word:
+                        after = "\n";
+                        break;
+                    //case PhraseType.Name:
+                    //    if (reverse.IndexOf(ph) < reverse.Count - 1)
+                    //    {
+                    //        if (reverse[reverse.IndexOf(ph) + 1].PhType == PhraseType.Round_Bracket_Open)
+                    //        {
+                    //            break;
+                    //        }
+                    //    }
+                    //    after = " ";
+                    //break;
+                    case PhraseType.LabelSeparator:
+                        //after = "\n";
+                        break;
+                    case PhraseType.AlgorithmBracket_Word:
+                        after = "\n";
+                        break;
 
                     default:
                         after = " ";
                         break;
                 }
-                while ((comments.Count > 0) && (comments[0].Start < sourse_phrase.Start))
+                //while ((comments.Count > 0) && (comments[0].Start < sourse_phrase.Start))
+                while ((comments.Count > 0) && (comments.Last().Start > sourse_phrase.Start))
                 {
-                    before += ((Lexeme)comments[0]).LValue;
-                    comments.RemoveAt(0);
+                    //before += ((Lexeme)comments[0]).LValue;
+                    after = after.Insert(0, tab + ((Lexeme)comments.Last()).LValue);
+                    // RemoveAt(0);
+                    comments.Remove(comments.Last());
                 }
                 result = before+((Lexeme)sourse_phrase).LValue + after;
             }      
@@ -921,8 +997,14 @@ namespace LPDP.TextAnalysis
                     {
                         //!!!Errors.Add(new Error(ErrorType.UnknownLexeme, ModelTextRules.ErrorTypes[ErrorType.UnknownLexeme] + lex.Value, lex.Line, lex.Start, lex.Length));
                     }
+
+                    //удаление \n из комментария
                     if (lex.PhType == PhraseType.Comment)
                     {
+                        if (lex.LValue.Last() == '\n')
+                        {
+                            lex.LValue = lex.LValue.TrimEnd('\n');// RemoveAt(lex.LValue.Length - 1);
+                        }
                         this.CommentPhrases.Add((Phrase)lex);
                         this.Selections.Add(lex.Start, lex.Length, TextSelectionType.Comment);
                     }
