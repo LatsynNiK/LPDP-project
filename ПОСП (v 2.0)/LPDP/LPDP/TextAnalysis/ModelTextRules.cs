@@ -231,7 +231,7 @@ namespace LPDP.TextAnalysis
             ModelTextRules.InitializeWordTypes();
             ModelTextRules.InitializePrimaryPhraseTypes();
             ModelTextRules.InitializeSyntacticalTemplates();
-            ModelTextRules.InitializeErrorTypes();
+            //ModelTextRules.InitializeErrorTypes();
         }
 
 
@@ -796,32 +796,6 @@ namespace LPDP.TextAnalysis
             //TerminateOperator
             SyntacticalTemplates.Add(new PhraseTypeTemplate(PhraseType.DeleteOperator, PhraseType.TerminateOperator_Word, PhraseType.Name));
             SyntacticalTemplates.Add(new PhraseTypeTemplate(PhraseType.TerminateOperator, PhraseType.TerminateOperator_Word, PhraseType.Initiator_Word));
-        }
-        #endregion
-
-        //ОШИБКИ
-        #region Errors
-        /// <summary>
-        /// Типы ошибок
-        /// </summary>
-        public static Dictionary<ErrorType, string> ErrorTypes;
-        /// <summary>
-        /// Инициализация типов ошибок
-        /// </summary>
-        public static void InitializeErrorTypes()
-        {
-            ErrorTypes = new Dictionary<ErrorType, string>()
-            {
-                //{ErrorType.EmptyText, "Не найден текст модели."},
-                //{ErrorType.UnknownSimbol, "Неизвестный символ: "},
-                //{ErrorType.UnknownLexeme, "Неизвестнная лексема: "},
-
-                //{ErrorType.ExpectedPhrase, "Ожидаемая фраза: "},
-
-                //{ErrorType.Replacing, "На этом месте ожидалось: "},
-
-                //{ErrorType.UnknownPhrase, "Неизвестнная конструкция: "}
-            };
         }
         #endregion
     }

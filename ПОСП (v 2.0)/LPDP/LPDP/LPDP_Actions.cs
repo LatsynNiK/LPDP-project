@@ -185,7 +185,7 @@ namespace LPDP
             ModelTextRules.InitializeSyntacticalTemplates();
 
 
-            ModelTextRules.InitializeErrorTypes();
+            //ModelTextRules.InitializeErrorTypes();
         }
     }
 }
