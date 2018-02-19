@@ -80,14 +80,8 @@
     <Compile Include="Structure\StructureController.cs" />
     <Compile Include="Structure\Subprogram.cs" />
     <Compile Include="Dynamics\TimeAndConditionController.cs" />
-    <Compile Include="LPDP_Actions.cs" />
-    <Compile Include="LPDP_Code.cs" />
-    <Compile Include="Structure\LPDP_Core%28old%29.cs" />
-    <Compile Include="LPDP_Data.cs" />
-    <Compile Include="LPDP_Graphics.cs" />
     <Compile Include="Objects\Initiator.cs" />
     <Compile Include="Objects\Link.cs" />
-    <Compile Include="Objects\LPDP_Objects%28old%29.cs" />
     <Compile Include="Objects\Memory.cs" />
     <Compile Include="Objects\Object.cs" />
     <Compile Include="Objects\ObjectController.cs" />
