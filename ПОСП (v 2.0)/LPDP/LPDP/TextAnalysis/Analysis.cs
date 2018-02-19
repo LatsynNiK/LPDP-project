@@ -216,7 +216,7 @@ namespace LPDP.TextAnalysis
             return Stack;
         }
 
-        int AnalyzeText(string source_text) // возвращает 1 если успешно
+        public int AnalyzeText(string source_text) // возвращает 1 если успешно
         {
             try
             {
@@ -356,6 +356,17 @@ namespace LPDP.TextAnalysis
                                 result = result.Insert(0, before + ph.ToString() + after);
                                 break;
                             }
+                            result = result.Insert(0, before + this.RebuildingText(ph, comments) + after);
+                            break;
+                        case PhraseType.WaitCondition:
+                            if (reverse.IndexOf(ph) > reverse.FindIndex(p => p.PhType == PhraseType.WaitCondition))
+                            {
+                                after = "\n"+tab+tab+tab;                                
+                            }
+                            result = result.Insert(0, before + this.RebuildingText(ph, comments) + after);
+                            break;
+                        case PhraseType.IfCondition:                            
+                            after = "\n" + tab + tab + tab;
                             result = result.Insert(0, before + this.RebuildingText(ph, comments) + after);
                             break;
                         default:

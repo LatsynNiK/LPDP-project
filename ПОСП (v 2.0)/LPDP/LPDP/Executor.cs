@@ -428,8 +428,8 @@ namespace LPDP
                     switch (first_exp_ph.PhType)
                     {
                         case PhraseType.ValueFromLink:
-                            //result = Convert.ToDouble(this.GetObject(first_exp_ph).GetValue());
-                            break;
+                            return Convert.ToString(this.GetObject(first_exp_ph).GetValue());                           
+                            //break;
                         case PhraseType.VectorNode:
                             return Convert.ToString(this.GetObject(first_exp_ph).GetValue());
                             //break;

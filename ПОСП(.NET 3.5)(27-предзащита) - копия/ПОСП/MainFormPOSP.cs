@@ -449,6 +449,7 @@ namespace ПОСП
             this.CodeField.TabIndex = 0;
             this.CodeField.Text = "";
             this.CodeField.WordWrap = false;
+            this.CodeField.KeyDown += new System.Windows.Forms.KeyEventHandler(this.CodeField_KeyDown);
             // 
             // General_Indicators
             // 
@@ -992,6 +993,17 @@ namespace ПОСП
                 }
             }
 
+        }
+
+        private void CodeField_KeyDown(object sender, KeyEventArgs e)
+        {
+            //if ((e.KeyData == Keys.Space) ||
+            //    (e.KeyData == Keys.Enter))
+            //{
+            //    this.UpDate();
+            //    this.ExploredModel.Analysis.AnalyzeText(this.Input.CodeTxt);
+            //    this.UpLoad();
+            //}
         }
 
         void UpDate()
@@ -1882,6 +1894,8 @@ namespace ПОСП
                 }  
             }
         }
+
+        
     }
 
 }
