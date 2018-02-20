@@ -18,5 +18,10 @@ namespace LPDP.TextAnalysis
             this.PhTemplate = template;
             this.ConcatedPhrases = template.Length;
         }
+
+        public override string ToString()
+        {
+            return this.PhType.ToString();
+        }
     }
 }

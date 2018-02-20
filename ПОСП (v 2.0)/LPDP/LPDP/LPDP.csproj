@@ -63,6 +63,7 @@
     <Compile Include="Errors\SyntacticalErrors\ExpectedPhraseError.cs" />
     <Compile Include="Errors\SyntacticalErrors\ReplacingError.cs" />
     <Compile Include="Errors\SyntacticalErrors\SyntacticalError.cs" />
+    <Compile Include="Errors\SyntacticalErrors\TemplateNotFound\PhraseNotFound.cs" />
     <Compile Include="Errors\SystemError.cs" />
     <Compile Include="Errors\UserError.cs" />
     <Compile Include="Executor.cs" />
