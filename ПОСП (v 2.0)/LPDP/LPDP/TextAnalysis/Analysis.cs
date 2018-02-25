@@ -897,7 +897,7 @@ namespace LPDP.TextAnalysis
             CopyPhrases.AddRange(Phrases);
 
             //Возможная ошибка
-            Phrase err = new Phrase();
+            //Phrase err = new Phrase();
 
             List<Phrase> ListNewPhrase = new List<Phrase>();
             for (int i = 0; i < template.ConcatedPhrases; i++)
@@ -926,104 +926,98 @@ namespace LPDP.TextAnalysis
                     }
                     else 
                     {
-                        //есть ошибка                        
-                        //throw new PhraseNotFound(Phrases[0].Start, Phrases[0].Length, Phrases[0].Line, template.PhTemplate[i]); 
-                        //создаем новую фразу, которую хотели бы видеть вместо этой
-                        Phrase inner_ph = new Phrase(template.PhTemplate[i]);
-                        inner_ph.Start = CopyPhrases[0].Start;
-                        inner_ph.Length = CopyPhrases[0].Length;
-                        inner_ph.Line = CopyPhrases[0].Line;
-                        //оборачиваем ее в ошибку
-                        Phrase ErrPh = new Phrase(PhraseType.Error, inner_ph);
-                        //ErrPh.Value[0].PhType = template.PhTemplate[i];
-                        CopyPhrases.RemoveAt(0);
-                        CopyPhrases.Insert(0, ErrPh);
-                        return CopyPhrases;
+                        //есть ошибка
+                        
+                        ////throw new PhraseNotFound(Phrases[0].Start, Phrases[0].Length, Phrases[0].Line, template.PhTemplate[i]); 
+                        ////создаем новую фразу, которую хотели бы видеть вместо этой
+                        //Phrase inner_ph = new Phrase(template.PhTemplate[i]);
+                        //inner_ph.Start = CopyPhrases[0].Start;
+                        //inner_ph.Length = CopyPhrases[0].Length;
+                        //inner_ph.Line = CopyPhrases[0].Line;
+                        ////оборачиваем ее в ошибку
+                        //Phrase ErrPh = new Phrase(PhraseType.Error, inner_ph);
+                        ////ErrPh.Value[0].PhType = template.PhTemplate[i];
+                        //CopyPhrases.RemoveAt(0);
+                        //CopyPhrases.Insert(0, ErrPh);
+                        //return CopyPhrases;
+
+                        throw new PhraseNotFound(CopyPhrases[0].Start, CopyPhrases[0].Length, CopyPhrases[0].Line, template.PhTemplate[i]);
                     }
                 }
                 //если нетерминал (составное значение)
                 else
                 {
-                    //подбираем возможный шаблон
-                    List<PhraseTypeTemplate> list_inner_temp = FindTemplates(template.PhTemplate[i]);
-                    bool firstly = true;
-                    foreach (PhraseTypeTemplate inner_temp in list_inner_temp)
+                    try
                     {
+                        PhraseTypeTemplate inner_temp = FindTemplates(template.PhTemplate[i], CopyPhrases[0]);
                         List<Phrase> NewPhrases = new List<Phrase>();
                         NewPhrases = ApplyTemplate(inner_temp, CopyPhrases);
-                        if (NewPhrases[0].PhType == PhraseType.Error)
-                        {
-                            //catch
-                            //если не подходит
-                            if (firstly)
-                            {
-                                //на всякий, сохраняем первую ошибку
-                                err = NewPhrases[0];
-                                firstly = false;
-                            }
-
-                            if (list_inner_temp.IndexOf(inner_temp) == list_inner_temp.IndexOf(list_inner_temp.Last()))
-                            {
-                                //если последни из списка                               
-                                //throw new PhraseNotFound(err, template.PhTemplate[i]);
-                                Phrase inner_ph = err.Value[0];
-                                Phrase outer_ph = new Phrase(template.PhTemplate[i], inner_ph);
-                                Phrase ErrPh = new Phrase(PhraseType.Error, outer_ph);
-                                CopyPhrases.RemoveAt(0);
-                                CopyPhrases.Insert(0, ErrPh);
-                                return CopyPhrases;
-                            }
-                            else
-                            {
-                                //если не последни из списка
-                                continue;
-                            }
-                        }
-                        else
-                        {
-                            //try
-                            CopyPhrases = NewPhrases;
-                            ListNewPhrase.Add(CopyPhrases[0]);
-                            CopyPhrases.RemoveAt(0);
-                            break;
-                        }
-
-                        //try
-                        //{
-                        //    //если подходит
-                        //    NewPhrases = ApplyTemplate(inner_temp, CopyPhrases);
-                        //    CopyPhrases = NewPhrases;
-                        //    ListNewPhrase.Add(CopyPhrases[0]);
-                        //    CopyPhrases.RemoveAt(0);
-                        //    break;
-                        //}
-                        //catch (PhraseNotFound e_inner)
-                        //{
-                        //    //если не подходит
-                        //    if (firstly)
-                        //    {
-                        //        //на всякий, сохраняем первую ошибку
-                        //        err = e_inner;
-                        //        firstly = false;
-                        //    }
-                            
-                        //    if (list_inner_temp.IndexOf(inner_temp) == list_inner_temp.IndexOf(list_inner_temp.Last()))
-                        //    {
-                        //        //если последни из списка
-                        //        //Phrases = CopyPhrases;
-                        //        throw new PhraseNotFound(err, template.PhTemplate[i]);
-                        //    }
-                        //    else
-                        //    {
-                        //        //если не последни из списка
-                        //        continue;
-                        //    }
-                        //}
+                        CopyPhrases = NewPhrases;
+                        ListNewPhrase.Add(CopyPhrases[0]);
+                        CopyPhrases.RemoveAt(0);
 
                     }
+                    catch (PhraseNotFound e)
+                    {
+                        throw new PhraseNotFound(e, template.PhType);
+                    }
+                    //подбираем возможный шаблон
+                    //List<PhraseTypeTemplate> list_inner_temp = FindTemplates(template.PhTemplate[i]);
+                    //bool firstly = true;
+                    //foreach (PhraseTypeTemplate inner_temp in list_inner_temp)
+                    //{
+                        
+                    //}
+                    //PhraseTypeTemplate inner_temp = FindTemplates(template.PhTemplate[i], CopyPhrases[0]);
+                    //List<Phrase> NewPhrases = new List<Phrase>();
+                    //NewPhrases = ApplyTemplate(inner_temp, CopyPhrases);
+                    //if (NewPhrases[0].PhType == PhraseType.Error)
+                    //{
+                    //    //catch
+                    //    //если не подходит
+                    //    //if (firstly)
+                    //    //{
+                    //    //    //на всякий, сохраняем первую ошибку
+                    //    //    err = NewPhrases[0];
+                    //    //    firstly = false;
+                    //    //}
+                    //    //если последни из списка                               
+                    //    //throw new PhraseNotFound(err, template.PhTemplate[i]);
+                    //    Phrase inner_ph = NewPhrases[0].Value[0];
+                    //    Phrase outer_ph = new Phrase(template.PhTemplate[i], inner_ph);
+                    //    Phrase ErrPh = new Phrase(PhraseType.Error, outer_ph);
+                    //    CopyPhrases.RemoveAt(0);
+                    //    CopyPhrases.Insert(0, ErrPh);
+                    //    return CopyPhrases;
+                    //    //if (list_inner_temp.IndexOf(inner_temp) == list_inner_temp.IndexOf(list_inner_temp.Last()))
+                    //    //{
+                            
+                    //    //}
+                    //    //else
+                    //    //{
+                    //    //    //если не последни из списка
+                    //    //    continue;
+                    //    //}
+                    //}
+                    //else
+                    //{
+                    //    //try
+                    //    CopyPhrases = NewPhrases;
+                    //    ListNewPhrase.Add(CopyPhrases[0]);
+                    //    CopyPhrases.RemoveAt(0);
+                    //    //break;
+                    //}
                 }        
             }
             //создаем новую фразу
+            foreach (Phrase ph in ListNewPhrase)
+            {
+                if ((ph.Value != null) && (ph.Value.Count == 0))
+                {
+                    Phrase last = ListNewPhrase.ElementAt(ListNewPhrase.IndexOf(ph) - 1);
+                    ph.Start = last.Start+last.Length;
+                }
+            }            
             Phrase[] ArrayNewPhrase = new Phrase[ListNewPhrase.Count];
             ListNewPhrase.CopyTo(ArrayNewPhrase);
             Phrase NewPhrase = new Phrase(template.PhType, ArrayNewPhrase);
@@ -1036,24 +1030,55 @@ namespace LPDP.TextAnalysis
             return CopyPhrases;
         }
 
-        List<PhraseTypeTemplate> FindTemplates(PhraseType ph_type)
+        PhraseTypeTemplate FindTemplates(PhraseType ph_type, Phrase first_ph)
         {
-            List<PhraseTypeTemplate> result = new List<PhraseTypeTemplate>();
+            Error err = new Error();
+            //PhraseTypeTemplate result = new PhraseTypeTemplate>();
             foreach (PhraseTypeTemplate temp in ModelTextRules.SyntacticalTemplates)
             {
+                
                 if (temp.PhType == ph_type)
                 {
-                    result.Add(temp);
+                    if (temp.ConcatedPhrases == 0)
+                    {
+                        return temp;
+                    }
+                    if (temp.PhTemplate[0] == first_ph.PhType)
+                    {
+                        return temp;
+                    }
+                    else
+                    {                        
+                        try
+                        {
+                            //если терминал
+                            if (ModelTextRules.PrimaryPhraseTypes[temp.PhTemplate[0]])
+                            {
+                                throw new PhraseNotFound(first_ph.Start,first_ph.Length,first_ph.Line, temp.PhTemplate[0]);
+                                //break;//выход из цикла и ошибка
+                                //temp.PhTemplate[0].PhType == PhraseType.Comma
+                            }
+                            //если нетерминал
+                            else
+                            {
+                                FindTemplates(temp.PhTemplate[0], first_ph);
+                                return temp; 
+                            }                          
+                        }
+                        catch (PhraseNotFound e)
+                        {
+                            err = e;
+                            continue;
+                        }
+                    }
                 }
             }
-            if (result.Count == 0)
-            {
-                throw new PhraseNotFound();
-            }
-            else
-            {
-                return result;
-            }
+            //Phrase Expected = new Phrase(ph_type);
+            //Expected.Start = first_ph.Start;
+            //Expected.Length = first_ph.Length;
+            //Expected.Line = first_ph.Line;
+            //throw new ExpectedPhraseError(Expected);       
+            throw new PhraseNotFound(err, ph_type);
         }
 
         bool TryToReplace(List<Phrase> Phrases, int corrected_index, PhraseTypeTemplate temp)
@@ -1070,7 +1095,7 @@ namespace LPDP.TextAnalysis
                 (Phrases[0].PhType == PhraseType.ComparisonOperator) ||
                 (Phrases[0].PhType == PhraseType.LogicOperator) ||
                 (Phrases[0].PhType == PhraseType.ArithmeticFunction_Word) ||
-                (Phrases[0].PhType == PhraseType.AssignOperator_Word) ||
+                (Phrases[0].PhType == PhraseType.SetOperator_Word) ||
                 (Phrases[0].PhType == PhraseType.LabelSeparator)
                 )
             {
@@ -1232,28 +1257,49 @@ namespace LPDP.TextAnalysis
 
         Phrase MadeStruct(Phrase InitialPhrase)
         {
-            for (int i = 0; i < InitialPhrase.Value.Count; i++)// (Phrase ph in InitialPhrase.Value)
+            int i = 0;
+            while (i < InitialPhrase.Value.Count)
+            //for (int i = 0; i < InitialPhrase.Value.Count; i++)// (Phrase ph in InitialPhrase.Value)
             {
                 if (InitialPhrase.Value[i] is Lexeme)
+                {
+                    i++;
                     continue;
+                }
                 else
                 {
                     InitialPhrase.Value[i] = MadeStruct(InitialPhrase.Value[i]);
-                    if (InitialPhrase.Value[i].PhType == InitialPhrase.PhType)
+                    if ((InitialPhrase.Value[i].PhType == InitialPhrase.PhType) ||
+                        (InitialPhrase.Value[i].PhType.ToString().Contains("Another")))
+                    //if ((InitialPhrase.Value[i].PhType == InitialPhrase.PhType)||
+                    //    (InitialPhrase.Value[i].PhType == PhraseType.AnotherVars)||
+                    //    (InitialPhrase.Value[i].PhType == PhraseType.AnotherDescriptionLine)||
+                    //    (InitialPhrase.Value[i].PhType == PhraseType.AnotherArithmeticExpression_1lvl)||
+                    //    (InitialPhrase.Value[i].PhType == PhraseType.AnotherArithmeticExpression_2lvl)||
+                    //    (InitialPhrase.Value[i].PhType == PhraseType.AnotherArithmeticExpression_3lvl)||
+                    //    (InitialPhrase.Value[i].PhType == PhraseType.AnotherParameters))
                     {
-                        if ((InitialPhrase.PhType != PhraseType.ArithmeticExpression_1lvl) &&
-                            (InitialPhrase.PhType != PhraseType.ArithmeticExpression_2lvl) &&
-                            (InitialPhrase.PhType != PhraseType.ArithmeticExpression_3lvl) &&
-                            (InitialPhrase.PhType != PhraseType.LogicExpression) &&
-                            (InitialPhrase.PhType != PhraseType.ArithmeticFunction) &&
-                            (InitialPhrase.PhType != PhraseType.VectorNode))
+
+                        if ((InitialPhrase.Value[i].PhType != PhraseType.ArithmeticExpression_1lvl) &&
+                            (InitialPhrase.Value[i].PhType != PhraseType.ArithmeticExpression_2lvl) &&
+                            (InitialPhrase.Value[i].PhType != PhraseType.ArithmeticExpression_3lvl) &&
+                            (InitialPhrase.Value[i].PhType != PhraseType.LogicExpression) &&
+                            (InitialPhrase.Value[i].PhType != PhraseType.ComparisonExpression) &&
+                            (InitialPhrase.Value[i].PhType != PhraseType.ArithmeticFunction) &&
+                            (InitialPhrase.Value[i].PhType != PhraseType.VectorNode))
                         {
                             int index = InitialPhrase.Value.IndexOf(InitialPhrase.Value[i]);
                             InitialPhrase.Value.InsertRange(index + 1, InitialPhrase.Value[index].Value);
                             InitialPhrase.Value.RemoveAt(index);
                         }
                     }
+                    //if (InitialPhrase.Value[i].Value.Count == 0)
+                    //{
+                    //    InitialPhrase.Value.RemoveAt(i);
+                    //    i--;
+                    //}
                 }
+                i++;
             }
 
             //if (Errors.Count > 0)
@@ -1294,22 +1340,25 @@ namespace LPDP.TextAnalysis
                     {
                         continue;
                     }
-                    if (var_ph.PhType == PhraseType.Var)
+                    if (var_ph.PhType == PhraseType.InitialVar)
                     {
-                        if (var_ph.Value.Exists(p => p.PhType == PhraseType.AssignOperator))
+                        string name = this.EjectStringName(var_ph);
+                        Phrase val = null;
+                        if (var_ph.Value.Exists(p => p.PhType == PhraseType.InitialValue))
                         {
-                            Phrase assign_op_ph = var_ph.Value.Find(p => p.PhType == PhraseType.AssignOperator);
-                            string name = this.EjectStringName(assign_op_ph);
-                            Phrase val = assign_op_ph.Value.Find(p => p.PhType == PhraseType.Value);
+                            Phrase initial_val_ph = var_ph.Value.Find(p => p.PhType == PhraseType.InitialValue);                            
+                            val = initial_val_ph.Value.Find(p => p.PhType == PhraseType.Value);
                             vars_dictionary.Add(name, val);
                             continue;
                         }
-                        if (var_ph.Value.Exists(p => p.PhType == PhraseType.Name))
-                        {
-                            string name = this.EjectStringName(var_ph);
-                            vars_dictionary.Add(name, null);
-                            continue;
-                        }
+                        vars_dictionary.Add(name, val);
+                        continue;
+                        //if (var_ph.Value.Exists(p => p.PhType == PhraseType.Name))
+                        //{
+                        //    string name = this.EjectStringName(var_ph);
+                        //    vars_dictionary.Add(name, null);
+                        //    continue;
+                        //}
                     }
                 }
 
@@ -1318,7 +1367,7 @@ namespace LPDP.TextAnalysis
 
                 string varunit;
                 Phrase ref_to_unit_ph = vardescription_ph.Value.Find(ph => ph.PhType == PhraseType.RefToUnit);
-                if (ref_to_unit_ph != null)
+                if (ref_to_unit_ph.Value.Count>0)
                 {
                     varunit = this.EjectStringName(ref_to_unit_ph);
                 }
@@ -1408,7 +1457,7 @@ namespace LPDP.TextAnalysis
                     result_oper.Name = OperatorName.Assign;
                     action = new Structure.Action();
                     action.Name = ActionName.Assign;
-                    Phrase concrete_var = concret_operator_ph.Value[0];
+                    Phrase concrete_var = concret_operator_ph.Value[1];
                     action.Parameters.Add(concrete_var);//var
                     action.Parameters.Add(concret_operator_ph.Value.Find(ph => ph.PhType == PhraseType.Value));//value
                     result_oper.AddAction(action);
@@ -1522,79 +1571,138 @@ namespace LPDP.TextAnalysis
                     break;
 
                 case PhraseType.WaitOperator:
-                    if (concret_operator_ph.Value.Exists(ph => ph.PhType == PhraseType.WaitTime))
+                    //начало ждать
+                    Phrase wait_condition_ph = concret_operator_ph.Value.Find(ph => ph.PhType == PhraseType.WaitCondition);
+                    action = new Structure.Action();
+                    if (wait_condition_ph.Value.Exists(ph => ph.PhType == PhraseType.WaitTime))
                     {
-                        result_oper.Name = OperatorName.SimpleWait;
-                        action = new Structure.Action();
+                        result_oper.Name = OperatorName.SimpleWait;                        
                         action.Name = ActionName.Write_to_FTT;
-                        Phrase wait_time_ph = concret_operator_ph.Value.Find(ph => ph.PhType == PhraseType.WaitTime);
+                        Phrase wait_time_ph = wait_condition_ph.Value.Find(ph => ph.PhType == PhraseType.WaitTime);
                         Phrase wait_time_value_ph = wait_time_ph.Value.Find(ph => ph.PhType == PhraseType.ArithmeticExpression_3lvl);
                         action.Parameters.Add(wait_time_value_ph);
+                        action.Parameters.Add(true);//initiator                        
+                        action.Parameters.Add(false);//to the begining
                         action.Parameters.Add("$L_" + this.ParentModel.ST_Cont.NextWaitLabelNumber);
                         action.Parameters.Add(this.ParentModel.ST_Cont.CurrentUnit.Name);
                         action.Parameters.Add(false);
-                        result_oper.AddAction(action);
+                        //result_oper.AddAction(action);
                     }
-                    if (concret_operator_ph.Value.Exists(ph => ph.PhType == PhraseType.WaitUntil))
+                    if (wait_condition_ph.Value.Exists(ph => ph.PhType == PhraseType.WaitUntil))
                     {
                         result_oper.Name = OperatorName.SimpleWait;
-                        action = new Structure.Action();
+                        //action = new Structure.Action();
                         action.Name = ActionName.Write_to_CT;
-                        Phrase wait_time_ph = concret_operator_ph.Value.Find(ph => ph.PhType == PhraseType.WaitUntil);
-                        Phrase wait_logic_expression_ph = wait_time_ph.Value.Find(ph => ph.PhType == PhraseType.LogicExpression);
+                        Phrase wait_until_ph = wait_condition_ph.Value.Find(ph => ph.PhType == PhraseType.WaitUntil);
+                        Phrase wait_logic_expression_ph = wait_until_ph.Value.Find(ph => ph.PhType == PhraseType.LogicExpression);
                         action.Parameters.Add(wait_logic_expression_ph);//condition
                         action.Parameters.Add(true);//initiator                        
                         action.Parameters.Add(false);//to the begining
                         action.Parameters.Add("$L_" + this.ParentModel.ST_Cont.NextWaitLabelNumber);
                         action.Parameters.Add(this.ParentModel.ST_Cont.CurrentUnit.Name);
                         action.Parameters.Add(false);
+                        //result_oper.AddAction(action);
+                    }
+                    ///
+                    Phrase complex_wait_condition_ph = concret_operator_ph.Value.Find(ph => ph.PhType == PhraseType.ComplexWaitCondition);
+                    if (complex_wait_condition_ph.Value[0].PhType == PhraseType.EoL)
+                    {
                         result_oper.AddAction(action);
                     }
-                    if (concret_operator_ph.Value.Exists(ph => ph.PhType == PhraseType.WaitConditions))
+                    else
                     {
                         result_oper.Name = OperatorName.ComplexWait;
-                        Phrase wait_conditions_ph = concret_operator_ph.Value.Find(ph => ph.PhType == PhraseType.WaitConditions);
-                        foreach (Phrase wait_condition_ph in wait_conditions_ph.Value)
+                        Phrase transfer_oper_in_wait_ph = complex_wait_condition_ph.Value.Find(ph => ph.PhType == PhraseType.TransferOperator);
+                        destination_ph = transfer_oper_in_wait_ph.Value.Find(ph => ph.PhType == PhraseType.Destination);
+                        destination_str = EjectStringDestination(destination_ph);
+                        action.Parameters[3] = destination_str.Key;
+                        action.Parameters[4] = destination_str.Value;
+                        result_oper.AddAction(action);
+                        for (int i = 2; i < transfer_oper_in_wait_ph.Value.Count; i+=4 )
                         {
-                            if (wait_condition_ph.PhType == PhraseType.EoL)
-                            {
-                                break;
+                            if (complex_wait_condition_ph.Value[i].PhType == PhraseType.EoL)
+                            { 
+                                break; 
                             }
                             action = new Structure.Action();
+                            wait_condition_ph = complex_wait_condition_ph.Value[i+1];
                             if (wait_condition_ph.Value.Exists(ph => ph.PhType == PhraseType.WaitTime))
-                            {                               
+                            {                                                                
                                 action.Name = ActionName.Write_to_FTT;
                                 Phrase wait_time_ph = wait_condition_ph.Value.Find(ph => ph.PhType == PhraseType.WaitTime);
                                 Phrase wait_time_value_ph = wait_time_ph.Value.Find(ph => ph.PhType == PhraseType.ArithmeticExpression_3lvl);
                                 action.Parameters.Add(wait_time_value_ph);
+                                //action.Parameters.Add(true);//initiator                        
+                                //action.Parameters.Add(false);//to the begining
+                                //action.Parameters.Add(true);
                             }
                             if (wait_condition_ph.Value.Exists(ph => ph.PhType == PhraseType.WaitUntil))
-                            {
+                            {                      
                                 action.Name = ActionName.Write_to_CT;
                                 Phrase wait_until_ph = wait_condition_ph.Value.Find(ph => ph.PhType == PhraseType.WaitUntil);
-                                Phrase logic_exp = wait_until_ph.Value.Find(ph => ph.PhType == PhraseType.LogicExpression);
-                                action.Parameters.Add(logic_exp);
-                                action.Parameters.Add(true);
-                                action.Parameters.Add(false);
+                                Phrase wait_logic_expression_ph = wait_until_ph.Value.Find(ph => ph.PhType == PhraseType.LogicExpression);
+                                action.Parameters.Add(wait_logic_expression_ph);//condition
+                                //action.Parameters.Add(true);//initiator                        
+                                //action.Parameters.Add(false);//to the begining                             
+                                //action.Parameters.Add(true);                                
                             }
-                            Phrase transfer_oper_in_wait_ph = wait_condition_ph.Value.Find(ph => ph.PhType == PhraseType.TransferOperator);
+                            action.Parameters.Add(true);//initiator                        
+                            action.Parameters.Add(false);//to the begining                           
+                            transfer_oper_in_wait_ph = complex_wait_condition_ph.Value.Find(ph => ph.PhType == PhraseType.TransferOperator);
                             destination_ph = transfer_oper_in_wait_ph.Value.Find(ph => ph.PhType == PhraseType.Destination);
                             destination_str = EjectStringDestination(destination_ph);
                             action.Parameters.Add(destination_str.Key);
                             action.Parameters.Add(destination_str.Value);
-                            if (firstly)
-                            {
-                                action.Parameters.Add(false); //islast
-                                firstly = false;
-                            }
-                            else
-                            {
-                                action.Parameters.Add(true); //islast
-                            }
+                            action.Parameters.Add(true);
                             result_oper.AddAction(action);
                         }
+                        //result_oper.AddAction(action);
+
+
+                        
+                        //Phrase wait_conditions_ph = concret_operator_ph.Value.Find(ph => ph.PhType == PhraseType.WaitConditions);
+                        //foreach (Phrase wait_condition_ph in wait_conditions_ph.Value)
+                        //{
+                        //    if (wait_condition_ph.PhType == PhraseType.EoL)
+                        //    {
+                        //        break;
+                        //    }
+                        //    action = new Structure.Action();
+                        //    if (wait_condition_ph.Value.Exists(ph => ph.PhType == PhraseType.WaitTime))
+                        //    {                               
+                        //        action.Name = ActionName.Write_to_FTT;
+                        //        Phrase wait_time_ph = wait_condition_ph.Value.Find(ph => ph.PhType == PhraseType.WaitTime);
+                        //        Phrase wait_time_value_ph = wait_time_ph.Value.Find(ph => ph.PhType == PhraseType.ArithmeticExpression_3lvl);
+                        //        action.Parameters.Add(wait_time_value_ph);
+                        //    }
+                        //    if (wait_condition_ph.Value.Exists(ph => ph.PhType == PhraseType.WaitUntil))
+                        //    {
+                        //        action.Name = ActionName.Write_to_CT;
+                        //        Phrase wait_until_ph = wait_condition_ph.Value.Find(ph => ph.PhType == PhraseType.WaitUntil);
+                        //        Phrase logic_exp = wait_until_ph.Value.Find(ph => ph.PhType == PhraseType.LogicExpression);
+                        //        action.Parameters.Add(logic_exp);
+                        //        action.Parameters.Add(true);
+                        //        action.Parameters.Add(false);
+                        //    }
+                        //    Phrase transfer_oper_in_wait_ph = wait_condition_ph.Value.Find(ph => ph.PhType == PhraseType.TransferOperator);
+                        //    destination_ph = transfer_oper_in_wait_ph.Value.Find(ph => ph.PhType == PhraseType.Destination);
+                        //    destination_str = EjectStringDestination(destination_ph);
+                        //    action.Parameters.Add(destination_str.Key);
+                        //    action.Parameters.Add(destination_str.Value);
+                        //    if (firstly)
+                        //    {
+                        //        action.Parameters.Add(false); //islast
+                        //        firstly = false;
+                        //    }
+                        //    else
+                        //    {
+                        //        action.Parameters.Add(true); //islast
+                        //    }
+                        //    result_oper.AddAction(action);
+                        //}
                     }
                     break;
+                //конец ждать
             }
             result_oper.Position = new Selection(concret_operator_ph.Start, concret_operator_ph.Length);
             return result_oper;
@@ -1604,15 +1712,13 @@ namespace LPDP.TextAnalysis
         {
             KeyValuePair<string, string> result;
             Word label_name_word = (Word)destination_ph.Value.Find(ph => ph.PhType == PhraseType.Name);
-            
-            if (destination_ph.Value.Exists(ph => ph.PhType == PhraseType.RefToUnit))
-            {
-                Phrase ref_to_unit_ph = destination_ph.Value.Find(ph => ph.PhType == PhraseType.RefToUnit);
+
+            result = new KeyValuePair<string, string>(label_name_word.LValue, this.ParentModel.ST_Cont.CurrentUnit.Name);
+            Phrase ref_to_unit_ph = destination_ph.Value.Find(ph => ph.PhType == PhraseType.RefToUnit);
+
+            if (ref_to_unit_ph.Value.Count > 0)
+            {               
                 result = new KeyValuePair<string,string>(label_name_word.LValue, EjectStringName(ref_to_unit_ph));
-            }
-            else
-            {
-                result = new KeyValuePair<string,string>(label_name_word.LValue,this.ParentModel.ST_Cont.CurrentUnit.Name);
             }
             return result;
         }

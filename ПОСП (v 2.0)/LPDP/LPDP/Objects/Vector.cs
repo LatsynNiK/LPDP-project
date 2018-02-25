@@ -42,18 +42,17 @@ namespace LPDP.Objects
             return this.Value;
         }
 
-        public LPDP.Objects.Object FindNode(Phrase path)
+        public LPDP.Objects.Object FindNode(string node_name, Phrase path)
         {
-            LPDP.Objects.Object finded_node;
-            if (path.PhType == PhraseType.Name)
-            {
-                string node_name = ((Word)path).LValue;
+            LPDP.Objects.Object finded_node;           
+            if (path.Value.Count == 0)
+            {                
                 finded_node = this.Value.Find(obj => obj.Name == node_name);
             }
             else
             {
-                Phrase inner_node = path.Value[2];
-                finded_node = this.FindNode(inner_node);
+                Phrase inner_node = path.Value[1];
+                finded_node = this.FindNode(node_name, inner_node);
             }
             return finded_node;
         }
