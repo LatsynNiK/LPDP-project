@@ -24,7 +24,15 @@ namespace LPDP
             }
             else
             {
-                return this.Text + " -> " + ((Error)base.InnerException).GetErrorStack();
+                string inner_text = ((Error)base.InnerException).Text;
+                if (inner_text == this.Text)
+                {
+                    return ((Error)base.InnerException).GetErrorStack();
+                }
+                else
+                {
+                    return this.Text + " -> " + ((Error)base.InnerException).GetErrorStack();
+                }
             }
         }
         
