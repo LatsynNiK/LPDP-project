@@ -77,8 +77,10 @@ namespace ПОСП
             this.очередиToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.системныеМеткиToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.путьКФайлуToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.MainContainer = new System.Windows.Forms.SplitContainer();
+            this.обновитьToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.InfoField = new System.Windows.Forms.RichTextBox();
             this.TopContainer = new System.Windows.Forms.SplitContainer();
+            this.FileName_label = new System.Windows.Forms.Label();
             this.FilePath_label = new System.Windows.Forms.Label();
             this.CodeField = new System.Windows.Forms.RichTextBox();
             this.General_Indicators = new System.Windows.Forms.Panel();
@@ -110,12 +112,8 @@ namespace ПОСП
             this.GraphicModel_Tab = new System.Windows.Forms.TabPage();
             this.GraphicModel_Panel = new System.Windows.Forms.Panel();
             this.GraphicModel_View = new System.Windows.Forms.PictureBox();
-            this.InfoField = new System.Windows.Forms.RichTextBox();
-            this.FileName_label = new System.Windows.Forms.Label();
+            this.MainContainer = new System.Windows.Forms.SplitContainer();
             this.MainMenu.SuspendLayout();
-            this.MainContainer.Panel1.SuspendLayout();
-            this.MainContainer.Panel2.SuspendLayout();
-            this.MainContainer.SuspendLayout();
             this.TopContainer.Panel1.SuspendLayout();
             this.TopContainer.Panel2.SuspendLayout();
             this.TopContainer.SuspendLayout();
@@ -146,6 +144,9 @@ namespace ПОСП
             this.GraphicModel_Tab.SuspendLayout();
             this.GraphicModel_Panel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.GraphicModel_View)).BeginInit();
+            this.MainContainer.Panel1.SuspendLayout();
+            this.MainContainer.Panel2.SuspendLayout();
+            this.MainContainer.SuspendLayout();
             this.SuspendLayout();
             // 
             // MainMenu
@@ -157,7 +158,8 @@ namespace ПОСП
             this.запускToolStripMenuItem,
             this.стопToolStripMenuItem,
             this.окнаToolStripMenuItem,
-            this.отображенияToolStripMenuItem});
+            this.отображенияToolStripMenuItem,
+            this.обновитьToolStripMenuItem});
             this.MainMenu.Location = new System.Drawing.Point(0, 0);
             this.MainMenu.Name = "MainMenu";
             this.MainMenu.Size = new System.Drawing.Size(892, 29);
@@ -378,28 +380,24 @@ namespace ПОСП
             this.путьКФайлуToolStripMenuItem.Text = "Путь к файлу";
             this.путьКФайлуToolStripMenuItem.Click += new System.EventHandler(this.путьКФайлуToolStripMenuItem_Click);
             // 
-            // MainContainer
+            // обновитьToolStripMenuItem
             // 
-            this.MainContainer.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.MainContainer.Location = new System.Drawing.Point(12, 45);
-            this.MainContainer.Name = "MainContainer";
-            this.MainContainer.Orientation = System.Windows.Forms.Orientation.Horizontal;
+            this.обновитьToolStripMenuItem.Name = "обновитьToolStripMenuItem";
+            this.обновитьToolStripMenuItem.ShortcutKeyDisplayString = "F5";
+            this.обновитьToolStripMenuItem.Size = new System.Drawing.Size(93, 25);
+            this.обновитьToolStripMenuItem.Text = "Обновить";
+            this.обновитьToolStripMenuItem.Click += new System.EventHandler(this.обновитьToolStripMenuItem_Click);
             // 
-            // MainContainer.Panel1
+            // InfoField
             // 
-            this.MainContainer.Panel1.Controls.Add(this.TopContainer);
-            this.MainContainer.Panel1.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            // 
-            // MainContainer.Panel2
-            // 
-            this.MainContainer.Panel2.Controls.Add(this.InfoField);
-            this.MainContainer.Panel2.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            this.MainContainer.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            this.MainContainer.Size = new System.Drawing.Size(868, 527);
-            this.MainContainer.SplitterDistance = 422;
-            this.MainContainer.TabIndex = 2;
+            this.InfoField.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.InfoField.Font = new System.Drawing.Font("Consolas", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.InfoField.Location = new System.Drawing.Point(0, 0);
+            this.InfoField.Name = "InfoField";
+            this.InfoField.ReadOnly = true;
+            this.InfoField.Size = new System.Drawing.Size(868, 101);
+            this.InfoField.TabIndex = 0;
+            this.InfoField.Text = "";
             // 
             // TopContainer
             // 
@@ -409,7 +407,7 @@ namespace ПОСП
             // 
             // TopContainer.Panel1
             // 
-            this.TopContainer.Panel1.AutoScroll = true;
+            this.TopContainer.Panel1.Controls.Add(this.FileName_label);
             this.TopContainer.Panel1.Controls.Add(this.FilePath_label);
             this.TopContainer.Panel1.Controls.Add(this.CodeField);
             // 
@@ -421,15 +419,26 @@ namespace ПОСП
             this.TopContainer.SplitterDistance = 551;
             this.TopContainer.TabIndex = 0;
             // 
+            // FileName_label
+            // 
+            this.FileName_label.AutoSize = true;
+            this.FileName_label.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.FileName_label.Location = new System.Drawing.Point(0, 0);
+            this.FileName_label.Name = "FileName_label";
+            this.FileName_label.Size = new System.Drawing.Size(101, 17);
+            this.FileName_label.TabIndex = 3;
+            this.FileName_label.Text = "Новая модель";
+            // 
             // FilePath_label
             // 
+            this.FilePath_label.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.FilePath_label.AutoSize = true;
-            this.FilePath_label.Dock = System.Windows.Forms.DockStyle.Right;
             this.FilePath_label.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.FilePath_label.Location = new System.Drawing.Point(551, 0);
+            this.FilePath_label.Location = new System.Drawing.Point(0, 0);
             this.FilePath_label.Name = "FilePath_label";
             this.FilePath_label.Size = new System.Drawing.Size(0, 17);
             this.FilePath_label.TabIndex = 4;
+            this.FilePath_label.TextAlign = System.Drawing.ContentAlignment.TopRight;
             this.FilePath_label.Visible = false;
             // 
             // CodeField
@@ -442,14 +451,14 @@ namespace ПОСП
             this.CodeField.EnableAutoDragDrop = true;
             this.CodeField.Font = new System.Drawing.Font("Consolas", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.CodeField.ForeColor = System.Drawing.SystemColors.WindowText;
-            this.CodeField.Location = new System.Drawing.Point(0, 16);
+            this.CodeField.HideSelection = false;
+            this.CodeField.Location = new System.Drawing.Point(0, 17);
             this.CodeField.Name = "CodeField";
             this.CodeField.ReadOnly = true;
-            this.CodeField.Size = new System.Drawing.Size(551, 406);
+            this.CodeField.Size = new System.Drawing.Size(534, 406);
             this.CodeField.TabIndex = 0;
             this.CodeField.Text = "";
             this.CodeField.WordWrap = false;
-            this.CodeField.KeyDown += new System.Windows.Forms.KeyEventHandler(this.CodeField_KeyDown);
             // 
             // General_Indicators
             // 
@@ -886,31 +895,32 @@ namespace ПОСП
             this.GraphicModel_View.TabIndex = 0;
             this.GraphicModel_View.TabStop = false;
             // 
-            // InfoField
+            // MainContainer
             // 
-            this.InfoField.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.InfoField.Font = new System.Drawing.Font("Consolas", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.InfoField.Location = new System.Drawing.Point(0, 0);
-            this.InfoField.Name = "InfoField";
-            this.InfoField.ReadOnly = true;
-            this.InfoField.Size = new System.Drawing.Size(868, 101);
-            this.InfoField.TabIndex = 0;
-            this.InfoField.Text = "";
+            this.MainContainer.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.MainContainer.Location = new System.Drawing.Point(12, 45);
+            this.MainContainer.Name = "MainContainer";
+            this.MainContainer.Orientation = System.Windows.Forms.Orientation.Horizontal;
             // 
-            // FileName_label
+            // MainContainer.Panel1
             // 
-            this.FileName_label.AutoSize = true;
-            this.FileName_label.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.FileName_label.Location = new System.Drawing.Point(12, 41);
-            this.FileName_label.Name = "FileName_label";
-            this.FileName_label.Size = new System.Drawing.Size(101, 17);
-            this.FileName_label.TabIndex = 3;
-            this.FileName_label.Text = "Новая модель";
+            this.MainContainer.Panel1.Controls.Add(this.TopContainer);
+            this.MainContainer.Panel1.RightToLeft = System.Windows.Forms.RightToLeft.No;
+            // 
+            // MainContainer.Panel2
+            // 
+            this.MainContainer.Panel2.Controls.Add(this.InfoField);
+            this.MainContainer.Panel2.RightToLeft = System.Windows.Forms.RightToLeft.No;
+            this.MainContainer.RightToLeft = System.Windows.Forms.RightToLeft.No;
+            this.MainContainer.Size = new System.Drawing.Size(868, 527);
+            this.MainContainer.SplitterDistance = 422;
+            this.MainContainer.TabIndex = 2;
             // 
             // POSP_Form
             // 
             this.ClientSize = new System.Drawing.Size(892, 584);
-            this.Controls.Add(this.FileName_label);
             this.Controls.Add(this.MainContainer);
             this.Controls.Add(this.MainMenu);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
@@ -923,9 +933,6 @@ namespace ПОСП
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.POSP_Form_KeyDown);
             this.MainMenu.ResumeLayout(false);
             this.MainMenu.PerformLayout();
-            this.MainContainer.Panel1.ResumeLayout(false);
-            this.MainContainer.Panel2.ResumeLayout(false);
-            this.MainContainer.ResumeLayout(false);
             this.TopContainer.Panel1.ResumeLayout(false);
             this.TopContainer.Panel1.PerformLayout();
             this.TopContainer.Panel2.ResumeLayout(false);
@@ -963,48 +970,13 @@ namespace ПОСП
             this.GraphicModel_Panel.ResumeLayout(false);
             this.GraphicModel_Panel.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.GraphicModel_View)).EndInit();
+            this.MainContainer.Panel1.ResumeLayout(false);
+            this.MainContainer.Panel2.ResumeLayout(false);
+            this.MainContainer.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
-        }
-        
-        private void POSP_Form_KeyDown(object sender, KeyEventArgs e)
-        {
-            if (e.KeyData == Keys.F5)
-            {
-                if ((this.Output == null) || (this.Output.ModelIsBuilt == false))
-                {
-                    построениеToolStripMenuItem_Click(sender, e);
-                }
-                else
-                {
-                    запускПоВремениToolStripMenuItem_Click(sender, e);
-                }
-            }
-            if (e.KeyCode == Keys.S && (e.Control))
-            {
-                if (this.Output.ModelIsBuilt)
-                {
-                    InfoField.Text = "Для сохранения модели необходимо остановить моделирование.";
-                }
-                else
-                {
-                    сохранитьToolStripMenuItem.PerformClick();
-                }
-            }
-
-        }
-
-        private void CodeField_KeyDown(object sender, KeyEventArgs e)
-        {
-            //if ((e.KeyData == Keys.Space) ||
-            //    (e.KeyData == Keys.Enter))
-            //{
-            //    this.UpDate();
-            //    this.ExploredModel.Analysis.AnalyzeText(this.Input.CodeTxt);
-            //    this.UpLoad();
-            //}
-        }
+        }       
 
         void UpDate()
         {
@@ -1067,6 +1039,40 @@ namespace ПОСП
             UseAllCaptions();
             this.CodeField.Enabled = true;
         }
+        void RefreshCodeField()
+        {
+            //Point scroll = this.CodeField. AutoScrollOffset;
+            //Rectangle rect = this.CodeField.sc;
+            //this.CodeField.Enabled = false;
+            //this.CodeField.HideSelection = false;
+            int save_position = this.CodeField.SelectionStart;
+            Font font = this.CodeField.Font;
+            Color forecolor = this.CodeField.ForeColor;
+            Color backcolor = this.CodeField.BackColor;
+            string info = this.ExploredModel.StatusInfo;
+            this.UpDate();
+            this.ExploredModel.Analysis.CheckText(this.Input.CodeTxt);
+            //try
+            //{
+            //    this.ExploredModel.Analysis.LexicalAnalysis(this.Input.CodeTxt);
+            //}
+            //catch (Error e)
+            //{
+            //    this.ExploredModel.Analysis.Selections.AddError(e);
+            //    this.ExploredModel.StatusInfo = e.GetErrorStack();
+            //}
+            this.UpLoad();
+
+            this.CodeField.SelectionStart = save_position;
+            this.CodeField.SelectionFont = font;
+            this.CodeField.SelectionColor = forecolor;
+            this.CodeField.SelectionBackColor = backcolor;
+            //this.CodeField.AutoScrollOffset = new Point();
+            this.CodeField.Focus();
+            //this.CodeField.Enabled = true;
+            //this.CodeField.ScrollToCaret();
+            //this.CodeField.rect = rect;
+        }
 
 
         #region ВКЛАДКИ МЕНЮ
@@ -1123,6 +1129,7 @@ namespace ПОСП
                     FilePath_label.Text = SelectedFile;
                     CodeField.Clear();
                     CodeField.Text = ModelText;
+                    this.RefreshCodeField();
 
                     InfoField.Text = "Файл " + "\"" + SelectedFile + "\" успешно открыт.";
 
@@ -1305,8 +1312,8 @@ namespace ПОСП
             this.UpDate();
             this.ExploredModel.Executor.StartStep();
 
-            if (this.Output.ModelIsBuilt == false)
-                стопToolStripMenuItem.PerformClick();
+            //if (this.Output.ModelIsBuilt == false)
+            //    стопToolStripMenuItem.PerformClick();
 
             this.UpLoad();
         } 
@@ -1893,9 +1900,45 @@ namespace ПОСП
                         break;
                 }  
             }
+        }     
+
+        //Быстрые клавиши
+
+        private void POSP_Form_KeyDown(object sender, KeyEventArgs e)
+        {
+            if ((e.Control) && (e.KeyCode == Keys.F5))
+            {
+                this.RefreshCodeField();
+            }
+            if (e.KeyData == Keys.F5)
+            {                
+                if ((this.Output == null) || (this.Output.ModelIsBuilt == false))
+                {
+                    построениеToolStripMenuItem_Click(sender, e);
+                }
+                else
+                {
+                    запускПоВремениToolStripMenuItem_Click(sender, e);
+                }
+            }
+            if (e.KeyCode == Keys.S && (e.Control))
+            {
+                if (this.Output.ModelIsBuilt)
+                {
+                    InfoField.Text = "Для сохранения модели необходимо остановить моделирование.";
+                }
+                else
+                {
+                    сохранитьToolStripMenuItem.PerformClick();
+                }
+            }
+
         }
 
-        
+        private void обновитьToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            this.RefreshCodeField();
+        }
     }
 
 }

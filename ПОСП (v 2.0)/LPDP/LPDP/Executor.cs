@@ -57,8 +57,19 @@ namespace LPDP
 
         public void StartStep()
         {
-            this.ExecuteOperator(this.INITIATOR.NextOperator);
-            this.ParentModel.StatusInfo = "Выполнен шаг.";
+            try
+            {
+                this.ExecuteOperator(this.INITIATOR.NextOperator);
+                this.ParentModel.StatusInfo = "Выполнен шаг.";
+            }
+            catch (Error e)
+            {
+                //this.Stop();
+                this.INITIATOR.Type = InitiatorType.RunTimeError;
+                this.ParentModel.Analysis.Selections.AddError(e);
+                this.ParentModel.StatusInfo = e.GetErrorStack();
+                //this.ParentModel.Built = false;
+            }
         }
 
         public void StartSEC()
@@ -146,7 +157,14 @@ namespace LPDP
         {
             foreach (Structure.Action action in oper.Actions)
             {
-                ExecuteAction(action);
+                try
+                {
+                    ExecuteAction(action);
+                }
+                catch (RunTimeError e)
+                {
+                    throw new UserError(e);
+                }
             }
             int next_oper_index = oper.ParentSubprogram.Operators.IndexOf(oper)+1;            
             if (oper.ParentSubprogram.Operators.Count == next_oper_index)
@@ -656,65 +674,86 @@ namespace LPDP
         // GET OBJECT
         public LPDP.Objects.Object GetObject(Phrase var)
         {
-            //заглушка
-            LPDP.Objects.Object result = new LPDP.Objects.Scalar("","");
-            //
-            if (var.PhType == PhraseType.Name)
+            try
             {
-                string var_name2 = ((Lexeme)var).LValue;
-                return this.ParentModel.O_Cont.GetObjectByName(var_name2, this.INITIATOR.NextOperator.ParentSubprogram.Unit.Name);
+                //заглушка
+                LPDP.Objects.Object result = new LPDP.Objects.Scalar("", "");
+                //
+                string var_name;// = ((Lexeme)var_name_ph).LValue;
+                if (var.PhType == PhraseType.Name)
+                {
+                    var_name = ((Lexeme)var).LValue;
+                    result = this.ParentModel.O_Cont.GetObjectByName(var_name, this.INITIATOR.NextOperator.ParentSubprogram.Unit.Name);
+                    //if (result == null)
+                    //{
+                    //    throw new NameNotFound(var.Start, var.Length, var.Line, var_name);
+                    //}
+                    return result;
+                }
+
+                Phrase var_name_ph = var.Value[0];
+                Phrase next_ph = var.Value[1];
+
+                var_name = ((Lexeme)var_name_ph).LValue;
+                if (var_name_ph.PhType == PhraseType.Name)
+                {
+                    result = this.ParentModel.O_Cont.GetObjectByName(var_name, this.INITIATOR.NextOperator.ParentSubprogram.Unit.Name);
+                    //if (result == null)
+                    //{
+                    //    throw new NameNotFound(var.Start, var.Length, var.Line, var_name);
+                    //}
+                }
+
+                switch (next_ph.PhType)
+                {
+                    case PhraseType.VectorNode:
+                        //result = this.ParentModel.O_Cont.GetVectorNode(var, this.SUBPROGRAM.Unit.Name);
+
+                        //result = this.ParentModel.O_Cont.GetVectorNode(var, this.INITIATOR.NextOperator.ParentSubprogram.Unit.Name);
+                        result = this.ParentModel.O_Cont.GetObjectByName(var_name, this.INITIATOR.NextOperator.ParentSubprogram.Unit.Name);
+                        if (next_ph.Value.Count == 0)
+                        {
+                            //var_name = ((Lexeme)var_name_ph).LValue;
+                            //result = this.ParentModel.O_Cont.GetObjectByName(var_name, this.INITIATOR.NextOperator.ParentSubprogram.Unit.Name);                        
+                        }
+                        else
+                        {
+                            //string var_name = ((Lexeme)var_name_ph).LValue;
+                            //result = this.ParentModel.O_Cont.GetObjectByName(var_name, this.INITIATOR.NextOperator.ParentSubprogram.Unit.Name);                        
+                            string inner_name = ((Lexeme)next_ph.Value[1]).LValue;
+                            Phrase inner_ph = next_ph.Value[2];
+                            result = ((Vector)result).FindNode(inner_name, inner_ph);
+                        }
+                        break;
+                    case PhraseType.ValueFromLink:
+                        result = this.GetObjectFromLink(var_name_ph);
+                        next_ph = next_ph.Value[1].Value[1];
+                        if (next_ph.Value.Count == 0)
+                        {
+                            //var_name = ((Lexeme)var_name_ph).LValue;
+                            //result = this.ParentModel.O_Cont.GetObjectByName(var_name, this.INITIATOR.NextOperator.ParentSubprogram.Unit.Name);                        
+                        }
+                        else
+                        {
+                            //string var_name = ((Lexeme)var_name_ph).LValue;
+                            //result = this.ParentModel.O_Cont.GetObjectByName(var_name, this.INITIATOR.NextOperator.ParentSubprogram.Unit.Name);                        
+                            string inner_name = ((Lexeme)next_ph.Value[1]).LValue;
+                            Phrase inner_ph = next_ph.Value[2];
+                            result = ((Vector)result).FindNode(inner_name, inner_ph);
+                        }
+                        break;
+                }
+                if (result == null)
+                {
+                    throw new ObjectDoesNotExistError(var.Start, var.Length, var.Line, var_name);
+                }
+                return result;
             }
-
-            Phrase var_name_ph = var.Value[0];
-            Phrase next_ph = var.Value[1];
-
-            string var_name = ((Lexeme)var_name_ph).LValue;
-            if (var_name_ph.PhType == PhraseType.Name)
-            {               
-                result = this.ParentModel.O_Cont.GetObjectByName(var_name, this.INITIATOR.NextOperator.ParentSubprogram.Unit.Name);
-            }
-
-            switch (next_ph.PhType)
+            catch (NameNotFound e)
             {
-                case PhraseType.VectorNode:
-                    //result = this.ParentModel.O_Cont.GetVectorNode(var, this.SUBPROGRAM.Unit.Name);
-                    
-                    //result = this.ParentModel.O_Cont.GetVectorNode(var, this.INITIATOR.NextOperator.ParentSubprogram.Unit.Name);
-                    result = this.ParentModel.O_Cont.GetObjectByName(var_name, this.INITIATOR.NextOperator.ParentSubprogram.Unit.Name);                        
-                    if (next_ph.Value.Count == 0)
-                    {
-                        //var_name = ((Lexeme)var_name_ph).LValue;
-                        //result = this.ParentModel.O_Cont.GetObjectByName(var_name, this.INITIATOR.NextOperator.ParentSubprogram.Unit.Name);                        
-                    }
-                    else
-                    {
-                        //string var_name = ((Lexeme)var_name_ph).LValue;
-                        //result = this.ParentModel.O_Cont.GetObjectByName(var_name, this.INITIATOR.NextOperator.ParentSubprogram.Unit.Name);                        
-                        string inner_name = ((Lexeme)next_ph.Value[1]).LValue;
-                        Phrase inner_ph = next_ph.Value[2];
-                        result = ((Vector)result).FindNode(inner_name, inner_ph);
-                    }
-                    break;
-                case PhraseType.ValueFromLink:
-                    result = this.GetObjectFromLink(var_name_ph);
-                    next_ph = next_ph.Value[1].Value[1];
-                    if (next_ph.Value.Count == 0)
-                    {
-                        //var_name = ((Lexeme)var_name_ph).LValue;
-                        //result = this.ParentModel.O_Cont.GetObjectByName(var_name, this.INITIATOR.NextOperator.ParentSubprogram.Unit.Name);                        
-                    }
-                    else
-                    {
-                        //string var_name = ((Lexeme)var_name_ph).LValue;
-                        //result = this.ParentModel.O_Cont.GetObjectByName(var_name, this.INITIATOR.NextOperator.ParentSubprogram.Unit.Name);                        
-                        string inner_name = ((Lexeme)next_ph.Value[1]).LValue;
-                        Phrase inner_ph = next_ph.Value[2];
-                        result = ((Vector)result).FindNode(inner_name, inner_ph);
-                    }
-                    break;
+                throw new ObjectDoesNotExistError(var.Start, var.Length, var.Line, e);
+                //throw new ObjectDoesNotExistError(e);
             }
-            return result;
-
         }
 
         //public LPDP.Objects.Object GetObject(Phrase var)
@@ -792,15 +831,5 @@ namespace LPDP
             return this.TIME;
         }
 
-        //public LPDP.DataSets.Selection GetNextOperatorPosition()
-        //{
-        //    //return this.NEXT_OPERATOR.Position;
-        //    return this.INITIATOR.NextOperator.Position;
-        //}
-
-        //public InitiatorType GetInitiatorType()
-        //{
-        //    return this.INITIATOR.Type;
-        //}
     }
 }

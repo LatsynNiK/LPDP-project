@@ -251,6 +251,8 @@ namespace LPDP.TextAnalysis
         {
             if (Char.IsLetter(ch))
                 return LexemeType.Word;
+            if (ch == '_')
+                return LexemeType.Word;
             if (Char.IsNumber(ch))
                 return LexemeType.Number;
             if ((ch == ' ') || (ch == '\t'))
@@ -318,16 +320,14 @@ namespace LPDP.TextAnalysis
             LexicalTemplates.Add(new LexemeTypeTemplate(LexemeType.Empty, LexemeType.Empty, LexemeType.Empty));
 
 
-            LexicalTemplates.Add(new LexemeTypeTemplate(LexemeType.Comment, LexemeType.Comment_Slash, LexemeType.Enter));
-            LexicalTemplates.Add(new LexemeTypeTemplate(LexemeType.Comment_Slash, LexemeType.Comment_Slash, LexemeType.Anything));
-            LexicalTemplates.Add(new LexemeTypeTemplate(LexemeType.Comment_Bracket_Open, LexemeType.Comment_Bracket_Open, LexemeType.Anything));
-            LexicalTemplates.Add(new LexemeTypeTemplate(LexemeType.Comment, LexemeType.Comment_Bracket_Open, LexemeType.Comment_Bracket_Close));
+            //LexicalTemplates.Add(new LexemeTypeTemplate(LexemeType.Comment, LexemeType.Comment_Slash, LexemeType.Enter));
+            //LexicalTemplates.Add(new LexemeTypeTemplate(LexemeType.Comment_Slash, LexemeType.Comment_Slash, LexemeType.Anything));
+            //LexicalTemplates.Add(new LexemeTypeTemplate(LexemeType.Comment, LexemeType.Comment_Bracket_Open, LexemeType.Comment_Bracket_Close));
+            //LexicalTemplates.Add(new LexemeTypeTemplate(LexemeType.Comment_Bracket_Open, LexemeType.Comment_Bracket_Open, LexemeType.Anything));            
             LexicalTemplates.Add(new LexemeTypeTemplate(LexemeType.String, LexemeType.Quotes, LexemeType.Quotes));
             LexicalTemplates.Add(new LexemeTypeTemplate(LexemeType.Quotes, LexemeType.Quotes, LexemeType.Anything));
 
-
-            LexicalTemplates.Add(new LexemeTypeTemplate(LexemeType.Empty, LexemeType.Enter));
-
+            //LexicalTemplates.Add(new LexemeTypeTemplate(LexemeType.Empty, LexemeType.Enter));
 
             LexicalTemplates.Add(new LexemeTypeTemplate(LexemeType.SetOperator_Word, LexemeType.LabelSeparator, LexemeType.Equality)); //:=
             LexicalTemplates.Add(new LexemeTypeTemplate(LexemeType.TypeSeparator, LexemeType.Minus, LexemeType.Minus)); //--
@@ -342,11 +342,12 @@ namespace LPDP.TextAnalysis
             LexicalTemplates.Add(new LexemeTypeTemplate(LexemeType.Comment_Bracket_Close, LexemeType.Star, LexemeType.Slash)); // */
             LexicalTemplates.Add(new LexemeTypeTemplate(LexemeType.Comment_Slash, LexemeType.Slash, LexemeType.Slash)); // //
 
-            //LexicalTemplates.Add(new LexemeTypeTemplate(LexemeType.Arithmetic_Operator_2lvl, LexemeType.Star)); // *
-            //LexicalTemplates.Add(new LexemeTypeTemplate(LexemeType.Arithmetic_Operator_2lvl, LexemeType.Slash)); // /
-            ////LexicalTemplates.Add(new LexemeTypeTemplate(LexemeType.Arithmetic_Operator_3lvl, LexemeType.Minus)); // -
-            //LexicalTemplates.Add(new LexemeTypeTemplate(LexemeType.Comparison_Operator, LexemeType.Comparison)); //> or <
-            //LexicalTemplates.Add(new LexemeTypeTemplate(LexemeType.Comparison_Operator, LexemeType.Equality)); // =
+            LexicalTemplates.Add(new LexemeTypeTemplate(LexemeType.Comment, LexemeType.Comment_Slash, LexemeType.Enter));
+            LexicalTemplates.Add(new LexemeTypeTemplate(LexemeType.Comment_Slash, LexemeType.Comment_Slash, LexemeType.Anything));
+            LexicalTemplates.Add(new LexemeTypeTemplate(LexemeType.Comment, LexemeType.Comment_Bracket_Open, LexemeType.Comment_Bracket_Close));
+            LexicalTemplates.Add(new LexemeTypeTemplate(LexemeType.Comment_Bracket_Open, LexemeType.Comment_Bracket_Open, LexemeType.Anything, LexemeType.Anything));
+            
+            LexicalTemplates.Add(new LexemeTypeTemplate(LexemeType.Empty, LexemeType.Enter));
         }
         #endregion
 
@@ -675,6 +676,8 @@ namespace LPDP.TextAnalysis
                     return PhraseType.TypeSeparator;
                 case LexemeType.String:
                     return PhraseType.String;
+                case LexemeType.Quotes:
+                    return PhraseType.String;
 
                 case LexemeType.Arithmetic_Operator_1lvl:
                     return PhraseType.ArithmeticOperator_1lvl;
@@ -704,6 +707,10 @@ namespace LPDP.TextAnalysis
                     return PhraseType.Ref_Operator;
 
                 case LexemeType.Comment:
+                    return PhraseType.Comment;
+                case LexemeType.Comment_Slash:
+                    return PhraseType.Comment;
+                case LexemeType.Comment_Bracket_Open:
                     return PhraseType.Comment;
 
                 default:

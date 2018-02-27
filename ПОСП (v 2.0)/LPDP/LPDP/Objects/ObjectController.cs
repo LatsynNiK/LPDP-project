@@ -94,7 +94,12 @@ namespace LPDP.Objects
 
         public LPDP.Objects.Object GetObjectByName(string name, string unit)
         {
-            return this.GVT.Vars[unit].Find(o => o.Name == name);
+            Object result = this.GVT.Vars[unit].Find(o => o.Name == name);
+            if (result == null)
+            {
+                throw new NameNotFound(name);
+            }
+            return result;
         }
 
         public int GetLinkValue(string link_name, string link_unit)

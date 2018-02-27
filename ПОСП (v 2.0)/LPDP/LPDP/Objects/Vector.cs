@@ -44,15 +44,17 @@ namespace LPDP.Objects
 
         public LPDP.Objects.Object FindNode(string node_name, Phrase path)
         {
-            LPDP.Objects.Object finded_node;           
+            LPDP.Objects.Object finded_node;
+            finded_node = this.Value.Find(obj => obj.Name == node_name);
             if (path.Value.Count == 0)
             {                
-                finded_node = this.Value.Find(obj => obj.Name == node_name);
+                return finded_node;// = this.Value.Find(obj => obj.Name == node_name);
             }
             else
             {
-                Phrase inner_node = path.Value[1];
-                finded_node = this.FindNode(node_name, inner_node);
+                node_name = ((Lexeme)path.Value[1]).LValue;
+                Phrase inner_node = path.Value[2];
+                finded_node = ((Vector)finded_node).FindNode(node_name, inner_node);
             }
             return finded_node;
         }

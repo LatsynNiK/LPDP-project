@@ -28,13 +28,13 @@ namespace LPDP.TextAnalysis
 
         public TextSelectionTable Selections;
 
-        struct Response
-        {
-            public Phrase BackPhrase;
-            public ScanningState ScanState;
-            public List<Error> Finded_Errors;
-            public int ConcattedLexemes;
-        }
+        //struct Response
+        //{
+        //    public Phrase BackPhrase;
+        //    public ScanningState ScanState;
+        //    public List<Error> Finded_Errors;
+        //    public int ConcattedLexemes;
+        //}
         //Error CurrentError;
         
 
@@ -43,7 +43,7 @@ namespace LPDP.TextAnalysis
             this.SourceText = "";
             //this.Errors = new List<Error>();
             this.Lexemes = new List<Lexeme>();
-            this.Phrases = new List<Phrase>();
+            //this.Phrases = new List<Phrase>();
             this.ParsedText = new Phrase();
             this.ResultRTFCode = "";
             this.ResultTxtCode = "";
@@ -75,26 +75,35 @@ namespace LPDP.TextAnalysis
             {
                 this.Selections.AddError(e);
                 this.ParentModel.StatusInfo = e.GetErrorStack();
-                //this.ResultInfo = this.OutputErrors(e);
-                //this.ParentModel.Out.InfoTxt = this.OutputErrors(e);
+            }
+        }
+
+        public void CheckText(string text)
+        {
+            try
+            {
+                this.LexicalAnalysis(text);
+                this.ParentModel.StatusInfo = "";
+            }
+            catch (Error e)
+            {
+                this.Selections.AddError(e);
+                this.ParentModel.StatusInfo = e.GetErrorStack();
             }
         }
 
         #region main functions
 
-        List<Lexeme> LexicalAnalysis(string Text)
+        List<Phrase> LexicalAnalysis(string Text)
         {
+            this.Selections = new TextSelectionTable();
+            this.SourceText = Text;
+
             List<Lexeme> Stack = new List<Lexeme>();
             try
             {
                 Text = Text.Replace('ё', 'е');
-                
-                //if (Text.Length == 0)
-                //{
-                //    Errors.Add(new EmptyTextError());
-                //    //Errors.Add(new Error(ErrorType.EmptyText, ModelTextRules.ErrorTypes[ErrorType.EmptyText], 0, 0, 0));
-                //    return Stack;
-                //}
+
                 int line_counter = 1;
                 int position = 0;
 
@@ -209,44 +218,70 @@ namespace LPDP.TextAnalysis
             }
             catch (ErrorList e)
             {
-                throw new LexicalError(e);
+                LexicalError LexErr = new LexicalError(e);
+                throw new UserError(LexErr);
             }
             catch (LexicalError e)
             {
-                throw new LexicalError(e);
+                throw new UserError(e);
             }
-            return Stack;
+
+            return this.LexemesToPhrases(Stack);
+        }        
+
+        List<Phrase> LexemesToPhrases(List<Lexeme> Lexemes)
+        {
+            List<Phrase> Phrases = new List<Phrase>();
+            foreach (Lexeme lex in Lexemes)
+            {
+                lex.PhType = ModelTextRules.DeterminePhrase(lex);
+                if (lex.PhType == PhraseType.UnknownLexeme)
+                {
+                    //!!!Errors.Add(new Error(ErrorType.UnknownLexeme, ModelTextRules.ErrorTypes[ErrorType.UnknownLexeme] + lex.Value, lex.Line, lex.Start, lex.Length));
+                }
+
+                //удаление \n из комментария
+                if (lex.PhType == PhraseType.Comment)
+                {
+                    if (lex.LValue.Last() == '\n')
+                    {
+                        lex.LValue = lex.LValue.TrimEnd('\n');// RemoveAt(lex.LValue.Length - 1);
+                    }
+                    this.CommentPhrases.Add((Phrase)lex);
+                    this.Selections.Add(lex.Start, lex.Length, TextSelectionType.Comment);
+                }
+                if (lex.PhType == PhraseType.String)
+                {
+                    this.Selections.Add(lex.Start, lex.Length, TextSelectionType.String);
+                }
+                if (lex is Word)
+                {
+                    if (((Word)lex).WType == WordType.KeyWord)
+                    {
+                        this.Selections.Add(lex.Start, lex.Length, TextSelectionType.KeyWord);
+                    }
+                }
+                if ((lex.PhType != PhraseType.Empty) && (lex.PhType != PhraseType.Comment))
+                    Phrases.Add((Phrase)lex);
+            }
+            return Phrases;
         }
 
         public int AnalyzeText(string source_text) // возвращает 1 если успешно
         {
             try
             {
-                this.Selections = new TextSelectionTable();
-                this.SourceText = source_text;
-                //this.Errors = new List<Error>();
-
+                this.Phrases = LexicalAnalysis(source_text);
                 // Пустой текст модели
-                if (source_text == string.Empty)
+                if (this.Phrases.Count == 0)
                 {
-                    //Errors.Add(new EmptyTextError());
                     throw new EmptyTextError();
                 }
-
-                this.Lexemes = LexicalAnalysis(this.SourceText);
-                this.ParsedText = SyntacticalAnalysis(this.Lexemes);
-                //if (Errors.Count > 0)
-                //{
-                //    return 0;
-                //}
+                //this.Phrases = this.LexemesToPhrases(this.Lexemes);
+                this.ParsedText = SyntacticalAnalysis(this.Phrases);
                 this.ParsedText = MadeStruct(this.ParsedText);
-                //if (Errors.Count > 0)
-                //{
-                //    return 0;
-                //}
-
-                this.ResultTxtCode = "";
-                this.ResultRTFCode = "";
+                //this.ResultTxtCode = "";
+                //this.ResultRTFCode = "";
                 return 1;
             }
             catch (UserError e)
@@ -340,11 +375,14 @@ namespace LPDP.TextAnalysis
                             break;
                         case PhraseType.Label:
                             after = tab + tab + tab;
-                            while (ph.Length > after.Length)
+                            if (ph.Length + tab.Length > after.Length)
                             {
-                                after += tab;
+                                after = '\n' + after;
                             }
-                            after = after.Remove(0, ph.Length);
+                            else
+                            {
+                                after = after.Remove(0, ph.Length);
+                            }
                             result = result.Insert(0, before + this.RebuildingText(ph, comments) + after);
 
                             break;
@@ -578,13 +616,13 @@ namespace LPDP.TextAnalysis
         #endregion
 
         #region for Syntactical Analysis
-        enum ScanningState
-        {
-            WithoutErrors,
-            WithErrors,
-            Initial,
-            Fallen
-        }
+        //enum ScanningState
+        //{
+        //    WithoutErrors,
+        //    WithErrors,
+        //    Initial,
+        //    Fallen
+        //}
 
         //Response FindTemplate1(PhraseTypeTemplate template, List<Phrase> Phrases)
         //{
@@ -896,25 +934,9 @@ namespace LPDP.TextAnalysis
             List<Phrase> CopyPhrases = new List<Phrase>();
             CopyPhrases.AddRange(Phrases);
 
-            //Возможная ошибка
-            //Phrase err = new Phrase();
-
             List<Phrase> ListNewPhrase = new List<Phrase>();
             for (int i = 0; i < template.ConcatedPhrases; i++)
             {
-                ////если нет фраз в стеке
-                //if (Phrases.Count == 0)
-                //{
-                //    //throw new PhraseNotFound();
-                //    //есть ошибка                        
-                //    //throw new PhraseNotFound(Phrases[0].Start, Phrases[0].Length, Phrases[0].Line, template.PhTemplate[i]);  
-                //    Phrase ErrPh = new Phrase(PhraseType.Error);
-                //    ErrPh.PhType = template.PhTemplate[i];
-                //    //CopyPhrases.RemoveAt(0);
-                //    CopyPhrases.Insert(0, ErrPh);
-                //    return CopyPhrases;
-                //}
-
                 //если терминал (конечное значение, уровня 0)
                 if (ModelTextRules.PrimaryPhraseTypes[template.PhTemplate[i]])
                 {
@@ -927,20 +949,6 @@ namespace LPDP.TextAnalysis
                     else 
                     {
                         //есть ошибка
-                        
-                        ////throw new PhraseNotFound(Phrases[0].Start, Phrases[0].Length, Phrases[0].Line, template.PhTemplate[i]); 
-                        ////создаем новую фразу, которую хотели бы видеть вместо этой
-                        //Phrase inner_ph = new Phrase(template.PhTemplate[i]);
-                        //inner_ph.Start = CopyPhrases[0].Start;
-                        //inner_ph.Length = CopyPhrases[0].Length;
-                        //inner_ph.Line = CopyPhrases[0].Line;
-                        ////оборачиваем ее в ошибку
-                        //Phrase ErrPh = new Phrase(PhraseType.Error, inner_ph);
-                        ////ErrPh.Value[0].PhType = template.PhTemplate[i];
-                        //CopyPhrases.RemoveAt(0);
-                        //CopyPhrases.Insert(0, ErrPh);
-                        //return CopyPhrases;
-
                         throw new PhraseNotFound(CopyPhrases[0].Start, CopyPhrases[0].Length, CopyPhrases[0].Line, template.PhTemplate[i]);
                     }
                 }
@@ -960,53 +968,7 @@ namespace LPDP.TextAnalysis
                     catch (PhraseNotFound e)
                     {
                         throw new PhraseNotFound(e, template.PhType);
-                    }
-                    //подбираем возможный шаблон
-                    //List<PhraseTypeTemplate> list_inner_temp = FindTemplates(template.PhTemplate[i]);
-                    //bool firstly = true;
-                    //foreach (PhraseTypeTemplate inner_temp in list_inner_temp)
-                    //{
-                        
-                    //}
-                    //PhraseTypeTemplate inner_temp = FindTemplates(template.PhTemplate[i], CopyPhrases[0]);
-                    //List<Phrase> NewPhrases = new List<Phrase>();
-                    //NewPhrases = ApplyTemplate(inner_temp, CopyPhrases);
-                    //if (NewPhrases[0].PhType == PhraseType.Error)
-                    //{
-                    //    //catch
-                    //    //если не подходит
-                    //    //if (firstly)
-                    //    //{
-                    //    //    //на всякий, сохраняем первую ошибку
-                    //    //    err = NewPhrases[0];
-                    //    //    firstly = false;
-                    //    //}
-                    //    //если последни из списка                               
-                    //    //throw new PhraseNotFound(err, template.PhTemplate[i]);
-                    //    Phrase inner_ph = NewPhrases[0].Value[0];
-                    //    Phrase outer_ph = new Phrase(template.PhTemplate[i], inner_ph);
-                    //    Phrase ErrPh = new Phrase(PhraseType.Error, outer_ph);
-                    //    CopyPhrases.RemoveAt(0);
-                    //    CopyPhrases.Insert(0, ErrPh);
-                    //    return CopyPhrases;
-                    //    //if (list_inner_temp.IndexOf(inner_temp) == list_inner_temp.IndexOf(list_inner_temp.Last()))
-                    //    //{
-                            
-                    //    //}
-                    //    //else
-                    //    //{
-                    //    //    //если не последни из списка
-                    //    //    continue;
-                    //    //}
-                    //}
-                    //else
-                    //{
-                    //    //try
-                    //    CopyPhrases = NewPhrases;
-                    //    ListNewPhrase.Add(CopyPhrases[0]);
-                    //    CopyPhrases.RemoveAt(0);
-                    //    //break;
-                    //}
+                    }                   
                 }        
             }
             //создаем новую фразу
@@ -1022,9 +984,6 @@ namespace LPDP.TextAnalysis
             ListNewPhrase.CopyTo(ArrayNewPhrase);
             Phrase NewPhrase = new Phrase(template.PhType, ArrayNewPhrase);
 
-            //удаляем старые
-            //Phrases.RemoveRange(0, ListNewPhrase.Count);
-
             //добавляем новую
             CopyPhrases.Insert(0, NewPhrase);
             return CopyPhrases;
@@ -1032,8 +991,7 @@ namespace LPDP.TextAnalysis
 
         PhraseTypeTemplate FindTemplates(PhraseType ph_type, Phrase first_ph)
         {
-            Error err = new Error();
-            //PhraseTypeTemplate result = new PhraseTypeTemplate>();
+            Error err = new Error();            
             foreach (PhraseTypeTemplate temp in ModelTextRules.SyntacticalTemplates)
             {
                 
@@ -1072,173 +1030,127 @@ namespace LPDP.TextAnalysis
                         }
                     }
                 }
-            }
-            //Phrase Expected = new Phrase(ph_type);
-            //Expected.Start = first_ph.Start;
-            //Expected.Length = first_ph.Length;
-            //Expected.Line = first_ph.Line;
-            //throw new ExpectedPhraseError(Expected);       
+            }      
             throw new PhraseNotFound(err, ph_type);
         }
 
-        bool TryToReplace(List<Phrase> Phrases, int corrected_index, PhraseTypeTemplate temp)
+        //bool TryToReplace(List<Phrase> Phrases, int corrected_index, PhraseTypeTemplate temp)
+        //{
+        //    if ((Phrases[0].PhType == PhraseType.EoL)
+        //        ||
+        //        (Phrases[0].PhType == PhraseType.Round_Bracket_Open) ||
+        //        (Phrases[0].PhType == PhraseType.Round_Bracket_Close) ||
+        //        (Phrases[0].PhType == PhraseType.Comma) ||
+        //        (Phrases[0].PhType == PhraseType.TypeSeparator) ||
+        //        (Phrases[0].PhType == PhraseType.ArithmeticOperator_3lvl) ||
+        //        (Phrases[0].PhType == PhraseType.ArithmeticOperator_2lvl) ||
+        //        (Phrases[0].PhType == PhraseType.ArithmeticOperator_1lvl) ||
+        //        (Phrases[0].PhType == PhraseType.ComparisonOperator) ||
+        //        (Phrases[0].PhType == PhraseType.LogicOperator) ||
+        //        (Phrases[0].PhType == PhraseType.ArithmeticFunction_Word) ||
+        //        (Phrases[0].PhType == PhraseType.SetOperator_Word) ||
+        //        (Phrases[0].PhType == PhraseType.LabelSeparator)
+        //        )
+        //    {
+        //        return false;
+        //    }
+
+
+        //    Phrases.RemoveAt(0);
+        //    Phrases.Insert(0, new Phrase(temp.PhTemplate[corrected_index]));
+
+        //    int to_concat = 0;
+        //    return CheckCorrect(Phrases, corrected_index, temp, ref to_concat);
+
+        //    //for (int i = corrected_index; i < temp.ConcatedPhrases; i++)
+        //    //{
+        //    //    if (PrimaryPhraseTypes[temp.PhTemplate[i]])
+        //    //    {
+        //    //        if (PhrasesCopy[i].PhType != temp.PhTemplate[i])
+        //    //        {
+        //    //            return false;
+        //    //        }
+        //    //    }
+        //    //    else 
+        //    //    {
+        //    //        TryToReplace
+        //    //    }
+        //    //}
+        //    //return true;
+        //}
+
+        //bool CheckCorrect(List<Phrase> Phrases, int start_index, PhraseTypeTemplate template, ref int concatted_lex)
+        //{
+        //    concatted_lex = 0;
+        //    for (int i = start_index; i < template.ConcatedPhrases; i++)
+        //    {
+        //        if (Phrases.Count == 0)
+        //            return false;
+        //        //терминал
+        //        if (ModelTextRules.PrimaryPhraseTypes[template.PhTemplate[i]])
+        //        {
+        //            if (Phrases[0].PhType == template.PhTemplate[i])
+        //            {
+        //                Phrases.RemoveAt(0);
+        //                concatted_lex++;
+        //            }
+        //            else
+        //            {
+        //                return false;
+        //            }
+        //        }
+        //        //нетерминал
+        //        else
+        //        {
+        //            bool part_finded = false;
+        //            //Response response = new Response();
+        //            PhraseTypeTemplate best_temp = ModelTextRules.SyntacticalTemplates[0];
+        //            foreach (PhraseTypeTemplate temp_part in ModelTextRules.SyntacticalTemplates)
+        //            {
+        //                if (temp_part.PhType == template.PhTemplate[i]) //if (temp_part.PhType == PhraseType.ActivateOperator )
+        //                {
+        //                    List<Phrase> PhrasesCopy = new List<Phrase>();
+        //                    foreach (Phrase ph in Phrases)
+        //                    {
+        //                        PhrasesCopy.Add(ph);
+        //                    }
+        //                    //Response res_resp = FindTemplate(template, PhrasesCopy);
+        //                    //if ((res_resp.ScanState == ScanningState.WithoutErrors) /*|| (res_resp.ScanState == ScanningState.WithoutErrors)*/)
+        //                    //response =FindTemplate(temp_part, PhrasesCopy);
+        //                    //if (response.ScanState== ScanningState.WithoutErrors)
+        //                    int internal_concatted_lex = 0;
+        //                    if (CheckCorrect(PhrasesCopy, 0, temp_part, ref  internal_concatted_lex))
+        //                    {
+        //                        best_temp = temp_part;
+        //                        part_finded = true;
+        //                        Phrases.RemoveRange(0, internal_concatted_lex);
+        //                        concatted_lex += internal_concatted_lex;
+        //                        break;
+        //                    }
+        //                }
+        //            }
+        //            if (part_finded == false)
+        //            {
+        //                return false;
+        //            }
+        //            //else
+        //            //{
+
+        //            //}
+        //        }
+        //    }
+        //    return true;
+        //}
+
+        Phrase SyntacticalAnalysis(List<Phrase> Phrases)
         {
-            if ((Phrases[0].PhType == PhraseType.EoL)
-                ||
-                (Phrases[0].PhType == PhraseType.Round_Bracket_Open) ||
-                (Phrases[0].PhType == PhraseType.Round_Bracket_Close) ||
-                (Phrases[0].PhType == PhraseType.Comma) ||
-                (Phrases[0].PhType == PhraseType.TypeSeparator) ||
-                (Phrases[0].PhType == PhraseType.ArithmeticOperator_3lvl) ||
-                (Phrases[0].PhType == PhraseType.ArithmeticOperator_2lvl) ||
-                (Phrases[0].PhType == PhraseType.ArithmeticOperator_1lvl) ||
-                (Phrases[0].PhType == PhraseType.ComparisonOperator) ||
-                (Phrases[0].PhType == PhraseType.LogicOperator) ||
-                (Phrases[0].PhType == PhraseType.ArithmeticFunction_Word) ||
-                (Phrases[0].PhType == PhraseType.SetOperator_Word) ||
-                (Phrases[0].PhType == PhraseType.LabelSeparator)
-                )
-            {
-                return false;
-            }
-
-
-            Phrases.RemoveAt(0);
-            Phrases.Insert(0, new Phrase(temp.PhTemplate[corrected_index]));
-
-            int to_concat = 0;
-            return CheckCorrect(Phrases, corrected_index, temp, ref to_concat);
-
-            //for (int i = corrected_index; i < temp.ConcatedPhrases; i++)
-            //{
-            //    if (PrimaryPhraseTypes[temp.PhTemplate[i]])
-            //    {
-            //        if (PhrasesCopy[i].PhType != temp.PhTemplate[i])
-            //        {
-            //            return false;
-            //        }
-            //    }
-            //    else 
-            //    {
-            //        TryToReplace
-            //    }
-            //}
-            //return true;
-        }
-
-        bool CheckCorrect(List<Phrase> Phrases, int start_index, PhraseTypeTemplate template, ref int concatted_lex)
-        {
-            concatted_lex = 0;
-            for (int i = start_index; i < template.ConcatedPhrases; i++)
-            {
-                if (Phrases.Count == 0)
-                    return false;
-                //терминал
-                if (ModelTextRules.PrimaryPhraseTypes[template.PhTemplate[i]])
-                {
-                    if (Phrases[0].PhType == template.PhTemplate[i])
-                    {
-                        Phrases.RemoveAt(0);
-                        concatted_lex++;
-                    }
-                    else
-                    {
-                        return false;
-                    }
-                }
-                //нетерминал
-                else
-                {
-                    bool part_finded = false;
-                    //Response response = new Response();
-                    PhraseTypeTemplate best_temp = ModelTextRules.SyntacticalTemplates[0];
-                    foreach (PhraseTypeTemplate temp_part in ModelTextRules.SyntacticalTemplates)
-                    {
-                        if (temp_part.PhType == template.PhTemplate[i]) //if (temp_part.PhType == PhraseType.ActivateOperator )
-                        {
-                            List<Phrase> PhrasesCopy = new List<Phrase>();
-                            foreach (Phrase ph in Phrases)
-                            {
-                                PhrasesCopy.Add(ph);
-                            }
-                            //Response res_resp = FindTemplate(template, PhrasesCopy);
-                            //if ((res_resp.ScanState == ScanningState.WithoutErrors) /*|| (res_resp.ScanState == ScanningState.WithoutErrors)*/)
-                            //response =FindTemplate(temp_part, PhrasesCopy);
-                            //if (response.ScanState== ScanningState.WithoutErrors)
-                            int internal_concatted_lex = 0;
-                            if (CheckCorrect(PhrasesCopy, 0, temp_part, ref  internal_concatted_lex))
-                            {
-                                best_temp = temp_part;
-                                part_finded = true;
-                                Phrases.RemoveRange(0, internal_concatted_lex);
-                                concatted_lex += internal_concatted_lex;
-                                break;
-                            }
-                        }
-                    }
-                    if (part_finded == false)
-                    {
-                        return false;
-                    }
-                    //else
-                    //{
-
-                    //}
-                }
-            }
-            return true;
-        }
-
-        Phrase SyntacticalAnalysis(List<Lexeme> Lexemes)
-        {
-            this.Phrases = new List<Phrase>();
+            //this.Phrases = new List<Phrase>();
             List<Error> Errors = new List<Error>();   
             Phrase result;
-            //Response resp = new Response();
             try
             {
-                foreach (Lexeme lex in Lexemes)
-                {
-                    lex.PhType = ModelTextRules.DeterminePhrase(lex);
-                    if (lex.PhType == PhraseType.UnknownLexeme)
-                    {
-                        //!!!Errors.Add(new Error(ErrorType.UnknownLexeme, ModelTextRules.ErrorTypes[ErrorType.UnknownLexeme] + lex.Value, lex.Line, lex.Start, lex.Length));
-                    }
-
-                    //удаление \n из комментария
-                    if (lex.PhType == PhraseType.Comment)
-                    {
-                        if (lex.LValue.Last() == '\n')
-                        {
-                            lex.LValue = lex.LValue.TrimEnd('\n');// RemoveAt(lex.LValue.Length - 1);
-                        }
-                        this.CommentPhrases.Add((Phrase)lex);
-                        this.Selections.Add(lex.Start, lex.Length, TextSelectionType.Comment);
-                    }
-                    if (lex.PhType == PhraseType.String)
-                    {
-                        this.Selections.Add(lex.Start, lex.Length, TextSelectionType.String);
-                    }
-                    if (lex is Word)
-                    {
-                        if (((Word)lex).WType == WordType.KeyWord)
-                        {
-                            this.Selections.Add(lex.Start, lex.Length, TextSelectionType.KeyWord);
-                        }
-                    }
-                    if ((lex.PhType != PhraseType.Empty) && (lex.PhType != PhraseType.Comment))
-                        this.Phrases.Add((Phrase)lex);
-                }
-
-                //вход в рекурсивный спуск
-                result = ApplyTemplate(ModelTextRules.SyntacticalTemplates[0],this.Phrases)[0];
-                if (result.PhType == PhraseType.Error)
-                {
-                    Errors.Add(new ExpectedPhraseError(result.Value[0]));
-                }
-
-                //Errors.AddRange(resp.Finded_Errors);
-
+                //вход в рекурсивный спуск                
+                result = ApplyTemplate(ModelTextRules.SyntacticalTemplates[0], Phrases)[0];
                 if (Errors.Count > 0)
                 {
                     throw new ErrorList(Errors);
@@ -1722,9 +1634,6 @@ namespace LPDP.TextAnalysis
             }
             return result;
         }
-
-
-
         #endregion
     }
 }
