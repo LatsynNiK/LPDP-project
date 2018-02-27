@@ -194,7 +194,16 @@ namespace LPDP
                     Objects.Object var = this.GetObject(var_ph);
                     
                     Phrase value_ph = (Phrase)action.Parameters[1];
-                    object value_obj = ConvertValueToObject(value_ph);
+                    object value_obj;// = ConvertValueToObject(value_ph);
+                    if (value_ph.PhType == PhraseType.Initiator_Word)
+                    {
+                        //пассивизация инициатора
+                        value_obj = GetObjectFromLink(value_ph).ID;                        
+                    }
+                    else
+                    {
+                        value_obj = ConvertValueToObject(value_ph);
+                    }
                     var.SetValue(value_obj);
                     break;
                 case ActionName.Create:
@@ -233,8 +242,8 @@ namespace LPDP
                     string deleted_name = Convert.ToString(action.Parameters[0]);
                     if (deleted_name == "True")
                     {
-                        int deleted_id = this.INITIATOR.ID_of_MemoryCell;
-                        this.ParentModel.O_Cont.DeleteInitiatorByID(deleted_id);
+                        int deleted_id = this.INITIATOR.ID_of_MemoryCell;                        
+                        this.ParentModel.O_Cont.IT.Delete(deleted_id);
                     }
                     else
                     {
@@ -246,6 +255,11 @@ namespace LPDP
                             this.ParentModel.O_Cont.DeleteObjectByID(del_obj.ID);
                         }
                     }
+                    break;
+                case ActionName.Terminate:
+                    string terminated_name = Convert.ToString(action.Parameters[0]);
+                    int terminated_id = this.INITIATOR.ID_of_MemoryCell;
+                    this.ParentModel.O_Cont.DeleteInitiatorByID(terminated_id);
                     break;
                 case ActionName.Write_to_CT:
                     Phrase condition;

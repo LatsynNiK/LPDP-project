@@ -399,15 +399,23 @@ namespace LPDP.TextAnalysis
                             }
                             result = result.Insert(0, before + this.RebuildingText(ph, comments) + after);
                             break;
-                        case PhraseType.WaitCondition:
-                            if (reverse.IndexOf(ph) > reverse.FindIndex(p => p.PhType == PhraseType.WaitCondition))
-                            {
-                                after = "\n"+tab+tab+tab;                                
-                            }
-                            result = result.Insert(0, before + this.RebuildingText(ph, comments) + after);
-                            break;
+                        //case PhraseType.WaitCondition:
+                        //    if (reverse.IndexOf(ph) > reverse.FindIndex(p => p.PhType == PhraseType.WaitCondition))
+                        //    {
+                        //        after = "\n"+tab+tab+tab;                                
+                        //    }
+                        //    result = result.Insert(0, before + this.RebuildingText(ph, comments) + after);
+                        //    break;
                         case PhraseType.IfCondition:                            
                             after = "\n" + tab + tab + tab;
+                            result = result.Insert(0, before + this.RebuildingText(ph, comments) + after);
+                            break;
+                        case PhraseType.WaitOperator_Word:
+                            if (sourse_phrase.PhType == PhraseType.ComplexWaitCondition)
+                            {
+                                before = "\n" + tab + tab + tab;
+                                //result = result.Insert(0, before + this.RebuildingText(ph, comments) + after);
+                            }
                             result = result.Insert(0, before + this.RebuildingText(ph, comments) + after);
                             break;
                         default:
@@ -448,6 +456,7 @@ namespace LPDP.TextAnalysis
                     case PhraseType.AlgorithmBracket_Word:
                         after = "\n";
                         break;
+
 
                     default:
                         after = " ";
@@ -599,7 +608,8 @@ namespace LPDP.TextAnalysis
                 {
                     Phrase true_ph = new Phrase(PhraseType.True);
                     Initiator new_init = this.ParentModel.O_Cont.CreateInitiator(unit.Name);
-                    Subprogram to_subp = this.ParentModel.ST_Cont.Tracks.Find(sp => sp.Unit == unit);
+                    Subprogram to_subp = this.ParentModel.ST_Cont.Tracks.Find(sp => (sp.Unit == unit)&&
+                                                                            (sp.Operators.All(op => op.Name != OperatorName.Passivate)));
                     new_init.NextOperator = to_subp.Operators[0];
 
                     this.ParentModel.Executor.TC_Cont.AddConditionRecord(true_ph, new_init, to_subp, false);
@@ -957,7 +967,7 @@ namespace LPDP.TextAnalysis
                 {
                     try
                     {
-                        PhraseTypeTemplate inner_temp = FindTemplates(template.PhTemplate[i], CopyPhrases[0]);
+                        PhraseTypeTemplate inner_temp = FindTemplate(template.PhTemplate[i], CopyPhrases[0]);
                         List<Phrase> NewPhrases = new List<Phrase>();
                         NewPhrases = ApplyTemplate(inner_temp, CopyPhrases);
                         CopyPhrases = NewPhrases;
@@ -989,7 +999,7 @@ namespace LPDP.TextAnalysis
             return CopyPhrases;
         }
 
-        PhraseTypeTemplate FindTemplates(PhraseType ph_type, Phrase first_ph)
+        PhraseTypeTemplate FindTemplate(PhraseType ph_type, Phrase first_ph)
         {
             Error err = new Error();            
             foreach (PhraseTypeTemplate temp in ModelTextRules.SyntacticalTemplates)
@@ -1013,13 +1023,11 @@ namespace LPDP.TextAnalysis
                             if (ModelTextRules.PrimaryPhraseTypes[temp.PhTemplate[0]])
                             {
                                 throw new PhraseNotFound(first_ph.Start,first_ph.Length,first_ph.Line, temp.PhTemplate[0]);
-                                //break;//выход из цикла и ошибка
-                                //temp.PhTemplate[0].PhType == PhraseType.Comma
                             }
                             //если нетерминал
                             else
                             {
-                                FindTemplates(temp.PhTemplate[0], first_ph);
+                                FindTemplate(temp.PhTemplate[0], first_ph);
                                 return temp; 
                             }                          
                         }
@@ -1030,8 +1038,138 @@ namespace LPDP.TextAnalysis
                         }
                     }
                 }
-            }      
+            }
             throw new PhraseNotFound(err, ph_type);
+        }
+
+        PhraseTypeTemplate FindTemplate1(PhraseType ph_type, Phrase first_ph)
+        {
+            Error err = new Error();
+            PhraseTypeTemplate err_temp = new PhraseTypeTemplate(PhraseType.Error);
+            foreach (PhraseTypeTemplate temp in ModelTextRules.SyntacticalTemplates)
+            {
+
+                if (temp.PhType == ph_type)
+                {
+                    if (temp.ConcatedPhrases == 0)
+                    {
+                        return temp;
+                    }
+                    if (temp.PhTemplate[0] == first_ph.PhType)
+                    {
+                        return temp;
+                    }
+                    else
+                    {
+                        //если терминал
+                        if (ModelTextRules.PrimaryPhraseTypes[temp.PhTemplate[0]])
+                        {
+                            //throw new PhraseNotFound(first_ph.Start, first_ph.Length, first_ph.Line, temp.PhTemplate[0]);
+                            err_temp = new PhraseTypeTemplate(PhraseType.Error, temp.PhTemplate[0]);
+                            //err = new PhraseNotFound(first_ph.Start, first_ph.Length, first_ph.Line, temp.PhTemplate[0]);
+                            continue;
+                        }
+                        //если нетерминал
+                        else
+                        {
+                            PhraseTypeTemplate finded_temp = FindTemplate(temp.PhTemplate[0], first_ph);
+                            if (finded_temp.PhType != PhraseType.Error)
+                            {
+                                return temp;
+                            }
+                            else
+                            {
+                                err_temp = finded_temp;
+                                PhraseType[] err_arr = new PhraseType[finded_temp.PhTemplate.Length+1];
+                                err_arr[err_arr.Length-1] = finded_temp.PhTemplate[0];
+                                err_temp = new PhraseTypeTemplate(PhraseType.Error, err_arr);
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+            //throw new PhraseNotFound(err, ph_type);
+            return err_temp;
+        }
+
+        List<Phrase> ApplyTemplate1(PhraseTypeTemplate template, List<Phrase> Phrases)
+        {
+            //копирование списка фраз
+            List<Phrase> CopyPhrases = new List<Phrase>();
+            CopyPhrases.AddRange(Phrases);
+
+            List<Phrase> ListNewPhrase = new List<Phrase>();
+            for (int i = 0; i < template.ConcatedPhrases; i++)
+            {
+                //если терминал (конечное значение, уровня 0)
+                if (ModelTextRules.PrimaryPhraseTypes[template.PhTemplate[i]])
+                {
+                    if (CopyPhrases[0].PhType == template.PhTemplate[i])
+                    {
+                        //есть совпадение                        
+                        ListNewPhrase.Add(CopyPhrases[0]);
+                        CopyPhrases.RemoveAt(0);
+                    }
+                    else
+                    {
+                        //есть ошибка
+                        Phrase inner = new Phrase(template.PhTemplate[i],CopyPhrases[0]);
+                        Phrase Err_ph = new Phrase(PhraseType.Error, inner);
+                        //throw new PhraseNotFound(CopyPhrases[0].Start, CopyPhrases[0].Length, CopyPhrases[0].Line, template.PhTemplate[i]);
+                        CopyPhrases.Clear();
+                        CopyPhrases.Add(Err_ph);
+                    }
+                }
+                //если нетерминал (составное значение)
+                else
+                {
+                    try
+                    {
+                        PhraseTypeTemplate inner_temp = FindTemplate(template.PhTemplate[i], CopyPhrases[0]);
+                        if (inner_temp.PhType == PhraseType.Error)
+                        {
+                            //есть ошибка
+                            Phrase inner = new Phrase(template.PhTemplate[i], CopyPhrases[0]);
+                            Phrase Err_ph = new Phrase(PhraseType.Error, inner);
+                            //throw new PhraseNotFound(CopyPhrases[0].Start, CopyPhrases[0].Length, CopyPhrases[0].Line, template.PhTemplate[i]);
+                            CopyPhrases.Clear();
+                            CopyPhrases.Add(Err_ph);
+                            
+                        }
+                        else
+                        {
+
+                            List<Phrase> NewPhrases = new List<Phrase>();
+                            NewPhrases = ApplyTemplate(inner_temp, CopyPhrases);
+                            CopyPhrases = NewPhrases;
+                            ListNewPhrase.Add(CopyPhrases[0]);
+                            CopyPhrases.RemoveAt(0);
+                        }
+
+                    }
+                    catch (PhraseNotFound e)
+                    {
+                        throw new PhraseNotFound(e, template.PhType);
+                    }
+                }
+            }
+            //создаем новую фразу
+            foreach (Phrase ph in ListNewPhrase)
+            {
+                if ((ph.Value != null) && (ph.Value.Count == 0))
+                {
+                    Phrase last = ListNewPhrase.ElementAt(ListNewPhrase.IndexOf(ph) - 1);
+                    ph.Start = last.Start + last.Length;
+                }
+            }
+            Phrase[] ArrayNewPhrase = new Phrase[ListNewPhrase.Count];
+            ListNewPhrase.CopyTo(ArrayNewPhrase);
+            Phrase NewPhrase = new Phrase(template.PhType, ArrayNewPhrase);
+
+            //добавляем новую
+            CopyPhrases.Insert(0, NewPhrase);
+            return CopyPhrases;
         }
 
         //bool TryToReplace(List<Phrase> Phrases, int corrected_index, PhraseTypeTemplate temp)
@@ -1419,15 +1557,21 @@ namespace LPDP.TextAnalysis
                     result_oper.Name = OperatorName.Passivate;
                     action = new Structure.Action();
                     action.Name = ActionName.Assign;
-                    action.Parameters.Add(EjectStringName(concret_operator_ph)); //var (link name)
-                    action.Parameters.Add(true);//value (true - initiator)
+                    action.Parameters.Add(concret_operator_ph.Value[3]); //var (link name)
+                    action.Parameters.Add(new Phrase(PhraseType.Initiator_Word));//value (true - initiator)
+                    result_oper.AddAction(action);
+
+                    //result_oper.Name = OperatorName.Terminate;
+                    action = new Structure.Action();
+                    action.Name = ActionName.Delete;
+                    action.Parameters.Add(true); //self initiator
                     result_oper.AddAction(action);
                     break;
 
                 case PhraseType.TerminateOperator:
                     result_oper.Name = OperatorName.Terminate;
                     action = new Structure.Action();
-                    action.Name = ActionName.Delete;
+                    action.Name = ActionName.Terminate;
                     action.Parameters.Add(true); //self initiator
                     result_oper.AddAction(action);
                     break;
@@ -1530,7 +1674,7 @@ namespace LPDP.TextAnalysis
                         action.Parameters[3] = destination_str.Key;
                         action.Parameters[4] = destination_str.Value;
                         result_oper.AddAction(action);
-                        for (int i = 2; i < transfer_oper_in_wait_ph.Value.Count; i+=4 )
+                        for (int i = 2; i < complex_wait_condition_ph.Value.Count; i += 4)
                         {
                             if (complex_wait_condition_ph.Value[i].PhType == PhraseType.EoL)
                             { 
@@ -1560,7 +1704,8 @@ namespace LPDP.TextAnalysis
                             }
                             action.Parameters.Add(true);//initiator                        
                             action.Parameters.Add(false);//to the begining                           
-                            transfer_oper_in_wait_ph = complex_wait_condition_ph.Value.Find(ph => ph.PhType == PhraseType.TransferOperator);
+                            transfer_oper_in_wait_ph = complex_wait_condition_ph.Value.Find(ph =>   (ph.PhType == PhraseType.TransferOperator) && 
+                                                                                                    (complex_wait_condition_ph.Value.IndexOf(ph)>i));
                             destination_ph = transfer_oper_in_wait_ph.Value.Find(ph => ph.PhType == PhraseType.Destination);
                             destination_str = EjectStringDestination(destination_ph);
                             action.Parameters.Add(destination_str.Key);
