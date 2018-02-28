@@ -272,15 +272,17 @@ namespace LPDP.DataSets
                 int start_op = this.Model.Executor.GetInitiator().NextOperator.Position.Start;// GetNextOperatorPosition().Start;
                 int length_op = this.Model.Executor.GetInitiator().NextOperator.Position.Length;// .GetNextOperatorPosition().Length;
                 string type;
-                if (this.Model.Executor.GetInitiator().Type == InitiatorType.Aggregate)
+                switch (this.Model.Executor.GetInitiator().Type)
                 {
-                    type = TextSelectionType.NextAggregateOperator.ToString();
-                    //this.NextInitiatorIsFlow = true;
-                }
-                else
-                {
-                    //this.NextInitiatorIsFlow = false;
-                    type = TextSelectionType.NextOperator.ToString();
+                    case InitiatorType.Aggregate:
+                        type = TextSelectionType.NextAggregateOperator.ToString();
+                        break;
+                    case InitiatorType.Flow:
+                        type = TextSelectionType.NextOperator.ToString();
+                        break;
+                    default:
+                        type = TextSelectionType.Error.ToString();
+                        break;
                 }
                 this.TextSelections.Rows.Add(start_op, length_op, type);
             }

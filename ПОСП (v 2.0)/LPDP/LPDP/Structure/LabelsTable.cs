@@ -39,6 +39,18 @@ namespace LPDP.Structure
         public Subprogram GetSubprogram(string name, string unit)
         {
             Label label = this.Table.Find(l => ((l.Name == name) && (l.Unit == unit)));
+            if (label == null)
+            {
+                throw new LabelNotFound(name, unit);
+                //if (this.Table.Exists(l => (l.Unit == unit)))
+                //{
+                    
+                //}
+                //else
+                //{
+                //    throw new UnitNotFound(unit);
+                //}
+            }
             return label.Subprogram;
         }
 

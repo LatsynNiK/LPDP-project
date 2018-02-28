@@ -6,7 +6,7 @@ using LPDP.Structure;
 
 namespace LPDP.Objects
 {
-    public enum InitiatorType { Aggregate, Flow, Description}
+    public enum InitiatorType { Aggregate, Flow, Description, RunTimeError}
     public class Initiator
     {
         public int Number; 

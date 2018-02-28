@@ -8,10 +8,24 @@ namespace LPDP
 {
     public class ExpectedPhraseError:SyntacticalError
     {
-        public ExpectedPhraseError(PhraseType ph_type, int start, int len, int line):
-            base(start, len, line)
+        //Phrase phrase;
+        public ExpectedPhraseError(Phrase ph):
+            base(ph.Start, ph.Length, ph.Line)
         {
-            this.Text = String.Format("Ожидаемая фраза: \"{0}\". Строка {1}", ph_type.ToString(),line);          
+            string stack_ph = this.GetStack(ph);
+            this.Text = String.Format("Ожидаемая фраза: \"{0}\". Строка {1}", GetStack(ph),ph.Line);          
+        }
+
+        string GetStack(Phrase ph)
+        {
+            if (ph.Value.Count == 0)
+            {
+                return ph.PhType.ToString();
+            }
+            else
+            {
+                return ph.PhType.ToString() + " -> " + this.GetStack(ph.Value[0]);
+            }
         }
     }
 }

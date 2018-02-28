@@ -91,6 +91,10 @@ namespace LPDP.Structure
             this.LT.Add(label);
         }
 
+        public void CheckLabels()
+        {
+        }
+
         //public int GetOperatorID()
         //{
         //    return this.OperatorID_Counter;

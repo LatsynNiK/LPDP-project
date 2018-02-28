@@ -122,6 +122,9 @@ namespace ПОСП
                             //back_color = next_operator_aggregat_color;
                         }
                         break;
+                    case "SystemWord":
+                        font = new Font(rtb.SelectionFont, FontStyle.Bold);
+                        break;
                     default:
                         break;
                 }

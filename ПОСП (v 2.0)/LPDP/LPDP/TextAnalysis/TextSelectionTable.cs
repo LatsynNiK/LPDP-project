@@ -13,7 +13,8 @@ namespace LPDP.TextAnalysis
         String,
         NextOperator,
         NextAggregateOperator,
-        SystemLabel
+        SystemLabel, 
+        SystemWord
     }
 
     public struct TextSelection
