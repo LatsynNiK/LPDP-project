@@ -5,13 +5,13 @@ using System.Text;
 
 namespace LPDP
 {
-    class NameNotFound:RunTimeError
+    public class LabelNotFound:RunTimeError
     {
         string Name;
-        public NameNotFound(string name)
+        public LabelNotFound(string name, string unit)
         {
             this.Name = name;
-            this.Text = "Не найдено наименование: " + name;
+            this.Text = "Не найдена метка \"" + name + "\" в блоке \""+ unit+"\"";
         }
         public string GetName()
         {

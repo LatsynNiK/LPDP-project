@@ -48,11 +48,21 @@ namespace LPDP
 
         public void StartUntil(double time)
         {
-            while (this.TIME <= time)
+            try
             {
-                this.ExecuteSubprogram(this.INITIATOR.NextOperator.ParentSubprogram);
+                while (this.TIME <= time)
+                {
+                    this.ExecuteSubprogram(this.INITIATOR.NextOperator.ParentSubprogram);
+                }
+                this.ParentModel.StatusInfo = "Выполнено моделирование до времени: " + this.TIME + ".";
             }
-            this.ParentModel.StatusInfo = "Выполнено моделирование до времени: " + this.TIME+".";
+            catch (UserError e)
+            {
+                UserError Err = new UserError(e);
+                this.INITIATOR.Type = InitiatorType.RunTimeError;
+                this.ParentModel.Analysis.Selections.AddError(Err);
+                this.ParentModel.StatusInfo = Err.GetErrorStack();
+            }
         }
 
         public void StartStep()
@@ -62,21 +72,29 @@ namespace LPDP
                 this.ExecuteOperator(this.INITIATOR.NextOperator);
                 this.ParentModel.StatusInfo = "Выполнен шаг.";
             }
-            catch (Error e)
+            catch (UserError e)
             {
-                //this.Stop();
+                UserError Err = new UserError(e);
                 this.INITIATOR.Type = InitiatorType.RunTimeError;
-                this.ParentModel.Analysis.Selections.AddError(e);
-                this.ParentModel.StatusInfo = e.GetErrorStack();
-                //this.ParentModel.Built = false;
+                this.ParentModel.Analysis.Selections.AddError(Err);
+                this.ParentModel.StatusInfo = Err.GetErrorStack();
             }
         }
 
         public void StartSEC()
-        {
-            this.StartUntil(this.TIME);
-            this.ParentModel.StatusInfo = "Выполнены все одновременные события во момент времени: "+ this.TIME+".";
-            //while(this.SUBPROGRAM.)
+        {            
+            try
+            {
+                this.StartUntil(this.TIME);
+                this.ParentModel.StatusInfo = "Выполнены все одновременные события во момент времени: " + this.TIME + ".";
+            }
+            catch (UserError e)
+            {
+                UserError Err = new UserError(e);
+                this.INITIATOR.Type = InitiatorType.RunTimeError;
+                this.ParentModel.Analysis.Selections.AddError(Err);
+                this.ParentModel.StatusInfo = Err.GetErrorStack();
+            }
         }
 
         public void Stop()
@@ -163,7 +181,7 @@ namespace LPDP
                 }
                 catch (RunTimeError e)
                 {
-                    throw new UserError(e);
+                    throw new RunTimeError(e);
                 }
             }
             int next_oper_index = oper.ParentSubprogram.Operators.IndexOf(oper)+1;            
@@ -281,7 +299,16 @@ namespace LPDP
                     islast = (bool)action.Parameters[5];
 
                     Initiator init;
-                    Subprogram subp = this.ParentModel.ST_Cont.FindSubprogramByLabelAndUnit(label,unit);
+                    Subprogram subp;
+                    try
+                    {
+                        subp = this.ParentModel.ST_Cont.FindSubprogramByLabelAndUnit(label, unit);
+                    }
+                    catch (RunTimeError e)
+                    {
+                        throw new RunTimeError(e);
+                    }
+
                     if (link_name == "True")
                     {
                         init = this.INITIATOR;
@@ -511,10 +538,10 @@ namespace LPDP
                 bool last_value = this.ComputeLogicExpression(last_value_ph);
                 switch (((Lexeme)logic_oper_ph).LValue)
                 {
-                    case "/\\":
+                    case "И":
                         result = result && last_value;
                         break;
-                    case "\\/":
+                    case "ИЛИ":
                         result = result || last_value;
                         break;
                     default:

@@ -187,19 +187,22 @@ namespace LPDP.TextAnalysis
                         switch (PhType)
                         {
                             case PhraseType.Time_Word:
-                                NewWord = new Word(WordType.SystemVar, Stack[Stack.Count - 1]);
+                                NewWord = new Word(WordType.SystemWord, Stack[Stack.Count - 1]);
                                 break;
                             case PhraseType.Initiator_Word:
-                                NewWord = new Word(WordType.SystemVar, Stack[Stack.Count - 1]);
+                                NewWord = new Word(WordType.SystemWord, Stack[Stack.Count - 1]);
                                 break;
                             case PhraseType.Rand_Word:
-                                NewWord = new Word(WordType.SystemVar, Stack[Stack.Count - 1]);
+                                NewWord = new Word(WordType.SystemWord, Stack[Stack.Count - 1]);
                                 break;
                             case PhraseType.Name:
                                 NewWord = new Word(WordType.Name, Stack[Stack.Count - 1]);
                                 break;
                             case PhraseType.ArithmeticFunction_Word:
-                                NewWord = new Word(WordType.ArithmeticFunction, Stack[Stack.Count - 1]);
+                                NewWord = new Word(WordType.SystemWord, Stack[Stack.Count - 1]);
+                                break;
+                            case PhraseType.LogicOperator:
+                                NewWord = new Word(WordType.SystemWord, Stack[Stack.Count - 1]);
                                 break;
                             default:
                                 NewWord = new Word(WordType.KeyWord, Stack[Stack.Count - 1]);                                
@@ -259,6 +262,10 @@ namespace LPDP.TextAnalysis
                     if (((Word)lex).WType == WordType.KeyWord)
                     {
                         this.Selections.Add(lex.Start, lex.Length, TextSelectionType.KeyWord);
+                    }
+                    if (((Word)lex).WType == WordType.SystemWord)
+                    {
+                        this.Selections.Add(lex.Start, lex.Length, TextSelectionType.SystemWord);
                     }
                 }
                 if ((lex.PhType != PhraseType.Empty) && (lex.PhType != PhraseType.Comment))
@@ -1779,6 +1786,7 @@ namespace LPDP.TextAnalysis
             }
             return result;
         }
+
         #endregion
     }
 }

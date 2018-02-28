@@ -5,8 +5,9 @@ using System.Text;
 
 namespace LPDP
 {
-    class RunTimeError:UserError
+    public class RunTimeError:UserError
     {
+        public RunTimeError() { }
         public RunTimeError(int start, int len, int line) :
             base(start, len, line)
         {            

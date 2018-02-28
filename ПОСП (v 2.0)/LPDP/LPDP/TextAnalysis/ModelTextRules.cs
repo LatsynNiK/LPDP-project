@@ -48,7 +48,7 @@ namespace LPDP.TextAnalysis
         Arithmetic_Operator_3lvl,    // + -
 
         Arithmetic_Function,    // log lg ln ЦЕЛОЕ
-        Logic_Operator,         //  /\ \/ 
+        //Logic_Operator,         //  /\ \/ 
         Comparison_Operator,    //= != > < >= <=
         Ref_Operator,           // ->
 
@@ -222,9 +222,10 @@ namespace LPDP.TextAnalysis
     public enum WordType
     {
         KeyWord,
-        SystemVar,
+        SystemWord,
         ArithmeticFunction,
-        Name
+        //LogicOperator,
+        Name      
     }
 
     public static class ModelTextRules
@@ -335,8 +336,8 @@ namespace LPDP.TextAnalysis
             LexicalTemplates.Add(new LexemeTypeTemplate(LexemeType.Comparison_Operator, LexemeType.Comparison, LexemeType.Equality)); //>=
             LexicalTemplates.Add(new LexemeTypeTemplate(LexemeType.Ref_Operator, LexemeType.Minus, LexemeType.Comparison)); //->
 
-            LexicalTemplates.Add(new LexemeTypeTemplate(LexemeType.Logic_Operator, LexemeType.Slash, LexemeType.Back_Slash)); // /\
-            LexicalTemplates.Add(new LexemeTypeTemplate(LexemeType.Logic_Operator, LexemeType.Back_Slash, LexemeType.Slash)); // \/
+            //LexicalTemplates.Add(new LexemeTypeTemplate(LexemeType.Logic_Operator, LexemeType.Slash, LexemeType.Back_Slash)); // /\
+            //LexicalTemplates.Add(new LexemeTypeTemplate(LexemeType.Logic_Operator, LexemeType.Back_Slash, LexemeType.Slash)); // \/
 
             LexicalTemplates.Add(new LexemeTypeTemplate(LexemeType.Comment_Bracket_Open, LexemeType.Slash, LexemeType.Star)); // /*
             LexicalTemplates.Add(new LexemeTypeTemplate(LexemeType.Comment_Bracket_Close, LexemeType.Star, LexemeType.Slash)); // */
@@ -411,6 +412,8 @@ namespace LPDP.TextAnalysis
                 {"ВРЕМЯ",PhraseType.Time_Word},
                 {"RAND",PhraseType.Rand_Word},
                 {"ИНИЦИАТОР",PhraseType.Initiator_Word},
+                {"И",PhraseType.LogicOperator},
+                {"ИЛИ",PhraseType.LogicOperator},
             };
         }
         public static PhraseType DetermineWord(Lexeme word)
@@ -700,8 +703,8 @@ namespace LPDP.TextAnalysis
 
                 case LexemeType.Arithmetic_Function:
                     return PhraseType.ArithmeticFunction_Word;
-                case LexemeType.Logic_Operator:
-                    return PhraseType.LogicOperator;
+                //case LexemeType.Logic_Operator:
+                //    return PhraseType.LogicOperator;
 
                 case LexemeType.Ref_Operator:
                     return PhraseType.Ref_Operator;

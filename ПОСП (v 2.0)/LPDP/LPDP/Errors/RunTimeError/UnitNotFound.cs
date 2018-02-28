@@ -5,13 +5,13 @@ using System.Text;
 
 namespace LPDP
 {
-    class NameNotFound:RunTimeError
+    public class UnitNotFound:RunTimeError
     {
         string Name;
-        public NameNotFound(string name)
+        public UnitNotFound(string name)
         {
             this.Name = name;
-            this.Text = "Не найдено наименование: " + name;
+            this.Text = "Не найден блок: " + name;
         }
         public string GetName()
         {

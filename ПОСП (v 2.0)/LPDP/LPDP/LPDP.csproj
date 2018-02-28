@@ -60,9 +60,11 @@
     <Compile Include="Errors\ErrorList.cs" />
     <Compile Include="Errors\LexicalErrors\LexicalError.cs" />
     <Compile Include="Errors\LexicalErrors\UnknownLexemeError.cs" />
+    <Compile Include="Errors\RunTimeError\LabelNotFound.cs" />
     <Compile Include="Errors\RunTimeError\NameNotFound.cs" />
     <Compile Include="Errors\RunTimeError\ObjectDoesNotExistError.cs" />
     <Compile Include="Errors\RunTimeError\RunTimeError.cs" />
+    <Compile Include="Errors\RunTimeError\UnitNotFound.cs" />
     <Compile Include="Errors\SyntacticalErrors\ExpectedPhraseError.cs" />
     <Compile Include="Errors\SyntacticalErrors\ReplacingError.cs" />
     <Compile Include="Errors\SyntacticalErrors\SyntacticalError.cs" />
