@@ -1,0 +1,129 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{7CE8C47D-1123-46FB-A310-F3ED23C0B8C7}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>SLT</RootNamespace>
+    <AssemblyName>SLT</AssemblyName>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <DocumentationFile>
+    </DocumentationFile>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <Prefer32Bit>false</Prefer32Bit>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="DataSets\InputData.cs" />
+    <Compile Include="DataSets\InputOutputData.cs" />
+    <Compile Include="DataSets\OutputData.cs" />
+    <Compile Include="Dynamics\ConditionsTable.cs" />
+    <Compile Include="Dynamics\FutureTimesTable.cs" />
+    <Compile Include="Dynamics\Queue.cs" />
+    <Compile Include="Dynamics\QueueTable.cs" />
+    <Compile Include="Dynamics\RecordEvent.cs" />
+    <Compile Include="Errors\EmptyTextError.cs" />
+    <Compile Include="Errors\ErrorList.cs" />
+    <Compile Include="Errors\LexicalErrors\LexicalError.cs" />
+    <Compile Include="Errors\LexicalErrors\UnknownLexemeError.cs" />
+    <Compile Include="Errors\RunTimeError\LabelNotFound.cs" />
+    <Compile Include="Errors\RunTimeError\NameNotFound.cs" />
+    <Compile Include="Errors\RunTimeError\ObjectDoesNotExistError.cs" />
+    <Compile Include="Errors\RunTimeError\RunTimeError.cs" />
+    <Compile Include="Errors\RunTimeError\UnitNotFound.cs" />
+    <Compile Include="Errors\SyntacticalErrors\ExpectedPhraseError.cs" />
+    <Compile Include="Errors\SyntacticalErrors\ReplacingError.cs" />
+    <Compile Include="Errors\SyntacticalErrors\SyntacticalError.cs" />
+    <Compile Include="Errors\SyntacticalErrors\PhraseNotFound.cs" />
+    <Compile Include="Errors\SystemError.cs" />
+    <Compile Include="Errors\UserError.cs" />
+    <Compile Include="Executor.cs" />
+    <Compile Include="Objects\InitiatorsTable.cs" />
+    <Compile Include="Structure\Action.cs" />
+    <Compile Include="Structure\LabelsTable.cs" />
+    <Compile Include="Objects\Macro.cs" />
+    <Compile Include="Objects\MacrosTable.cs" />
+    <Compile Include="Structure\Model.cs" />
+    <Compile Include="Structure\Operator.cs" />
+    <Compile Include="Structure\Parameter.cs" />
+    <Compile Include="Dynamics\RecordCT.cs" />
+    <Compile Include="Dynamics\RecordFTT.cs" />
+    <Compile Include="Structure\Label.cs" />
+    <Compile Include="Structure\StructureController.cs" />
+    <Compile Include="Structure\Subprogram.cs" />
+    <Compile Include="Dynamics\TimeAndConditionController.cs" />
+    <Compile Include="Objects\Initiator.cs" />
+    <Compile Include="Objects\Link.cs" />
+    <Compile Include="Objects\Memory.cs" />
+    <Compile Include="Objects\Object.cs" />
+    <Compile Include="Objects\ObjectController.cs" />
+    <Compile Include="Objects\GlobalVarsTable.cs" />
+    <Compile Include="Objects\Scalar.cs" />
+    <Compile Include="Objects\Vector.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Structure\Unit.cs" />
+    <Compile Include="Errors\Error.cs" />
+    <Compile Include="TextAnalysis\Lexeme.cs" />
+    <Compile Include="TextAnalysis\LexemeTypeTemplate.cs" />
+    <Compile Include="TextAnalysis\ModelTextRules.cs" />
+    <Compile Include="TextAnalysis\Phrase.cs" />
+    <Compile Include="TextAnalysis\PhraseTypeTemplate.cs" />
+    <Compile Include="TextAnalysis\Analysis.cs" />
+    <Compile Include="TextAnalysis\TextSelectionTable.cs" />
+    <Compile Include="TextAnalysis\Word.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
