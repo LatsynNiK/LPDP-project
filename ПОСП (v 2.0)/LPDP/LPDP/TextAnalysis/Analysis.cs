@@ -13,30 +13,15 @@ namespace LPDP.TextAnalysis
     public class Analysis
     {
         public string SourceText;
-        //public List<Error> Errors;
+        List<Error> ErrorStack;
         List<Lexeme> Lexemes;
-        List<Phrase> Phrases;
-        //List<Phrase> Phrases;
+        List<Phrase> Phrases;        
         Phrase ParsedText;
         public string ResultTxtCode;
         public string ResultRTFCode;
-        //public string ResultInfo;
-        
-        Model ParentModel;
-        
+        Model ParentModel;     
         List<Phrase> CommentPhrases;
-
         public TextSelectionTable Selections;
-
-        //struct Response
-        //{
-        //    public Phrase BackPhrase;
-        //    public ScanningState ScanState;
-        //    public List<Error> Finded_Errors;
-        //    public int ConcattedLexemes;
-        //}
-        //Error CurrentError;
-        
 
         public Analysis(Model parent_model)
         {
@@ -1049,57 +1034,6 @@ namespace LPDP.TextAnalysis
             throw new PhraseNotFound(err, ph_type);
         }
 
-        PhraseTypeTemplate FindTemplate1(PhraseType ph_type, Phrase first_ph)
-        {
-            Error err = new Error();
-            PhraseTypeTemplate err_temp = new PhraseTypeTemplate(PhraseType.Error);
-            foreach (PhraseTypeTemplate temp in ModelTextRules.SyntacticalTemplates)
-            {
-
-                if (temp.PhType == ph_type)
-                {
-                    if (temp.ConcatedPhrases == 0)
-                    {
-                        return temp;
-                    }
-                    if (temp.PhTemplate[0] == first_ph.PhType)
-                    {
-                        return temp;
-                    }
-                    else
-                    {
-                        //если терминал
-                        if (ModelTextRules.PrimaryPhraseTypes[temp.PhTemplate[0]])
-                        {
-                            //throw new PhraseNotFound(first_ph.Start, first_ph.Length, first_ph.Line, temp.PhTemplate[0]);
-                            err_temp = new PhraseTypeTemplate(PhraseType.Error, temp.PhTemplate[0]);
-                            //err = new PhraseNotFound(first_ph.Start, first_ph.Length, first_ph.Line, temp.PhTemplate[0]);
-                            continue;
-                        }
-                        //если нетерминал
-                        else
-                        {
-                            PhraseTypeTemplate finded_temp = FindTemplate(temp.PhTemplate[0], first_ph);
-                            if (finded_temp.PhType != PhraseType.Error)
-                            {
-                                return temp;
-                            }
-                            else
-                            {
-                                err_temp = finded_temp;
-                                PhraseType[] err_arr = new PhraseType[finded_temp.PhTemplate.Length+1];
-                                err_arr[err_arr.Length-1] = finded_temp.PhTemplate[0];
-                                err_temp = new PhraseTypeTemplate(PhraseType.Error, err_arr);
-                                break;
-                            }
-                        }
-                    }
-                }
-            }
-            //throw new PhraseNotFound(err, ph_type);
-            return err_temp;
-        }
-
         List<Phrase> ApplyTemplate1(PhraseTypeTemplate template, List<Phrase> Phrases)
         {
             //копирование списка фраз
@@ -1121,44 +1055,44 @@ namespace LPDP.TextAnalysis
                     else
                     {
                         //есть ошибка
-                        Phrase inner = new Phrase(template.PhTemplate[i],CopyPhrases[0]);
-                        Phrase Err_ph = new Phrase(PhraseType.Error, inner);
                         //throw new PhraseNotFound(CopyPhrases[0].Start, CopyPhrases[0].Length, CopyPhrases[0].Line, template.PhTemplate[i]);
-                        CopyPhrases.Clear();
-                        CopyPhrases.Add(Err_ph);
+                        this.ErrorStack.Add(new PhraseNotFound(CopyPhrases[0].Start, CopyPhrases[0].Length, CopyPhrases[0].Line, template.PhTemplate[i]));
+                        return null;
                     }
                 }
                 //если нетерминал (составное значение)
                 else
                 {
-                    try
+                    int err_stack_deep = this.ErrorStack.Count;
+                    PhraseTypeTemplate inner_temp = FindTemplate1(template.PhTemplate[i], CopyPhrases[0]);
+                    if (inner_temp == null)
                     {
-                        PhraseTypeTemplate inner_temp = FindTemplate(template.PhTemplate[i], CopyPhrases[0]);
-                        if (inner_temp.PhType == PhraseType.Error)
-                        {
-                            //есть ошибка
-                            Phrase inner = new Phrase(template.PhTemplate[i], CopyPhrases[0]);
-                            Phrase Err_ph = new Phrase(PhraseType.Error, inner);
-                            //throw new PhraseNotFound(CopyPhrases[0].Start, CopyPhrases[0].Length, CopyPhrases[0].Line, template.PhTemplate[i]);
-                            CopyPhrases.Clear();
-                            CopyPhrases.Add(Err_ph);
-                            
-                        }
-                        else
-                        {
-
-                            List<Phrase> NewPhrases = new List<Phrase>();
-                            NewPhrases = ApplyTemplate(inner_temp, CopyPhrases);
-                            CopyPhrases = NewPhrases;
-                            ListNewPhrase.Add(CopyPhrases[0]);
-                            CopyPhrases.RemoveAt(0);
-                        }
-
+                        this.ErrorStack.Add(new PhraseNotFound(ErrorStack.Last(), template.PhType));
+                        return null;
                     }
-                    catch (PhraseNotFound e)
+                    else
                     {
-                        throw new PhraseNotFound(e, template.PhType);
+                        if (this.ErrorStack.Count > 0)
+                        {
+                            this.ErrorStack.RemoveRange(err_stack_deep, this.ErrorStack.Count - err_stack_deep);
+                        }
                     }
+                    //List<Phrase> NewPhrases = new List<Phrase>();
+                    CopyPhrases = ApplyTemplate1(inner_temp, CopyPhrases);
+                    if (CopyPhrases == null)
+                    {
+                        this.ErrorStack.Add(new PhraseNotFound(ErrorStack.Last(), template.PhType));
+                        return null;
+                    }
+                    else
+                    {
+                        if (this.ErrorStack.Count > 0)
+                        {
+                            this.ErrorStack.RemoveRange(err_stack_deep, this.ErrorStack.Count - err_stack_deep);
+                        }
+                    }
+                    ListNewPhrase.Add(CopyPhrases[0]);
+                    CopyPhrases.RemoveAt(0);
                 }
             }
             //создаем новую фразу
@@ -1177,6 +1111,72 @@ namespace LPDP.TextAnalysis
             //добавляем новую
             CopyPhrases.Insert(0, NewPhrase);
             return CopyPhrases;
+        }
+
+        PhraseTypeTemplate FindTemplate1(PhraseType ph_type, Phrase first_ph)
+        {
+            Error err = new Error();
+            int err_stack_deep = this.ErrorStack.Count;
+            foreach (PhraseTypeTemplate temp in ModelTextRules.SyntacticalTemplates)
+            {
+                if (this.ErrorStack.Count > 0)
+                {
+                    this.ErrorStack.RemoveRange(err_stack_deep, this.ErrorStack.Count - err_stack_deep);
+                }
+                if (temp.PhType == ph_type)
+                {
+                    if (temp.ConcatedPhrases == 0)
+                    {
+                        return temp;
+                    }
+                    if (temp.PhTemplate[0] == first_ph.PhType)
+                    {
+                        return temp;
+                    }
+                    else
+                    {
+                        //если терминал
+                        if (ModelTextRules.PrimaryPhraseTypes[temp.PhTemplate[0]])
+                        {
+                            err = new PhraseNotFound(first_ph.Start, first_ph.Length, first_ph.Line, temp.PhTemplate[0]);
+                            continue;
+                            //throw new PhraseNotFound(first_ph.Start, first_ph.Length, first_ph.Line, temp.PhTemplate[0]);
+                        }
+                        //если нетерминал
+                        else
+                        {
+                            //int err_stack_deep = this.ErrorStack.Count;
+                            PhraseTypeTemplate inner_temp = FindTemplate1(temp.PhTemplate[0], first_ph);
+                            if (inner_temp == null)
+                            {
+                                //if (this.ErrorStack.Count > 1)
+                                //{
+                                //    this.ErrorStack.Remove(err);
+                                //}
+                                err = this.ErrorStack.Last();
+                                continue;
+                            }
+                            else
+                            {
+                                //if (this.ErrorStack.Count > 0)
+                                //{
+                                //    this.ErrorStack.RemoveRange(err_stack_deep, this.ErrorStack.Count - err_stack_deep);
+                                //}
+                                return temp;
+                            }
+                            //if (FindTemplate1(temp.PhTemplate[0], first_ph) == null)
+                            //{
+                            //    err = this.ErrorStack.Last();
+                            //    continue;
+                            //}
+                            //return temp;
+                        }
+                    }
+                }
+            }
+            //throw new PhraseNotFound(err, ph_type);
+            this.ErrorStack.Add(new PhraseNotFound(err, ph_type));
+            return null;
         }
 
         //bool TryToReplace(List<Phrase> Phrases, int corrected_index, PhraseTypeTemplate temp)
@@ -1290,21 +1290,39 @@ namespace LPDP.TextAnalysis
         Phrase SyntacticalAnalysis(List<Phrase> Phrases)
         {
             //this.Phrases = new List<Phrase>();
-            List<Error> Errors = new List<Error>();   
+            List<Error> Errors = new List<Error>();
+            this.ErrorStack = new List<Error>();
             Phrase result;
             try
             {
-                //вход в рекурсивный спуск                
-                result = ApplyTemplate(ModelTextRules.SyntacticalTemplates[0], Phrases)[0];
-                if (Errors.Count > 0)
+                //вход в рекурсивный спуск 
+                List<Phrase> result_list = ApplyTemplate1(ModelTextRules.SyntacticalTemplates[0], Phrases);
+                if (result_list == null)
                 {
-                    throw new ErrorList(Errors);
+                    PhraseNotFound inner_err = (PhraseNotFound)this.ErrorStack[0];
+                    PhraseNotFound outer_err;// = this.ErrorStack[0];
+                    this.ErrorStack.RemoveAt(0);
+                    while(this.ErrorStack.Count > 0)
+                    {
+                        outer_err = new PhraseNotFound(inner_err,((PhraseNotFound)this.ErrorStack[0]).Type);
+                        inner_err = outer_err;
+                        this.ErrorStack.RemoveAt(0);
+                    }
+                    throw inner_err;
                 }
+                else
+                {
+                    result = result_list[0];
+                }
+            //    if (Errors.Count > 0)
+            //    {
+            //        throw new ErrorList(Errors);
+            //    }
             }
-            catch (ErrorList e)
-            {
-                throw new SyntacticalError(e);
-            }
+            //catch (ErrorList e)
+            //{
+            //    throw new SyntacticalError(e);
+            //}
             catch (SyntacticalError e)
             {
                 throw new SyntacticalError(e);
