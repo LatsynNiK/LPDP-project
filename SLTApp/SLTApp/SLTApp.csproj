@@ -7,8 +7,8 @@
     <ProjectGuid>{3FB0FAEA-E2FB-48EE-8E25-EA145E176A77}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>ПОСП</RootNamespace>
-    <AssemblyName>ПОСП</AssemblyName>
+    <RootNamespace>STLApp</RootNamespace>
+    <AssemblyName>STLApp</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile>
@@ -58,9 +58,8 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="LPDP, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\ПОСП (v 2.0)\LPDP\LPDP\bin\Debug\LPDP.dll</HintPath>
+    <Reference Include="SLT">
+      <HintPath>..\..\SLT - dll\SLT\SLT\bin\Debug\SLT.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />

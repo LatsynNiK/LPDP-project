@@ -8,11 +8,11 @@ using System.Text;
 using System.Windows.Forms;
 using System.IO;
 
-using LPDP;
-using LPDP.DataSets;
-using LPDP.Structure;
+using SLT;
+using SLT.DataSets;
+using SLT.Structure;
 //нужно скрыть!
-//using LPDP.Structure;
+//using SLT.Structure;
 
 namespace ПОСП
 {
@@ -31,7 +31,7 @@ namespace ПОСП
         public POSP_Form()
         {
             InitializeComponent();
-            LPDP.TextAnalysis.ModelTextRules.SetRules();
+            SLT.TextAnalysis.ModelTextRules.SetRules();
             this.Input = new InputData(precision);
             //this.DataSets = new InputOutputData(precision);
             //UseAllCaptions();
@@ -1323,7 +1323,7 @@ namespace ПОСП
         {
             this.UpDate();
 
-            //LPDP_Actions.Stop();
+            //SLT_Actions.Stop();
             //this.ExploredModel.Built = false;
             this.ExploredModel.Executor.Stop();
 
@@ -1455,9 +1455,9 @@ namespace ПОСП
             отображенияToolStripMenuItem.ShowDropDown();
             this.UpDate();
             this.UpLoad();
-            //LPDP_Actions.Building(this.DataSets.CodeTxt);
-            //CodeField.Rtf = LPDP_Code.Build_RTF_Code(системныеМеткиToolStripMenuItem.Checked);
-            //CodeField.Rtf = LPDP_Code.Rewrite_Initiators_RTF(CodeField.Rtf, следующийОператорToolStripMenuItem.Checked, очередиToolStripMenuItem.Checked);
+            //SLT_Actions.Building(this.DataSets.CodeTxt);
+            //CodeField.Rtf = SLT_Code.Build_RTF_Code(системныеМеткиToolStripMenuItem.Checked);
+            //CodeField.Rtf = SLT_Code.Rewrite_Initiators_RTF(CodeField.Rtf, следующийОператорToolStripMenuItem.Checked, очередиToolStripMenuItem.Checked);
         }
         private void следующийОператорToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -1470,8 +1470,8 @@ namespace ПОСП
                 следующийОператорToolStripMenuItem.Checked = false;
 
             отображенияToolStripMenuItem.ShowDropDown();
-            //CodeField.Rtf = LPDP_Code.Rewrite_Initiators_RTF(CodeField.Rtf, следующийОператорToolStripMenuItem.Checked, очередиToolStripMenuItem.Checked);
-            //LPDP_Actions.UpGradeCode();
+            //CodeField.Rtf = SLT_Code.Rewrite_Initiators_RTF(CodeField.Rtf, следующийОператорToolStripMenuItem.Checked, очередиToolStripMenuItem.Checked);
+            //SLT_Actions.UpGradeCode();
             this.UpDate();
             this.UpLoad();
         }
@@ -1486,9 +1486,9 @@ namespace ПОСП
                 очередиToolStripMenuItem.Checked = false;
 
             отображенияToolStripMenuItem.ShowDropDown();
-            //CodeField.Rtf = LPDP_Code.Rewrite_Initiators_RTF(CodeField.Rtf, следующийОператорToolStripMenuItem.Checked, очередиToolStripMenuItem.Checked);
-            //LPDP_Actions.Building(this.DataSets.CodeTxt);
-            //LPDP_Graphics.Reload_Values_and_Queues(очередиToolStripMenuItem.Checked);
+            //CodeField.Rtf = SLT_Code.Rewrite_Initiators_RTF(CodeField.Rtf, следующийОператорToolStripMenuItem.Checked, очередиToolStripMenuItem.Checked);
+            //SLT_Actions.Building(this.DataSets.CodeTxt);
+            //SLT_Graphics.Reload_Values_and_Queues(очередиToolStripMenuItem.Checked);
             //GraphicModel_View.Refresh();
             this.UpDate();
             this.UpLoad();
@@ -1878,19 +1878,19 @@ namespace ПОСП
                             стопToolStripMenuItem.PerformClick();
                         сохранитьToolStripMenuItem.PerformClick();
 
-                        //LPDP_Data.ClearTable(LPDP_Data.Objects);
-                        //LPDP_Data.ClearTable(LPDP_Data.Initiators);
-                        //LPDP_Data.ClearTable(LPDP_Data.Queues);
-                        //LPDP_Data.ClearTable(LPDP_Data.FTT);
-                        //LPDP_Data.ClearTable(LPDP_Data.CT);
+                        //SLT_Data.ClearTable(SLT_Data.Objects);
+                        //SLT_Data.ClearTable(SLT_Data.Initiators);
+                        //SLT_Data.ClearTable(SLT_Data.Queues);
+                        //SLT_Data.ClearTable(SLT_Data.FTT);
+                        //SLT_Data.ClearTable(SLT_Data.CT);
 
                         break;
                     case Closing_Form.ResultType.NoSave:
-                        //LPDP_Data.ClearTable(LPDP_Data.Objects);
-                        //LPDP_Data.ClearTable(LPDP_Data.Initiators);
-                        //LPDP_Data.ClearTable(LPDP_Data.Queues);
-                        //LPDP_Data.ClearTable(LPDP_Data.FTT);
-                        //LPDP_Data.ClearTable(LPDP_Data.CT);
+                        //SLT_Data.ClearTable(SLT_Data.Objects);
+                        //SLT_Data.ClearTable(SLT_Data.Initiators);
+                        //SLT_Data.ClearTable(SLT_Data.Queues);
+                        //SLT_Data.ClearTable(SLT_Data.FTT);
+                        //SLT_Data.ClearTable(SLT_Data.CT);
                         break;
                     case Closing_Form.ResultType.Cancel:
                         e.Cancel = true;

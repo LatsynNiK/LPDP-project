@@ -3,7 +3,7 @@ using System.ComponentModel;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
-using LPDP;
+using SLT;
 
 namespace ПОСП
 {

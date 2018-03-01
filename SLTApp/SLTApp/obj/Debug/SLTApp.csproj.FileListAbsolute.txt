@@ -1,0 +1,3 @@
+C:\Users\Николай\Desktop\LPDP-project\SLTApp\SLTApp\bin\Debug\STLApp.exe.config
+C:\Users\Николай\Desktop\LPDP-project\SLTApp\SLTApp\obj\Debug\STLApp.exe
+C:\Users\Николай\Desktop\LPDP-project\SLTApp\SLTApp\obj\Debug\STLApp.pdb

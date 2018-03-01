@@ -6,8 +6,8 @@ using System.Windows.Forms;
 using System.Drawing;
 using System.Data;
 
-using LPDP.DataSets;
-using LPDP.Objects;
+using SLT.DataSets;
+using SLT.Objects;
 
 namespace ПОСП
 {
