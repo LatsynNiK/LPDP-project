@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace SLT.Objects
+namespace SLT
 {
-    public class Scalar:Object
+    class Scalar:Object
     {
         string Value;
 
@@ -43,14 +43,6 @@ namespace SLT.Objects
             base.Type = ObjectType.Scalar;
             this.Value = "";
         }
-
-        //Parent
-        //public Scalar(int id, string name, string unit, int parent)
-        //    : base(id, name, unit, parent)
-        //{
-        //    base.Type = ObjectType.Scalar;
-        //    this.Value = "";
-        //}
 
         ///////////////////////////////
 

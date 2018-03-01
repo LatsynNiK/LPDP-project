@@ -7,7 +7,6 @@ namespace SLT
 {
     public class EmptyTextError:UserError
     {
-        //public string Text;
         public EmptyTextError()
         {
             this.Text = "Нет текста модели";

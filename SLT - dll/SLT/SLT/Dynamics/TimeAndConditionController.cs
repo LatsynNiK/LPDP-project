@@ -3,13 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-using SLT.TextAnalysis;
-using SLT.Structure;
-using SLT.Objects;
-
-namespace SLT.Dynamics
+namespace SLT
 {
-    public class TimeAndConditionController
+    class TimeAndConditionController
     {
         int ID_event_Counter;
 

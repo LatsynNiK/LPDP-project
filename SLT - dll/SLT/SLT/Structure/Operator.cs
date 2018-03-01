@@ -3,12 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-using SLT.TextAnalysis;
-using SLT.DataSets;
-
-namespace SLT.Structure
+namespace SLT
 {
-    public enum OperatorName
+    enum OperatorName
     {
         Assign,
         Transfer,
@@ -25,22 +22,17 @@ namespace SLT.Structure
         //WaitConditions,
         Execute
     }
-    public class Operator
+    class Operator
     {
-        //public int ID;
-        //public int Index;
-        public OperatorName Name;
-        //List<Parameter> Params;
+        public OperatorName Name;        
         public List<Action> Actions;
-        public Subprogram ParentSubprogram;
-        //public Dictionary<string, object> Params;
-        public Selection Position;
+        public Subprogram ParentSubprogram;        
+        public int Start;
+        public int Length;
 
         public Operator() 
-        {
-            //this.Params = new Dictionary<string, object>();
-            this.Actions = new List<Action>();
-            this.Position = new Selection();
+        {            
+            this.Actions = new List<Action>();            
         }
 
         public void AddAction(Action act)
@@ -48,14 +40,5 @@ namespace SLT.Structure
             act.ParentOperator = this;
             this.Actions.Add(act);
         }
-
-        //public Operator(int id, int ind, OperatorName name, List<Parameter> param_list )
-        //{
-        //    this.ID = id;
-        //    this.Index = ind;
-        //    this.Name = name;
-        //    //this.Params = param_list;
-        //}
-        
     }
 }

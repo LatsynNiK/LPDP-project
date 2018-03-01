@@ -7,7 +7,6 @@ namespace SLT
 {
     public class UserError:Error
     {
-        //public string Text;
         public int Line;
         public int Start;
         public int Length;
@@ -33,7 +32,6 @@ namespace SLT
 
         public UserError(int start, int len, int line)
         {
-            //this.Text = text;
             this.Start = start;
             this.Length = len;
             this.Line = line;

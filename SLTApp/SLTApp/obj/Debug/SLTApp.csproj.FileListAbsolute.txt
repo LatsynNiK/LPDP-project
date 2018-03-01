@@ -1,3 +1,15 @@
 C:\Users\Николай\Desktop\LPDP-project\SLTApp\SLTApp\bin\Debug\STLApp.exe.config
 C:\Users\Николай\Desktop\LPDP-project\SLTApp\SLTApp\obj\Debug\STLApp.exe
 C:\Users\Николай\Desktop\LPDP-project\SLTApp\SLTApp\obj\Debug\STLApp.pdb
+C:\Users\Николай\Desktop\SLT-project\SLTApp\SLTApp\bin\Debug\STLApp.exe.config
+C:\Users\Николай\Desktop\SLT-project\SLTApp\SLTApp\obj\Debug\STLApp.exe
+C:\Users\Николай\Desktop\SLT-project\SLTApp\SLTApp\obj\Debug\STLApp.pdb
+C:\Users\Николай\Desktop\SLT-project\SLTApp\SLTApp\bin\Debug\STLApp.exe
+C:\Users\Николай\Desktop\SLT-project\SLTApp\SLTApp\bin\Debug\STLApp.pdb
+C:\Users\Николай\Desktop\SLT-project\SLTApp\SLTApp\bin\Debug\SLT.dll
+C:\Users\Николай\Desktop\SLT-project\SLTApp\SLTApp\bin\Debug\SLT.pdb
+C:\Users\Николай\Desktop\SLT-project\SLTApp\SLTApp\obj\Debug\SLTApp.csprojResolveAssemblyReference.cache
+C:\Users\Николай\Desktop\SLT-project\SLTApp\SLTApp\obj\Debug\ПОСП.Closing_Form.resources
+C:\Users\Николай\Desktop\SLT-project\SLTApp\SLTApp\obj\Debug\ПОСП.POSP_Form.resources
+C:\Users\Николай\Desktop\SLT-project\SLTApp\SLTApp\obj\Debug\STLApp.Properties.Resources.resources
+C:\Users\Николай\Desktop\SLT-project\SLTApp\SLTApp\obj\Debug\SLTApp.csproj.GenerateResource.Cache

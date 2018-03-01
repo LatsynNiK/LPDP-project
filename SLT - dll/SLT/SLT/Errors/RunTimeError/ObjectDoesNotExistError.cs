@@ -5,15 +5,14 @@ using System.Text;
 
 namespace SLT
 {
-    class ObjectDoesNotExistError:RunTimeError
+    class ObjectNotFoundError:RunTimeError
     {
-        public ObjectDoesNotExistError(int start, int len, int line, string name) :
+        public ObjectNotFoundError(int start, int len, int line, string name) :
             base(start, len, line)
         {
-            //string type_text = ModelTextRules.PhraseTypeCommonNames[type];
             this.Text = "Не существует объекта: " + name;
         }
-        public ObjectDoesNotExistError(int start, int len, int line, Exception inner) :
+        public ObjectNotFoundError(int start, int len, int line, Exception inner) :
             base(inner)
         {            
             this.Text = "Не существует объекта";
@@ -21,7 +20,7 @@ namespace SLT
             ((UserError)inner).Length = len;
             ((UserError)inner).Line = line;
         }
-        ObjectDoesNotExistError(Exception inner) :
+        ObjectNotFoundError(Exception inner) :
             base(inner)
         {
             this.Text = "Не существует объекта";

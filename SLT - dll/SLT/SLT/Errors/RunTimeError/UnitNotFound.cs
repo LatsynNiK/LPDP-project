@@ -5,7 +5,7 @@ using System.Text;
 
 namespace SLT
 {
-    public class UnitNotFound:RunTimeError
+    class UnitNotFound:RunTimeError
     {
         string Name;
         public UnitNotFound(string name)

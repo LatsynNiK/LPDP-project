@@ -3,11 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-using SLT.Structure;
-
-namespace SLT.Dynamics
+namespace SLT
 {
-    public class QueueTable
+    class QueueTable
     {
         public List<Queue> Queues;
         Executor ParentExecutor;
@@ -23,7 +21,7 @@ namespace SLT.Dynamics
             }
         }
 
-        public void Update(SLT.Objects.Initiator init)
+        public void Update(SLT.Initiator init)
         {
             foreach (Queue q in this.Queues)
             {

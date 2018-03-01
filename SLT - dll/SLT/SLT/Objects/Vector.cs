@@ -3,9 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-using SLT.TextAnalysis;
-
-namespace SLT.Objects
+namespace SLT
 {
     class Vector:Object
     {
@@ -42,9 +40,9 @@ namespace SLT.Objects
             return this.Value;
         }
 
-        public SLT.Objects.Object FindNode(string node_name, Phrase path)
+        public SLT.Object FindNode(string node_name, Phrase path)
         {
-            SLT.Objects.Object finded_node;
+            SLT.Object finded_node;
             finded_node = this.Value.Find(obj => obj.Name == node_name);
             if (path.Value.Count == 0)
             {                

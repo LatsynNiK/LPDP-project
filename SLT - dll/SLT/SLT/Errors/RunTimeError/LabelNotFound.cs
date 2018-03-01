@@ -5,7 +5,7 @@ using System.Text;
 
 namespace SLT
 {
-    public class LabelNotFound:RunTimeError
+    class LabelNotFound:RunTimeError
     {
         string Name;
         public LabelNotFound(string name, string unit)

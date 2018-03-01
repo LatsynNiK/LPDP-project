@@ -3,33 +3,31 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-using SLT.TextAnalysis;
-using SLT.Structure;
-
-namespace SLT.Objects
+namespace SLT
 {
-    public class ObjectController
+    class ObjectController
     {
         
         //int Initiator_Number_Counter;
-        SLT.Structure.Model ParentModel;
-
+        SLT.Model ParentModel;
+        public Memory Memory;
         public InitiatorsTable IT;
         public GlobalVarsTable GVT;
-        Object CurrentObject;
+        //Object CurrentObject;
 
-        public ObjectController(SLT.Structure.Model model)
+        public ObjectController(SLT.Model model)
         {
             //this.ID_Object_Counter = 0;
             //this.Initiator_Number_Counter = 0;
             this.ParentModel = model;
+            this.Memory = new Memory();
             this.IT = new InitiatorsTable();
             this.GVT = new GlobalVarsTable();
         }
 
         public void CreateObject(Object obj, string unit)
         {
-            obj = this.ParentModel.Memory.AddNewObject(obj);
+            obj = this.Memory.AddNewObject(obj);
 
             if (obj.Type == ObjectType.Macro)
             {
@@ -43,7 +41,7 @@ namespace SLT.Objects
 
         public void AddObject(Object obj, string unit)
         {
-            obj = this.ParentModel.Memory.AddSingletonObject(obj);
+            obj = this.Memory.AddSingletonObject(obj);
 
             if (obj.Type == ObjectType.Macro)
             {
@@ -57,18 +55,18 @@ namespace SLT.Objects
 
         public void DeleteObjectByID(int id)
         {
-            this.ParentModel.Memory.DeleteObject(id);
+            this.Memory.DeleteObject(id);
             this.GVT.DeleteObjectByID(id);
         }
         public void DeleteInitiatorByID(int id)
         {
-            this.ParentModel.Memory.DeleteObject(id);
+            this.Memory.DeleteObject(id);
             this.IT.Delete(id);
         }
 
         public void SetValueToScalar(string name, string unit, object value) 
         {
-            SLT.Objects.Scalar updated_scalar = (Scalar)this.GVT.Vars[unit].Find(o => o.Name == name);
+            SLT.Scalar updated_scalar = (Scalar)this.GVT.Vars[unit].Find(o => o.Name == name);
             updated_scalar.SetValue(value);
         }
         //public void SetValueToVector(Phrase path, string unit, object value) 
@@ -77,22 +75,22 @@ namespace SLT.Objects
         //    Phrase inner_node = path.Value[2];
         //    Vector parent_vector = (Vector)this.GVT.Vars[unit].Find(v => v.Name == vector_name);
 
-        //    //SLT.Objects.Scalar updated_scalar = (Scalar)this.ParentModel.GVT.Vars[unit].Find(o => o.Name == name);
+        //    //SLT.Scalar updated_scalar = (Scalar)this.ParentModel.GVT.Vars[unit].Find(o => o.Name == name);
 
-        //    SLT.Objects.Object updated_obj = parent_vector.FindNode(inner_node);//Scalar or Link
+        //    SLT.Object updated_obj = parent_vector.FindNode(inner_node);//Scalar or Link
         //    updated_obj.SetValue(value);
         //}
 
 //GET
-        public SLT.Objects.Object GetObjectByID(int id)
+        public SLT.Object GetObjectByID(int id)
         {
-            //SLT.Objects.Link finded_link = (Link)this.ParentModel.GVT.Vars[unit].Find(o => o.Name == name);
-            SLT.Objects.Object result = this.ParentModel.Memory.GetObjectByID(id);
+            //SLT.Link finded_link = (Link)this.ParentModel.GVT.Vars[unit].Find(o => o.Name == name);
+            SLT.Object result = this.Memory.GetObjectByID(id);
 
             return result;
         }
 
-        public SLT.Objects.Object GetObjectByName(string name, string unit)
+        public SLT.Object GetObjectByName(string name, string unit)
         {
             Object result = this.GVT.Vars[unit].Find(o => o.Name == name);
             if (result == null)
@@ -104,7 +102,7 @@ namespace SLT.Objects
 
         public int GetLinkValue(string link_name, string link_unit)
         {
-            SLT.Objects.Link link = (Link)this.GVT.Vars[link_unit].Find(l => l.Name == link_name);
+            SLT.Link link = (Link)this.GVT.Vars[link_unit].Find(l => l.Name == link_name);
             int result = (int)link.GetValue();
             return result;
         }
@@ -126,7 +124,7 @@ namespace SLT.Objects
         //    Phrase inner_node = path.Value[1];
         //    Vector parent_vector = (Vector)this.GVT.Vars[unit].Find(v => v.Name == vector_name);
 
-        //    //SLT.Objects.Scalar updated_scalar = (Scalar)this.ParentModel.GVT.Vars[unit].Find(o => o.Name == name);
+        //    //SLT.Scalar updated_scalar = (Scalar)this.ParentModel.GVT.Vars[unit].Find(o => o.Name == name);
 
         //    result = parent_vector.FindNode(inner_node);//Scalar or Link
         //    return result;
@@ -143,7 +141,7 @@ namespace SLT.Objects
             //Subprogram subp = this.ParentModel.ST_Cont.Tracks.Find(sp => sp.Unit.Name == unit_name);
             //init.Position = subp;
             Object obj = new Scalar ("Инициатор блока",unit_name,unit_name);
-            obj = this.ParentModel.Memory.AddSingletonObject(obj);
+            obj = this.Memory.AddSingletonObject(obj);
             init.ID_of_MemoryCell = obj.ID;
             this.IT.Add(init);
             return init;
@@ -163,7 +161,7 @@ namespace SLT.Objects
         public Object GetObjectFromInitiator(Initiator init)
         {
             int cell_id = init.ID_of_MemoryCell;
-            Object finded_obj = this.ParentModel.Memory.GetObjectByID(cell_id);
+            Object finded_obj = this.Memory.GetObjectByID(cell_id);
             return finded_obj;
         }
 

@@ -3,13 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace SLT.Structure
+namespace SLT
 {
-    public class StructureController
+    class StructureController
     {
         int SubprogramID_Counter;
-        int OperatorID_Counter;
-
         //*************
         Model ParentModel;
         public Unit CurrentUnit;
@@ -17,6 +15,7 @@ namespace SLT.Structure
         public Operator LastOperator;
         public int NextWaitLabelNumber;
         public LabelsTable LT;
+        public List<Unit> Units;
 
         public List<Subprogram> Tracks;
 
@@ -26,17 +25,9 @@ namespace SLT.Structure
             this.Tracks = new List<Subprogram>();
             this.ParentModel = model;
             this.NextWaitLabelNumber = 1;
+            this.Units = new List<Unit>();
             SubprogramID_Counter = 0;
         }
-
-        //public void CreateSubprogram()
-        //{
-        //    Subprogram NewSubp = new Subprogram(SubprogramID_Counter);
-        //    //model.Tracks.Add(NewSubp);
-        //    this.SubprogramID_Counter++;
-        //    this.CurrentSubprogram = NewSubp;
-        //}
-
 
         public void AddSubprogram(Subprogram subp)
         {
@@ -54,8 +45,6 @@ namespace SLT.Structure
 
         public void AddOperator(Operator oper)
         {
-            //oper.ID = this.OperatorID_Counter;
-            //this.OperatorID_Counter++;
             this.CurrentSubprogram.AddOperator(oper);
             this.LastOperator = oper;
         }
@@ -70,7 +59,7 @@ namespace SLT.Structure
         public void CreateUnit(int position)
         {
             Unit NewUnit = new Unit(position);
-            this.ParentModel.Units.Add(NewUnit);
+            this.Units.Add(NewUnit);
             this.CurrentUnit = NewUnit;
         }
         public void SetUnitHeader(string name, UnitType type)
@@ -95,9 +84,5 @@ namespace SLT.Structure
         {
         }
 
-        //public int GetOperatorID()
-        //{
-        //    return this.OperatorID_Counter;
-        //}
     }
 }

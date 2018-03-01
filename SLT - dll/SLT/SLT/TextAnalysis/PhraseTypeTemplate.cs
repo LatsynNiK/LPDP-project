@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace SLT.TextAnalysis
+namespace SLT
 {
-    public class PhraseTypeTemplate
+    class PhraseTypeTemplate
     {
         public PhraseType PhType;
         public PhraseType[] PhTemplate;

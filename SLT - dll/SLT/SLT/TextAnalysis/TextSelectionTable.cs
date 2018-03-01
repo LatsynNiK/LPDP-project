@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace SLT.TextAnalysis
+namespace SLT
 {
-    public enum TextSelectionType
+    enum TextSelectionType
     {
         KeyWord,
         Comment,
@@ -17,14 +17,14 @@ namespace SLT.TextAnalysis
         SystemWord
     }
 
-    public struct TextSelection
+    struct TextSelection
     {
         public int Start;
         public int Length;
         public TextSelectionType Type;
     }
 
-    public class TextSelectionTable
+    class TextSelectionTable
     {
         public List<TextSelection> SelectionList;
         public TextSelectionTable()

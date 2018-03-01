@@ -3,22 +3,21 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace SLT.DataSets
+namespace SLT
 {
-    public class InputData : InputOutputData
+    public class InputData
     {
         public string CodeTxt;
         public bool ShowSysLabel;
         public bool ShowNextOperator;
         public bool ShowQueues;
 
-        public InputData(int precision):base(precision)
+        public InputData()
         {
             this.CodeTxt = "";
             this.ShowNextOperator = false;
             this.ShowQueues = false;
             this.ShowSysLabel = false;
-            base.Precision = precision;
         }
 
     }

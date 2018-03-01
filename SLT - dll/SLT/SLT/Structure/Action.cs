@@ -3,9 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-using SLT.TextAnalysis;
-
-namespace SLT.Structure
+namespace SLT
 {
     public enum ActionName
     {
@@ -17,7 +15,7 @@ namespace SLT.Structure
         Terminate
     }
 
-    public class Action
+    class Action
     {
         public ActionName Name;
         public List<object> Parameters;
@@ -27,10 +25,5 @@ namespace SLT.Structure
         {
             this.Parameters = new List<object>();
         }
-
-        //public void AddParam(object par)
-        //{
-        //    this.Parameters.Add(par);
-        //}
     }
 }

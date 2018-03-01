@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace SLT.Dynamics
+namespace SLT
 {
-    public class ConditionsTable
+    class ConditionsTable
     {
         public List<RecordCT> CondTable;
 

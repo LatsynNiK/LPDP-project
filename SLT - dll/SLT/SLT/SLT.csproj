@@ -49,7 +49,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DataSets\InputData.cs" />
-    <Compile Include="DataSets\InputOutputData.cs" />
     <Compile Include="DataSets\OutputData.cs" />
     <Compile Include="Dynamics\ConditionsTable.cs" />
     <Compile Include="Dynamics\FutureTimesTable.cs" />
@@ -65,13 +64,12 @@
     <Compile Include="Errors\RunTimeError\ObjectDoesNotExistError.cs" />
     <Compile Include="Errors\RunTimeError\RunTimeError.cs" />
     <Compile Include="Errors\RunTimeError\UnitNotFound.cs" />
-    <Compile Include="Errors\SyntacticalErrors\ExpectedPhraseError.cs" />
-    <Compile Include="Errors\SyntacticalErrors\ReplacingError.cs" />
     <Compile Include="Errors\SyntacticalErrors\SyntacticalError.cs" />
     <Compile Include="Errors\SyntacticalErrors\PhraseNotFound.cs" />
     <Compile Include="Errors\SystemError.cs" />
     <Compile Include="Errors\UserError.cs" />
-    <Compile Include="Executor.cs" />
+    <Compile Include="Dynamics\Executor.cs" />
+    <Compile Include="Modeling.cs" />
     <Compile Include="Objects\InitiatorsTable.cs" />
     <Compile Include="Structure\Action.cs" />
     <Compile Include="Structure\LabelsTable.cs" />

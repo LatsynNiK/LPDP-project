@@ -3,11 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-using SLT.TextAnalysis;
-
-namespace SLT.Objects
+namespace SLT
 {
-    public class Macro:Object
+    class Macro:Object
     {
         public Phrase Code;
         public List<string> Vars;
@@ -17,8 +15,7 @@ namespace SLT.Objects
         {
             base.Type = ObjectType.Macro;
             this.Code = code;
-            this.Vars = vars;
-            //this.Vars = new string[];
+            this.Vars = vars;            
         }
 
         public override void SetValue(object value)
@@ -31,13 +28,5 @@ namespace SLT.Objects
             //!!!ЗАГЛУШКА
             return this.Code;
         }
-
-        //public Macro(int id, string name, string unit)
-        //{
-        //    this.ID = id;
-        //    this.Name = name;
-        //    this.Unit = unit;
-        //    this.Code = new Phrase();
-        //}
     }
 }

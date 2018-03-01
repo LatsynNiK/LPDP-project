@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace SLT.TextAnalysis
+namespace SLT
 {
-    public class Phrase
+    class Phrase
     {
         public PhraseType PhType;
         public List<Phrase> Value;
@@ -16,17 +16,6 @@ namespace SLT.TextAnalysis
         public int Line;
 
         public Phrase() { }
-
-        //public Phrase(SLT_ModelTextRules.PhraseType type, int level, int start, int length, Phrase lexeme)
-        //{
-        //    this.PhType = type;
-        //    this.Level = level;
-        //    this.Start = start;
-        //    this.Length = length;
-
-        //    this.Value = new List<Phrase>();
-        //    this.Value.Add(lexeme);
-        //}
 
         public Phrase(PhraseType type, params Phrase[] ConcatedPhrase)
         {
@@ -71,10 +60,6 @@ namespace SLT.TextAnalysis
             {
                 int start = ConcatedPhrase[0].Start;
                 int finish = ConcatedPhrase[ConcatedPhrase.Length - 1].Start + ConcatedPhrase[ConcatedPhrase.Length - 1].Length;
-                //foreach (Phrase ph in ConcatedPhrase)
-                //{
-                //    length += ph.Length;
-                //}
                 return finish - start;
             }
             else

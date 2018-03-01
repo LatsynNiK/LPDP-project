@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace SLT.Dynamics
+namespace SLT
 {
-    public class FutureTimesTable
+    class FutureTimesTable
     {
         public List<RecordFTT> TimesTable;
 
@@ -18,11 +18,6 @@ namespace SLT.Dynamics
         {
             this.TimesTable.Add(rec);
         }
-
-        //public void Add(double time, int init, int lable, bool islast)
-        //{
-        //    RecordFTT NewRec = new RecordFTT(
-        //}
 
         public void Delete(int id_rec)
         {
@@ -42,15 +37,6 @@ namespace SLT.Dynamics
             {
                 return null;
             }
-            //if (finded != null)
-            //{
-            //    return finded;
-            //}
-            //else
-            //{
-            //    return -1;
-            //}
-
         }
     }
 }

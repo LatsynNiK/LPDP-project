@@ -11,10 +11,7 @@ namespace SLT
 
         public Error() {}
         public Error(Exception inner)
-            : base("", inner)
-        {
-            //this.Message = text;
-        }
+            : base("", inner){}
 
         public string GetErrorStack()
         {

@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace SLT.Objects
+namespace SLT
 {
-    public class Link:Object
+    class Link:Object
     {
         int Value;
 
@@ -13,7 +13,6 @@ namespace SLT.Objects
             : base(name, unit)
         {
             base.Type = ObjectType.Link;
-            //this.Value = -1;
         }
 
         public Link(string name, string unit, int value)

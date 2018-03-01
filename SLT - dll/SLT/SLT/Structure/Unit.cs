@@ -3,16 +3,16 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace SLT.Structure
+namespace SLT
 {
-    public enum UnitType
+    enum UnitType
     {
         Processor,
         Controller,
         Aggregate
     }
 
-    public class Unit
+    class Unit
     {
         public string Name; 
         public UnitType Type;

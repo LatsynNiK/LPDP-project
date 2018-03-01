@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace SLT.Objects
+namespace SLT
 {
-    public class Memory
+    class Memory
     {
         int ID_Object_Counter;
         List<Object> Cells;
@@ -16,14 +16,9 @@ namespace SLT.Objects
             this.ID_Object_Counter = 1;
         }
 
-        //public void CreateObject(ObjectType type)
-        //{
-        //    this.Cells.Add()
-        //}
-
         public Object AddSingletonObject(Object o)
         {
-            Objects.Object finded = this.Cells.Find(c => ((c.Name == o.Name)&&(c.Unit == o.Unit)));
+            SLT.Object finded = this.Cells.Find(c => ((c.Name == o.Name)&&(c.Unit == o.Unit)));
             if (finded != null)
             {
                 finded.SetValue(o.GetValue());

@@ -15,9 +15,6 @@ namespace SLT
             : base(inner)
         {
             this.Text = "Синтаксическая ошибка";
-            //base.Start = ((SyntacticalError)inner).Start;
-            //base.Length = ((SyntacticalError)inner).Length;
-            //base.Line = ((SyntacticalError)inner).Line;
         }
     }
 }

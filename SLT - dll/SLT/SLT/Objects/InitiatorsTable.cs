@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace SLT.Objects
+namespace SLT
 {
-    public class InitiatorsTable
+    class InitiatorsTable
     {
         public List<Initiator> Initiators;
         int NumberCount;

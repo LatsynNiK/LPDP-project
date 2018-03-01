@@ -2,12 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using SLT.Structure;
+//using SLT.Structure;
 
-namespace SLT.Objects
+namespace SLT
 {
-    public enum InitiatorType { Aggregate, Flow, Description, RunTimeError}
-    public class Initiator
+    enum InitiatorType { Aggregate, Flow, Description, RunTimeError}
+    class Initiator
     {
         public int Number; 
         public int ID_of_MemoryCell;
@@ -17,8 +17,6 @@ namespace SLT.Objects
 
         public Initiator(InitiatorType type)
         {
-            //this.Number = number;
-            //this.ID_of_MemoryCell = id;
             this.Type = type;
         }
 

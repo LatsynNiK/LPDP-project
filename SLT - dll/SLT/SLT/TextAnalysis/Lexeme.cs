@@ -3,17 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace SLT.TextAnalysis
+namespace SLT
 {
-    public class Lexeme : Phrase
+    class Lexeme : Phrase
     {
         public LexemeType LType;
         public string LValue;
-        //public int Line;
-        //public int Index;
-
-        //public int Start;
-        //public int Length;
 
         public Lexeme()
         {

@@ -3,27 +3,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-using SLT.Structure;
-using SLT.TextAnalysis;
-using SLT.Objects;
-using SLT.Dynamics;
-
 namespace SLT
 {
-    public class Executor
+    class Executor
     {
         public Model ParentModel;
 
-        //Subprogram SUBPROGRAM;
-        //Operator NEXT_OPERATOR; 
         Initiator INITIATOR;
         double TIME;
-
-        //public FutureTimesTable FTT;
-        //public ConditionsTable CT;
-        public TimeAndConditionController TC_Cont;
-
-        //public InitiatorsTable IT;
+        public TimeAndConditionController TC_Cont;        
         Random RAND;
 
         public QueueTable QT;
@@ -31,17 +19,9 @@ namespace SLT
         
         public Executor(Model model) 
         {
-            this.ParentModel = model;
-
-            //this.CT = new ConditionsTable();
-            //this.FTT = new FutureTimesTable();
-            this.TC_Cont = new TimeAndConditionController(this);
-
-            
-
+            this.ParentModel = model;            
+            this.TC_Cont = new TimeAndConditionController(this);           
             this.TIME = 0;
-            //this.SUBPROGRAM = null;
-            //this.NEXT_OPERATOR = null;
             this.INITIATOR = null;
             this.RAND = new Random();
         }
@@ -60,7 +40,7 @@ namespace SLT
             {
                 UserError Err = new UserError(e);
                 this.INITIATOR.Type = InitiatorType.RunTimeError;
-                this.ParentModel.Analysis.Selections.AddError(Err);
+                this.ParentModel.Analyzer.Selections.AddError(Err);
                 this.ParentModel.StatusInfo = Err.GetErrorStack();
             }
         }
@@ -76,7 +56,7 @@ namespace SLT
             {
                 UserError Err = new UserError(e);
                 this.INITIATOR.Type = InitiatorType.RunTimeError;
-                this.ParentModel.Analysis.Selections.AddError(Err);
+                this.ParentModel.Analyzer.Selections.AddError(Err);
                 this.ParentModel.StatusInfo = Err.GetErrorStack();
             }
         }
@@ -92,7 +72,7 @@ namespace SLT
             {
                 UserError Err = new UserError(e);
                 this.INITIATOR.Type = InitiatorType.RunTimeError;
-                this.ParentModel.Analysis.Selections.AddError(Err);
+                this.ParentModel.Analyzer.Selections.AddError(Err);
                 this.ParentModel.StatusInfo = Err.GetErrorStack();
             }
         }
@@ -101,7 +81,7 @@ namespace SLT
         {
             this.ParentModel.Built = false;
             this.ParentModel.StatusInfo = "Модель остановлена.";
-            this.SetCurrentUnit(this.ParentModel.Units[0]);
+            this.SetCurrentUnit(this.ParentModel.ST_Cont.Units[0]);
             this.QT = new QueueTable(this);
             this.TIME = 0;
         }
@@ -113,12 +93,7 @@ namespace SLT
             {
                 this.TC_Cont.DeleteRecords(next_event.ID);
                 this.INITIATOR = next_event.Initiator;
-                //this.SUBPROGRAM = next_event.Subprogram;
-                //this.NEXT_OPERATOR = this.SUBPROGRAM.Operators[0];
-
-                this.INITIATOR.NextOperator = next_event.Subprogram.Operators[0];
-
-                //this.INITIATOR.NextOperator = this.SUBPROGRAM;
+                this.INITIATOR.NextOperator = next_event.Subprogram.Operators[0];                
                 if (next_event.GetType() == typeof(RecordFTT))
                 {
                     double active_time = ((RecordFTT)next_event).ActiveTime;
@@ -127,7 +102,7 @@ namespace SLT
             }
             else
             {
-                //модель выполнилась до конца
+                this.ParentModel.StatusInfo = "Модель выполнилась до конца.";
             }
         }
 
@@ -137,8 +112,6 @@ namespace SLT
             this.INITIATOR.NextOperator = new Operator();
             this.INITIATOR.NextOperator.ParentSubprogram = new Subprogram();
             this.INITIATOR.NextOperator.ParentSubprogram.Unit = unit;
-            //this.SUBPROGRAM = new Subprogram();
-            //this.SUBPROGRAM.Unit = unit;
         }
 
         public void SetInitiator(Initiator init)
@@ -153,27 +126,16 @@ namespace SLT
 
         int ExecuteSubprogram(Subprogram subprogram)
         {
-            //this.SUBPROGRAM = subprogram;
-
             foreach (Operator oper in subprogram.Operators)
             {
                 ExecuteOperator(oper);
             }
-            //RecordEvent next_event = this.TC_Cont.FindNextEvent();
-            //this.INITIATOR = next_event.Initiator;
-            //this.SUBPROGRAM = this.TC_Cont.FindNextEvent().Subprogram;
-            //this.NEXT_OPERATOR = this.SUBPROGRAM.Operators[0];
-            //this.SetState();
-
-
-
-            //this.NEXT_OPERATOR = null;
             return 1;
         }
 
         int ExecuteOperator(Operator oper)
         {
-            foreach (Structure.Action action in oper.Actions)
+            foreach (Action action in oper.Actions)
             {
                 try
                 {
@@ -191,7 +153,6 @@ namespace SLT
             }
             else
             {
-                //this.NEXT_OPERATOR = oper.ParentSubprogram.Operators[next_oper_index];
                 this.INITIATOR.NextOperator = oper.ParentSubprogram.Operators[next_oper_index];
             }
             //Очереди            
@@ -199,7 +160,7 @@ namespace SLT
             return 1;
         }
 
-        int ExecuteAction(Structure.Action action)
+        int ExecuteAction(Action action)
         {
             string unit_name = action.ParentOperator.ParentSubprogram.Unit.Name;
             string label;
@@ -209,7 +170,7 @@ namespace SLT
             { 
                 case ActionName.Assign:
                     Phrase var_ph = (Phrase)action.Parameters[0];
-                    Objects.Object var = this.GetObject(var_ph);
+                    SLT.Object var = this.GetObject(var_ph);
                     
                     Phrase value_ph = (Phrase)action.Parameters[1];
                     object value_obj;// = ConvertValueToObject(value_ph);
@@ -228,23 +189,23 @@ namespace SLT
                     string var_name = (string)action.Parameters[0];
                     Phrase vartype_ph = (Phrase)action.Parameters[1];
 
-                    Objects.Object new_obj = new Objects.Scalar("", "");//заглушка
+                    SLT.Object new_obj = new SLT.Scalar("", "");//заглушка
 
                     //для скаляра
                     if (vartype_ph.Value.Exists(ph => ph.PhType == PhraseType.ScalarVarType_Word))
                     {
-                        new_obj = new Objects.Scalar(var_name, unit_name);
+                        new_obj = new SLT.Scalar(var_name, unit_name);
                     }
                     //для вектора
                     if (vartype_ph.Value.Exists(ph => ph.PhType == PhraseType.VectorVarType_Word))
                     {
                         Phrase description_line_ph = vartype_ph.Value.Find(ph => ph.PhType == PhraseType.DescriptionLine);
-                        new_obj = new Objects.Vector(var_name, unit_name, this.ParentModel.Analysis.CreateObjectsFromDesciptionLine(description_line_ph,this.INITIATOR.NextOperator.ParentSubprogram.Unit.Name));
+                        new_obj = new SLT.Vector(var_name, unit_name, this.ParentModel.Analyzer.CreateObjectsFromDesciptionLine(description_line_ph,this.INITIATOR.NextOperator.ParentSubprogram.Unit.Name));
                     }
                     //для ссылки
                     if (vartype_ph.Value.Exists(ph => ph.PhType == PhraseType.LinkVarType_Word))
                     {
-                        new_obj = new Objects.Link(var_name,unit_name);
+                        new_obj = new SLT.Link(var_name,unit_name);
                     }
                     //для макроса
                     if (vartype_ph.Value.Exists(ph => ph.PhType == PhraseType.MacroVarType_Word))
@@ -266,7 +227,7 @@ namespace SLT
                     else
                     {
                         //Objects.Object del_obj= this.ParentModel.O_Cont.GetObjectByName(deleted_name,this.SUBPROGRAM.Unit.Name);
-                        Objects.Object del_obj = this.ParentModel.O_Cont.GetObjectByName(deleted_name, this.INITIATOR.NextOperator.ParentSubprogram.Unit.Name);
+                        SLT.Object del_obj = this.ParentModel.O_Cont.GetObjectByName(deleted_name, this.INITIATOR.NextOperator.ParentSubprogram.Unit.Name);
                         //if (del_obj.Unit == this.SUBPROGRAM.Unit.Name)
                         if (del_obj.Unit == this.INITIATOR.NextOperator.ParentSubprogram.Unit.Name)
                         {
@@ -413,15 +374,6 @@ namespace SLT
                     first_exp_ph = ar_exp.Value[0];
                     switch (first_exp_ph.PhType)
                     {
-                        //case PhraseType.ValueFromLink:
-                        //    return Convert.ToString(this.GetObject(first_exp_ph).GetValue());                           
-                        //    //break;
-                        //case PhraseType.VectorNode:
-                        //    return Convert.ToString(this.GetObject(first_exp_ph).GetValue());
-                        //    //break;
-                        //case PhraseType.Name:
-                        //    return Convert.ToString(this.GetObject(first_exp_ph).GetValue());
-                        //    //break;
                         case PhraseType.Var:
                             return Convert.ToString(this.GetObject(first_exp_ph).GetValue());
                         case PhraseType.LinkVarType_Word:
@@ -508,11 +460,6 @@ namespace SLT
                 default:
                     return "";
             }
-
-
-
-
-            //return Convert.ToString(result);
         }
 
         public bool ComputeLogicExpression(Phrase logic_exp)
@@ -551,96 +498,6 @@ namespace SLT
                 }
             }
             return result;
-
-
-            //if (logic_exp.Value.Exists(ph => ph.PhType == PhraseType.ComparisonOperator))
-            //{
-            //    #region comparison
-            //    Phrase first_value_ph = logic_exp.Value.Find(ph => ph.PhType == PhraseType.Value).Value[0];
-            //    Phrase last_value_ph = logic_exp.Value.FindLast(ph => ph.PhType == PhraseType.Value).Value[0];
-            //    Phrase comparison_oper_ph = logic_exp.Value.Find(ph => ph.PhType == PhraseType.ComparisonOperator);
-
-            //    string first_value;
-            //    string last_value;
-
-            //    if (first_value_ph.PhType == PhraseType.ArithmeticExpression_3lvl)
-            //    {
-            //        first_value = this.ComputeArithmeticExpression(first_value_ph);
-            //    }
-            //    else
-            //    {
-            //        first_value = ((Lexeme)first_value_ph).LValue;
-            //    }
-            //    if (last_value_ph.PhType == PhraseType.ArithmeticExpression_3lvl)
-            //    {
-            //        last_value = this.ComputeArithmeticExpression(last_value_ph);
-            //    }
-            //    else
-            //    {
-            //        last_value = ((Lexeme)last_value_ph).LValue;
-            //    }
-
-            //    switch (((Lexeme)comparison_oper_ph).LValue)
-            //    {
-            //        case "=":
-            //            result = first_value == last_value;
-            //            break;
-            //        case "!=":
-            //            result = first_value != last_value;
-            //            break;
-            //        case ">":
-            //            result = Convert.ToDouble(first_value) > Convert.ToDouble(last_value);
-            //            break;
-            //        case "<":
-            //            result = Convert.ToDouble(first_value) < Convert.ToDouble(last_value);
-            //            break;
-            //        case ">=":
-            //            result = Convert.ToDouble(first_value) >= Convert.ToDouble(last_value);
-            //            break;
-            //        case "<=":
-            //            result = Convert.ToDouble(first_value) <= Convert.ToDouble(last_value);
-            //            break;
-            //        default:
-            //            //error
-            //            result = false;
-            //            break;
-            //    }
-            //    #endregion
-            //    return result;
-            //}
-            //if (logic_exp.Value.Exists(ph => ph.PhType == PhraseType.LogicOperator))
-            //{
-            //    #region logic operator
-            //    Phrase first_exp_ph = logic_exp.Value.Find(ph => ph.PhType == PhraseType.LogicExpression);
-            //    Phrase last_exp_ph = logic_exp.Value.FindLast(ph => ph.PhType == PhraseType.LogicExpression);
-            //    Phrase logic_oper_ph = logic_exp.Value.Find(ph => ph.PhType == PhraseType.LogicOperator);
-
-            //    bool first_bool = this.ComputeLogicExpression(first_exp_ph);
-            //    bool last_bool = this.ComputeLogicExpression(last_exp_ph);
-            //    switch (((Lexeme)logic_oper_ph).LValue)
-            //    {
-            //        case "/\\":
-            //            result = first_bool && last_bool;
-            //            break;
-            //        case "\\/":
-            //            result = first_bool || last_bool;
-            //            break;
-            //        default:
-            //            //error
-            //            result = false;
-            //            break;
-            //    }
-            //    #endregion
-            //    return result;
-            //}
-            //if (logic_exp.Value.Count(ph => ph.PhType == PhraseType.LogicExpression) == 1)
-            //{
-            //    Phrase inner_logic_exp = logic_exp.Value[1];
-            //    result = this.ComputeLogicExpression(inner_logic_exp);
-            //    return result;
-            //}
-            //error
-            //return false;
         }
 
         public bool ComputeComparisonExpression(Phrase comp_exp)
@@ -713,12 +570,12 @@ namespace SLT
         #endregion
 
         // GET OBJECT
-        public SLT.Objects.Object GetObject(Phrase var)
+        public SLT.Object GetObject(Phrase var)
         {
             try
             {
                 //заглушка
-                SLT.Objects.Object result = new SLT.Objects.Scalar("", "");
+                SLT.Object result = new SLT.Scalar("", "");
                 //
                 string var_name;// = ((Lexeme)var_name_ph).LValue;
                 if (var.PhType == PhraseType.Name)
@@ -786,71 +643,20 @@ namespace SLT
                 }
                 if (result == null)
                 {
-                    throw new ObjectDoesNotExistError(var.Start, var.Length, var.Line, var_name);
+                    throw new ObjectNotFoundError(var.Start, var.Length, var.Line, var_name);
                 }
                 return result;
             }
             catch (NameNotFound e)
             {
-                throw new ObjectDoesNotExistError(var.Start, var.Length, var.Line, e);
+                throw new ObjectNotFoundError(var.Start, var.Length, var.Line, e);
                 //throw new ObjectDoesNotExistError(e);
             }
         }
 
-        //public SLT.Objects.Object GetObject(Phrase var)
-        //{
-        //    //заглушка
-        //    SLT.Objects.Object result = new SLT.Objects.Scalar("", "");
-        //    //
-
-        //    switch (var.PhType)
-        //    {
-        //        case PhraseType.Name:
-        //            string var_name = ((Lexeme)var).LValue;
-
-        //            //result = this.ParentModel.O_Cont.GetObjectByName (var_name, this.INITIATOR.NextOperator.Unit.Name);
-        //            result = this.ParentModel.O_Cont.GetObjectByName(var_name, this.INITIATOR.NextOperator.ParentSubprogram.Unit.Name);
-
-        //            break;
-        //        case PhraseType.VectorNode:
-        //            //result = this.ParentModel.O_Cont.GetVectorNode(var, this.SUBPROGRAM.Unit.Name);
-        //            result = this.ParentModel.O_Cont.GetVectorNode(var, this.INITIATOR.NextOperator.ParentSubprogram.Unit.Name);
-        //            break;
-        //        case PhraseType.ValueFromLink:
-        //            Objects.Object var_from_link = this.GetObjectFromLink(var.Value[0]);
-        //            Phrase path = var.Value[2];
-        //            switch (var_from_link.Type)
-        //            {
-        //                case ObjectType.Scalar:
-        //                    if (var_from_link.Name != ((Lexeme)path.Value[0]).LValue)
-        //                    { //error
-        //                    }
-        //                    result = var_from_link;
-        //                    break;
-        //                case ObjectType.Vector:
-        //                    if (var_from_link.Name != ((Lexeme)path.Value[0].Value[0]).LValue)
-        //                    { //error
-        //                    }
-        //                    Phrase inner_node = path.Value[0].Value[2];
-        //                    SLT.Objects.Vector vector_from_link = (SLT.Objects.Vector)var_from_link;
-        //                    result = vector_from_link.FindNode(inner_node);
-        //                    break;
-        //            }
-        //            break;
-        //        default:
-        //            //error
-        //            var_name = ((Lexeme)var).LValue;
-        //            //result = this.ParentModel.O_Cont.GetObjectByName(var_name, this.SUBPROGRAM.Unit.Name);
-        //            result = this.ParentModel.O_Cont.GetObjectByName(var_name, this.INITIATOR.NextOperator.ParentSubprogram.Unit.Name);
-        //            break;
-        //    }
-        //    return result;
-
-        //}
-
-        public SLT.Objects.Object GetObjectFromLink(Phrase link_name)
+        public SLT.Object GetObjectFromLink(Phrase link_name)
         {
-            SLT.Objects.Object result;
+            SLT.Object result;
             int cell_id;
             if (link_name.PhType == PhraseType.Initiator_Word)
             {

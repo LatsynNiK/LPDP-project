@@ -6,9 +6,7 @@ using System.Text;
 namespace SLT
 {
     public class UnknownLexemeError:LexicalError
-    {
-        //public string Text;
-        
+    {        
         public UnknownLexemeError(char simbol, int start, int len, int line)
         {
             base.Start = start;

@@ -1,0 +1,6 @@
+C:\Users\Николай\Desktop\SLT-project\SLT - dll\SLT\SLT\bin\Debug\SLT.dll
+C:\Users\Николай\Desktop\SLT-project\SLT - dll\SLT\SLT\bin\Debug\SLT.pdb
+C:\Users\Николай\Desktop\SLT-project\SLT - dll\SLT\SLT\obj\Debug\SLT.Properties.Resources.resources
+C:\Users\Николай\Desktop\SLT-project\SLT - dll\SLT\SLT\obj\Debug\SLT.csproj.GenerateResource.Cache
+C:\Users\Николай\Desktop\SLT-project\SLT - dll\SLT\SLT\obj\Debug\SLT.dll
+C:\Users\Николай\Desktop\SLT-project\SLT - dll\SLT\SLT\obj\Debug\SLT.pdb

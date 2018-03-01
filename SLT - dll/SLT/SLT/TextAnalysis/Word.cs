@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace SLT.TextAnalysis
+namespace SLT
 {
     class Word:Lexeme
     {
@@ -16,7 +16,6 @@ namespace SLT.TextAnalysis
 
             base.Value = lex.Value;
             base.Level = lex.Level;
-            //    this.Value.Add(lexeme);
 
             base.LType = lex.LType;
             base.LValue = lex.LValue;

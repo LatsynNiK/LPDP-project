@@ -9,10 +9,6 @@ using System.Windows.Forms;
 using System.IO;
 
 using SLT;
-using SLT.DataSets;
-using SLT.Structure;
-//нужно скрыть!
-//using SLT.Structure;
 
 namespace ПОСП
 {
@@ -23,26 +19,23 @@ namespace ПОСП
 
         //InputOutputData DataSets;
 
-        InputData Input;
-        OutputData Output;
-        Model ExploredModel;
+        //InputData Input;
+        //OutputData Output;
+        Modeling Modeling;
 
 
         public POSP_Form()
         {
             InitializeComponent();
-            SLT.TextAnalysis.ModelTextRules.SetRules();
-            this.Input = new InputData(precision);
-            //this.DataSets = new InputOutputData(precision);
-            //UseAllCaptions();
-            //Initiators_Tab.Parent = null;
-            //Queues_Tab.Parent = null;
+            //SLT.ModelTextRules.SetRules();
+            //this.Input = new InputData(precision);
+            this.Modeling = new SLT.Modeling(precision);
             GraphicModel_Tab.Parent = null;
             this.CodeField.ReadOnly = false;
         }
         private void POSP_Form_Load(object sender, EventArgs e)
         {
-            this.ExploredModel = new Model();
+            //this.ExploredModel = new Model();
             this.UpLoad();
         }
 
@@ -980,98 +973,73 @@ namespace ПОСП
 
         void UpDate()
         {
-            //this.DataSets.Input. CodeRtf = CodeField.Rtf;
-            this.Input.CodeTxt = CodeField.Text;
-            //this.DataSets.InfoTxt = BuildingField.Text;
-            this.Input.ShowNextOperator = следующийОператорToolStripMenuItem.Checked;
-            this.Input.ShowQueues = очередиToolStripMenuItem.Checked;
-            this.Input.ShowSysLabel = системныеМеткиToolStripMenuItem.Checked;
+            this.Modeling.Input.CodeTxt = CodeField.Text;
+            this.Modeling.Input.ShowNextOperator = следующийОператорToolStripMenuItem.Checked;
+            this.Modeling.Input.ShowQueues = очередиToolStripMenuItem.Checked;
+            this.Modeling.Input.ShowSysLabel = системныеМеткиToolStripMenuItem.Checked;
         }
         void UpLoad()
         {
             this.CodeField.Enabled = false;
-            this.Output = new OutputData(this.precision, this.ExploredModel);            
-            this.Output.Output_All_Data();
+            //this.Modeling.Output = new OutputData(this.precision, this.ExploredModel);
+            //this.Modeling.ClearOutput();
+            this.Modeling.Output_All_Data();
 
             CodeField.Clear();
-            CodeField.Text = this.Output.CodeTxt;// CodeRtf;
+            CodeField.Text = this.Modeling.Output.CodeTxt;// CodeRtf;
 
-            if (this.Input.ShowSysLabel)
+            if (this.Modeling.Input.ShowSysLabel)
             {
-                TextFormat.InsertSystemLabel(this.CodeField, this.Output.HiddenLabel, this.Output.TextSelections);
+                TextFormat.InsertSystemLabel(this.CodeField, this.Modeling.Output.HiddenLabel, this.Modeling.Output.TextSelections);
             }
 
             ///Метод должен быть последним, изменяющим текст и первым, закрашивающим текст
-            if (this.Input.ShowQueues)
-            {               
-                TextFormat.InsertColorQueueArrows(this.CodeField, this.Output.QueueArrows, this.Output.TextSelections);
+            if (this.Modeling.Input.ShowQueues)
+            {
+                TextFormat.InsertColorQueueArrows(this.CodeField, this.Modeling.Output.QueueArrows, this.Modeling.Output.TextSelections);
             }
-            //if (this.Input.ShowNextOperator)
-            //{
-                
-            //    //TextFormat.ColorizeNextOperator(this.CodeField,
-            //    //    this.Output.NextOperatorPosition_Start + shifting,
-            //    //    this.Output.NextOperatorPosition_Length,
-            //    //    this.Output.NextInitiatorIsFlow,
-            //    //    this.Output.UnitPosition);
-            //}
             TextFormat.ColorizeTextSelection(
                 this.CodeField,
-                this.Output.TextSelections,
-                this.Output.UnitPosition,
-                this.Input.ShowNextOperator,
-                this.Input.ShowSysLabel
+                this.Modeling.Output.TextSelections,
+                this.Modeling.Output.UnitPosition,
+                this.Modeling.Input.ShowNextOperator,
+                this.Modeling.Input.ShowSysLabel
                 );
 
-            InfoField.Text = this.Output.InfoTxt;
+            InfoField.Text = this.Modeling.Output.InfoTxt;
             //следующийОператорToolStripMenuItem.Checked = this.DataSets.ShowNextOperator;
             //очередиToolStripMenuItem.Checked = this.DataSets.ShowQueues;
             //системныеМеткиToolStripMenuItem.Checked = this.DataSets.ShowSysMark;
 
-            TIME_Value.Text = Convert.ToString(Math.Round(this.Output.TIME, this.Output.Precision));
-            INITIATOR_Value.Text = Convert.ToString(this.Output.InitiatorNumber);
+            TIME_Value.Text = Convert.ToString(Math.Round(this.Modeling.Output.TIME, this.Modeling.Precision));
+            INITIATOR_Value.Text = Convert.ToString(this.Modeling.Output.InitiatorNumber);
 
-            this.Objects_View.DataSource = this.Output.Objects;
-            this.Initiators_View.DataSource = this.Output.Initiators;
-            this.FTT_View.DataSource = this.Output.FTT;
-            this.CT_View.DataSource = this.Output.CT;
-            this.Queues_View.DataSource = this.Output.Queues;
+            this.Objects_View.DataSource = this.Modeling.Output.Objects;
+            this.Initiators_View.DataSource = this.Modeling.Output.Initiators;
+            this.FTT_View.DataSource = this.Modeling.Output.FTT;
+            this.CT_View.DataSource = this.Modeling.Output.CT;
+            this.Queues_View.DataSource = this.Modeling.Output.Queues;
             UseAllCaptions();
             this.CodeField.Enabled = true;
         }
         void RefreshCodeField()
         {
-            //Point scroll = this.CodeField. AutoScrollOffset;
-            //Rectangle rect = this.CodeField.sc;
-            //this.CodeField.Enabled = false;
-            //this.CodeField.HideSelection = false;
             int save_position = this.CodeField.SelectionStart;
             Font font = this.CodeField.Font;
             Color forecolor = this.CodeField.ForeColor;
             Color backcolor = this.CodeField.BackColor;
-            string info = this.ExploredModel.StatusInfo;
+            //!!!string info = this.Modeling.ExploredModel.StatusInfo;
             this.UpDate();
-            this.ExploredModel.Analysis.CheckText(this.Input.CodeTxt);
-            //try
-            //{
-            //    this.ExploredModel.Analysis.LexicalAnalysis(this.Input.CodeTxt);
-            //}
-            //catch (Error e)
-            //{
-            //    this.ExploredModel.Analysis.Selections.AddError(e);
-            //    this.ExploredModel.StatusInfo = e.GetErrorStack();
-            //}
+            //this.ExploredModel.Analysis.CheckText(this.Modeling.Input.CodeTxt);
+            this.Modeling.CheckText();
+
             this.UpLoad();
 
             this.CodeField.SelectionStart = save_position;
             this.CodeField.SelectionFont = font;
             this.CodeField.SelectionColor = forecolor;
-            this.CodeField.SelectionBackColor = backcolor;
-            //this.CodeField.AutoScrollOffset = new Point();
+            this.CodeField.SelectionBackColor = backcolor;            
             this.CodeField.Focus();
-            //this.CodeField.Enabled = true;
-            //this.CodeField.ScrollToCaret();
-            //this.CodeField.rect = rect;
         }
 
 
@@ -1079,8 +1047,7 @@ namespace ПОСП
         // Файл
         private void открытьToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            OpenFileDialog NewOpenFileDialog = new OpenFileDialog();
-            //NewOpenFileDialog.InitialDirectory = 
+            OpenFileDialog NewOpenFileDialog = new OpenFileDialog();            
             NewOpenFileDialog.Filter = "Текстовые файлы (*.txt)|*.txt|Текст в формате RTF (*.rtf)|*.rtf|Все файлы|*.*"; //|Документы Word (*.docx)|*.docx|Документы Word 97-2003 (*.doc)|*.doc
 
             if (NewOpenFileDialog.ShowDialog() == DialogResult.OK)
@@ -1191,8 +1158,7 @@ namespace ПОСП
         } 
         private void сохранитьКакToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            SaveFileDialog NewSaveFileDialog = new SaveFileDialog();
-            //NewOpenFileDialog.InitialDirectory = 
+            SaveFileDialog NewSaveFileDialog = new SaveFileDialog();            
             NewSaveFileDialog.Filter = "Текстовые файлы (*.txt)|*.txt|Текст в формате RTF (*.rtf)|*.rtf|Все файлы|*.*"; //|Документы Word (*.docx)|*.docx|Документы Word 97-2003 (*.doc)|*.doc
             NewSaveFileDialog.FileName = FileName_label.Text;
             if (NewSaveFileDialog.ShowDialog() == DialogResult.OK)
@@ -1249,13 +1215,16 @@ namespace ПОСП
             this.InfoField.Text = "Выполняется построение модели.";
             this.InfoField.Refresh();
             this.UpDate();
-            this.ExploredModel = new Model();
-            //this.DataSets.SetParentModel(this.ExploredModel);
-            this.ExploredModel.Analysis.Building(this.Input.CodeTxt);
+            this.Modeling.CreateModel();
+            this.Modeling.Building();
+
+            //this.ExploredModel = new Model();            
+            //this.ExploredModel.Analysis.Building(this.Input.CodeTxt);
+
             
             this.UpLoad();
 
-            if (this.Output.ModelIsBuilt == true)
+            if (this.Modeling.Output.ModelIsBuilt == true)
             {
 
                 запускToolStripMenuItem.Enabled = true;
@@ -1265,6 +1234,7 @@ namespace ПОСП
                 CodeField.ReadOnly = true;
                 построениеToolStripMenuItem.Enabled = false;
                 файлToolStripMenuItem.Enabled = false;
+                обновитьToolStripMenuItem.Enabled = false;
                 стопToolStripMenuItem.Enabled = true;
             }
             else 
@@ -1291,26 +1261,33 @@ namespace ПОСП
             {
                 this.UpDate();
                 double LaunchTime = Convert.ToDouble(вводВремениToolStripMenuItem.Text);
-                this.ExploredModel.Executor.StartUntil(LaunchTime);
-                if (this.Output.ModelIsBuilt == false)
-                    стопToolStripMenuItem.PerformClick();
+                //this.ExploredModel.Executor.StartUntil(LaunchTime);
+                this.Modeling.StartUntil(LaunchTime);
+
+
+                //if (this.Modeling.Output.ModelIsBuilt == false)
+                //    стопToolStripMenuItem.PerformClick();
                 this.UpLoad();
             }
         }
         private void выполнениеКОСToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            this.UpDate();
-            //double LaunchTime = Convert.ToDouble(вводВремениToolStripMenuItem.Text);
-            this.ExploredModel.Executor.StartSEC();
-            if (this.Output.ModelIsBuilt == false)
-                стопToolStripMenuItem.PerformClick();
+            this.UpDate();            
+            //this.ExploredModel.Executor.StartSEC();
+            this.Modeling.StartSEC();
+
+
+            //if (this.Modeling.Output.ModelIsBuilt == false)
+            //    стопToolStripMenuItem.PerformClick();
             this.UpLoad();
 
         }
         private void шагToolStripMenuItem_Click(object sender, EventArgs e)
         {
             this.UpDate();
-            this.ExploredModel.Executor.StartStep();
+            //this.ExploredModel.Executor.StartStep();
+            this.Modeling.StartStep();
+
 
             //if (this.Output.ModelIsBuilt == false)
             //    стопToolStripMenuItem.PerformClick();
@@ -1323,9 +1300,8 @@ namespace ПОСП
         {
             this.UpDate();
 
-            //SLT_Actions.Stop();
-            //this.ExploredModel.Built = false;
-            this.ExploredModel.Executor.Stop();
+            //this.ExploredModel.Executor.Stop();
+            this.Modeling.Stop();
 
             this.UpLoad();
 
@@ -1333,6 +1309,7 @@ namespace ПОСП
             CodeField.ReadOnly = false;
             построениеToolStripMenuItem.Enabled = true;
             файлToolStripMenuItem.Enabled = true;
+            обновитьToolStripMenuItem.Enabled = true;
             запускToolStripMenuItem.Enabled = false;
             запускToolStripMenuItem.Enabled = false;
 
@@ -1419,21 +1396,6 @@ namespace ПОСП
             }
             окнаToolStripMenuItem.ShowDropDown();
         }
-        //private void графическаяМодельToolStripMenuItem_Click(object sender, EventArgs e)
-        //{
-        //    if (графическаяМодельToolStripMenuItem.Checked == false)
-        //    {
-        //        графическаяМодельToolStripMenuItem.Checked = true;
-        //        GraphicModel_Tab.Parent = ResultField;
-        //        BuildingField.Focus();
-        //    }
-        //    else
-        //    {
-        //        графическаяМодельToolStripMenuItem.Checked = false;
-        //        GraphicModel_Tab.Parent = null;
-        //    }
-        //    окнаToolStripMenuItem.ShowDropDown();
-        //}
         
         //отображения
         private void отображенияToolStripMenuItem_Click(object sender, EventArgs e)
@@ -1454,10 +1416,7 @@ namespace ПОСП
 
             отображенияToolStripMenuItem.ShowDropDown();
             this.UpDate();
-            this.UpLoad();
-            //SLT_Actions.Building(this.DataSets.CodeTxt);
-            //CodeField.Rtf = SLT_Code.Build_RTF_Code(системныеМеткиToolStripMenuItem.Checked);
-            //CodeField.Rtf = SLT_Code.Rewrite_Initiators_RTF(CodeField.Rtf, следующийОператорToolStripMenuItem.Checked, очередиToolStripMenuItem.Checked);
+            this.UpLoad();            
         }
         private void следующийОператорToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -1469,9 +1428,7 @@ namespace ПОСП
             else
                 следующийОператорToolStripMenuItem.Checked = false;
 
-            отображенияToolStripMenuItem.ShowDropDown();
-            //CodeField.Rtf = SLT_Code.Rewrite_Initiators_RTF(CodeField.Rtf, следующийОператорToolStripMenuItem.Checked, очередиToolStripMenuItem.Checked);
-            //SLT_Actions.UpGradeCode();
+            отображенияToolStripMenuItem.ShowDropDown();            
             this.UpDate();
             this.UpLoad();
         }
@@ -1486,10 +1443,6 @@ namespace ПОСП
                 очередиToolStripMenuItem.Checked = false;
 
             отображенияToolStripMenuItem.ShowDropDown();
-            //CodeField.Rtf = SLT_Code.Rewrite_Initiators_RTF(CodeField.Rtf, следующийОператорToolStripMenuItem.Checked, очередиToolStripMenuItem.Checked);
-            //SLT_Actions.Building(this.DataSets.CodeTxt);
-            //SLT_Graphics.Reload_Values_and_Queues(очередиToolStripMenuItem.Checked);
-            //GraphicModel_View.Refresh();
             this.UpDate();
             this.UpLoad();
         }
@@ -1854,7 +1807,7 @@ namespace ПОСП
         // применение шапок таблиц
         void UseAllCaptions()
         {
-            OutputData out_data = this.Output;
+            OutputData out_data = this.Modeling.Output;
             TextFormat.UseCaptions(this.Objects_View, out_data.Objects);
             TextFormat.UseCaptions(this.Initiators_View, out_data.Initiators);
             TextFormat.UseCaptions(this.FTT_View, out_data.FTT);
@@ -1874,23 +1827,11 @@ namespace ПОСП
                 switch (NewClosing_Form.Result)
                 {
                     case Closing_Form.ResultType.Save:
-                        if (this.Output.ModelIsBuilt) 
+                        if (this.Modeling.Output.ModelIsBuilt) 
                             стопToolStripMenuItem.PerformClick();
                         сохранитьToolStripMenuItem.PerformClick();
-
-                        //SLT_Data.ClearTable(SLT_Data.Objects);
-                        //SLT_Data.ClearTable(SLT_Data.Initiators);
-                        //SLT_Data.ClearTable(SLT_Data.Queues);
-                        //SLT_Data.ClearTable(SLT_Data.FTT);
-                        //SLT_Data.ClearTable(SLT_Data.CT);
-
                         break;
                     case Closing_Form.ResultType.NoSave:
-                        //SLT_Data.ClearTable(SLT_Data.Objects);
-                        //SLT_Data.ClearTable(SLT_Data.Initiators);
-                        //SLT_Data.ClearTable(SLT_Data.Queues);
-                        //SLT_Data.ClearTable(SLT_Data.FTT);
-                        //SLT_Data.ClearTable(SLT_Data.CT);
                         break;
                     case Closing_Form.ResultType.Cancel:
                         e.Cancel = true;
@@ -1911,8 +1852,8 @@ namespace ПОСП
                 this.RefreshCodeField();
             }
             if (e.KeyData == Keys.F5)
-            {                
-                if ((this.Output == null) || (this.Output.ModelIsBuilt == false))
+            {
+                if ((this.Modeling.Output == null) || (this.Modeling.Output.ModelIsBuilt == false))
                 {
                     построениеToolStripMenuItem_Click(sender, e);
                 }
@@ -1923,7 +1864,7 @@ namespace ПОСП
             }
             if (e.KeyCode == Keys.S && (e.Control))
             {
-                if (this.Output.ModelIsBuilt)
+                if (this.Modeling.Output.ModelIsBuilt)
                 {
                     InfoField.Text = "Для сохранения модели необходимо остановить моделирование.";
                 }

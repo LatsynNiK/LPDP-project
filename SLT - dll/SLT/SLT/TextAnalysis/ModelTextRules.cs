@@ -3,14 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-using System.ComponentModel;
-
-namespace SLT.TextAnalysis
+namespace SLT
 {
     /// <summary>
     /// Типы лексем
     /// </summary>
-    public enum LexemeType
+    enum LexemeType
     {
         Anything,
 
@@ -63,7 +61,7 @@ namespace SLT.TextAnalysis
 
 
     }
-    public enum PhraseType
+    enum PhraseType
     {
         // Неопределенная лексема
         Error,
@@ -219,7 +217,7 @@ namespace SLT.TextAnalysis
         True,
         False
     }
-    public enum WordType
+    enum WordType
     {
         KeyWord,
         SystemWord,
@@ -228,7 +226,7 @@ namespace SLT.TextAnalysis
         Name      
     }
 
-    public static class ModelTextRules
+    static class ModelTextRules
     {
         public static void SetRules()
         {

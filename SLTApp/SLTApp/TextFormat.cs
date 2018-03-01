@@ -6,9 +6,6 @@ using System.Windows.Forms;
 using System.Drawing;
 using System.Data;
 
-using SLT.DataSets;
-using SLT.Objects;
-
 namespace ПОСП
 {
     static class TextFormat
@@ -28,40 +25,10 @@ namespace ПОСП
         static Color initialfont_color = Color.Black;
         static Color initialback_color = Color.White;
 
-        static Color system_label_color = Color.Gray;
-
-
-        //public static void ColorizeNextOperator(RichTextBox rtb, int start, int len, bool is_flow, int unit_pos)
-        //{
-        //    Color save_color = rtb.SelectionBackColor; 
-        //    rtb.Select(unit_pos, 0);
-        //    rtb.ScrollToCaret();
-
-        //    rtb.Select(start, len);
-        //    Color color;
-        //    if (is_flow)
-        //    {
-        //        color = next_operator_color;
-        //    }
-        //    else
-        //    {
-        //        color = next_operator_aggregat_color;
-        //    }
-            
-        //    rtb.SelectionBackColor = color;
-        //    rtb.DeselectAll();
-
-        //    rtb.SelectionBackColor = save_color;
-        //    //return rtb;
-        //}
+        static Color system_label_color = Color.Gray;     
 
         public static void ColorizeTextSelection(RichTextBox rtb, DataTable dt, int unit_pos, bool show_next_oper, bool show_sys_label)
         {
-            //Color save_color = rtb.SelectionColor;
-            //Color save_bcolor = rtb.SelectionBackColor;
-            
-            
-
             bool built = false;
 
             foreach (DataRow row in dt.Rows)
@@ -135,7 +102,6 @@ namespace ПОСП
                 rtb.SelectionFont = font;                
             }
 
-
             if (built == false)
             {
                 rtb.Select(unit_pos, 0);
@@ -156,7 +122,6 @@ namespace ПОСП
 
             Dictionary<int, Color> result = new Dictionary<int, Color>();
 
-            //int shifting = 0;
             foreach (DataRow row in arrs.Rows)
             {
                 int shifting = 0;
@@ -228,16 +193,6 @@ namespace ПОСП
                     }
                 }
                 
-
-                //result
-
-                //for (int i = colors.Length -1; i >= 0; i--)
-                //{
-                //    rtb.Select(new_position, arrows[i].Length);
-                //    rtb.SelectionColor = colors[i];
-                //    rtb.DeselectAll();
-                //    new_position += arrows[i].Length;
-                //}
             }
             return result;
         }
@@ -269,16 +224,6 @@ namespace ПОСП
             int save_cursor = rtb.SelectionStart;
             foreach (int position in dict.Keys)
             {
-                //if (position <= start + shifting)
-                //{
-                //    shifting++;
-                //}
-                ////else
-                ////{
-
-                ////}
-                //text_selections
-
                 rtb.Select(position, 1);
                 rtb.SelectionColor = dict[position];
             }
@@ -294,16 +239,6 @@ namespace ПОСП
                 col.HeaderText = dt.Columns[col.Name].Caption;
             }
         }
-        
-        //public static void Shift(DataTable text_sel, int start)
-        //{
-        //    foreach (DataRow row in text_sel.Rows)
-        //    {
-        //        if (Convert.ToInt32(row[0]) >= start)
-        //        {
-        //            row[0] = Convert.ToInt32(row[0]) + 1;
-        //        }
-        //    }
-        //}        
+       
     }
 }

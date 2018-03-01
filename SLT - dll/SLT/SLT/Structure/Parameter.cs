@@ -3,11 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-using SLT.TextAnalysis;
-
-namespace SLT.Structure
+namespace SLT
 {
-    public class Parameter
+    class Parameter
     {
         public string Name;
         public Phrase Value;

@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace SLT.Objects
+namespace SLT
 {
-    public class MacrosTable
+    class MacrosTable
     {
         List<Macro> Macros;
 
@@ -19,11 +19,5 @@ namespace SLT.Objects
         {
             this.Macros.Add(rec);
         }
-
-        //public void Delete(int id_rec)
-        //{
-        //    Macro rec = this.Table.Find(r => r.ID == id_rec);
-        //    this.Table.Remove(rec);
-        //}
     }
 }

@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace SLT.Objects
+namespace SLT
 {
-    public class GlobalVarsTable
+    class GlobalVarsTable
     {
         public Dictionary<string, List<Object>> Vars;
 
@@ -21,7 +21,7 @@ namespace SLT.Objects
 
         public void AddToUnit(Object obj, string unit_name)
         {
-            Objects.Object finded = this.Vars[unit_name].Find(o => (o.Name == obj.Name));            
+            SLT.Object finded = this.Vars[unit_name].Find(o => (o.Name == obj.Name));            
             if (finded != null)
             {
                 finded.SetValue(obj.GetValue());
@@ -33,7 +33,7 @@ namespace SLT.Objects
         }
         public void AddNewToUnit(Object obj, string unit_name)
         {
-            Objects.Object finded = this.Vars[unit_name].Find(o => (o.Name == obj.Name));
+            Object finded = this.Vars[unit_name].Find(o => (o.Name == obj.Name));
             if (finded != null)
             {
                 this.Vars[unit_name].Remove(finded);

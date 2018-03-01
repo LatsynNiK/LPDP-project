@@ -3,14 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-using SLT;
-using SLT.Structure;
-using SLT.Objects;
-using SLT.DataSets;
-
-namespace SLT.TextAnalysis
+namespace SLT
 {
-    public class Analysis
+    class Analyzer
     {
         public string SourceText;
         List<Error> ErrorStack;
@@ -23,7 +18,7 @@ namespace SLT.TextAnalysis
         List<Phrase> CommentPhrases;
         public TextSelectionTable Selections;
 
-        public Analysis(Model parent_model)
+        public Analyzer(Model parent_model)
         {
             this.SourceText = "";
             //this.Errors = new List<Error>();
@@ -391,13 +386,6 @@ namespace SLT.TextAnalysis
                             }
                             result = result.Insert(0, before + this.RebuildingText(ph, comments) + after);
                             break;
-                        //case PhraseType.WaitCondition:
-                        //    if (reverse.IndexOf(ph) > reverse.FindIndex(p => p.PhType == PhraseType.WaitCondition))
-                        //    {
-                        //        after = "\n"+tab+tab+tab;                                
-                        //    }
-                        //    result = result.Insert(0, before + this.RebuildingText(ph, comments) + after);
-                        //    break;
                         case PhraseType.IfCondition:                            
                             after = "\n" + tab + tab + tab;
                             result = result.Insert(0, before + this.RebuildingText(ph, comments) + after);
@@ -414,10 +402,6 @@ namespace SLT.TextAnalysis
                             result = result.Insert(0, before + this.RebuildingText(ph, comments) + after);
                             break;
                     }
-
-                    //result += before + this.RebuildingText(ph, comments) + after;
-                    
-                    //result = result.Insert(0, before + this.RebuildingText(ph, comments) + after);
                 }
             }
             else
@@ -432,16 +416,6 @@ namespace SLT.TextAnalysis
                     case PhraseType.DescriptionBracket_Word:
                         after = "\n";
                         break;
-                    //case PhraseType.Name:
-                    //    if (reverse.IndexOf(ph) < reverse.Count - 1)
-                    //    {
-                    //        if (reverse[reverse.IndexOf(ph) + 1].PhType == PhraseType.Round_Bracket_Open)
-                    //        {
-                    //            break;
-                    //        }
-                    //    }
-                    //    after = " ";
-                    //break;
                     case PhraseType.LabelSeparator:
                         //after = "\n";
                         break;
@@ -526,8 +500,8 @@ namespace SLT.TextAnalysis
                     break;
 
                 case PhraseType.DescriptionLine:
-                    List<Objects.Object> list_obj = this.CreateObjectsFromDesciptionLine(source_phrase,this.ParentModel.ST_Cont.CurrentUnit.Name);
-                    foreach (Objects.Object o in list_obj)
+                    List<SLT.Object> list_obj = this.CreateObjectsFromDesciptionLine(source_phrase,this.ParentModel.ST_Cont.CurrentUnit.Name);
+                    foreach (SLT.Object o in list_obj)
                     {
                         this.ParentModel.O_Cont.AddObject(o,this.ParentModel.ST_Cont.CurrentUnit.Name);
                     }
@@ -562,10 +536,6 @@ namespace SLT.TextAnalysis
                                 this.ParentModel.ST_Cont.AddLabel(NewLabel);
                             }
                         }
-                        //Phrase label_ph = source_phrase.Value.Find(ph => ph.PhType == PhraseType.Label);
-                        //string label_name = EjectStringName(label_ph);
-                        //Label NewLabel = new Label(label_name, true);
-                        //this.ParentModel.ST_Cont.AddLabel(NewLabel);
                     }
 
                     Phrase operator_ph = source_phrase.Value.Find(ph => ph.PhType == PhraseType.Operator);
@@ -594,7 +564,7 @@ namespace SLT.TextAnalysis
 
         int LaunchPreparation()
         {
-            foreach (Unit unit in this.ParentModel.Units)
+            foreach (Unit unit in this.ParentModel.ST_Cont.Units)
             {
                 if ((unit.Type == UnitType.Aggregate) || (unit.Type == UnitType.Controller))
                 {
@@ -618,423 +588,113 @@ namespace SLT.TextAnalysis
         #endregion
 
         #region for Syntactical Analysis
-        //enum ScanningState
-        //{
-        //    WithoutErrors,
-        //    WithErrors,
-        //    Initial,
-        //    Fallen
-        //}
 
-        //Response FindTemplate1(PhraseTypeTemplate template, List<Phrase> Phrases)
+        //Функции для синтаксического анализа через (throw) -- медленно!
+        //List<Phrase> ApplyTemplate(PhraseTypeTemplate template, List<Phrase> Phrases)
         //{
-        //    Response result = new Response(); //template.PhType == SLT.PhraseType.Algorithm
-        //    result.Finded_Errors = new List<Error>();
-        //    result.ScanState = ScanningState.Initial;
-        //    result.ConcattedLexemes = 0;
+        //    //копирование списка фраз
+        //    List<Phrase> CopyPhrases = new List<Phrase>();
+        //    CopyPhrases.AddRange(Phrases);
 
-        //    Phrase[] ListNewPhrase = new Phrase[template.ConcatedPhrases];
+        //    List<Phrase> ListNewPhrase = new List<Phrase>();
         //    for (int i = 0; i < template.ConcatedPhrases; i++)
         //    {
-        //        //если нет фраз в стеке
-        //        if (Phrases.Count == 0)
-        //        {
-        //            result.BackPhrase = null;
-        //            //////*****
-        //            //int ii;
-        //            //for (ii = 0; ii < ListNewPhrase.Length; ii++)
-        //            //{
-        //            //    if (ListNewPhrase[ii] == null)
-        //            //    {
-        //            //        break;
-        //            //    }
-        //            //}
-        //            //Phrase[] ErrListNewPhrase = new Phrase[ii];
-        //            //for (int ei = 0; ei < ErrListNewPhrase.Length; ei++)
-        //            //{
-        //            //    ErrListNewPhrase[ei] = ListNewPhrase[ei];
-        //            //}
-        //            //Request.BackPhrase = new Phrase(template.PhType, ErrListNewPhrase);
-        //            //////*****
-
-        //            result.Finded_Errors = new List<Error>();
-        //            result.Finded_Errors.Add(
-        //                new ExpectedPhraseError(template.PhType,0,0,0));
-        //                //new Error(ErrorType.ExpectedPhrase,
-        //                //ModelTextRules.ErrorTypes[ErrorType.ExpctedPhrase] + template.PhType.ToString(),
-        //                ////ListNewPhrase[i-1].Line,ListNewPhrase[i-1].Start,ListNewPhrase[i-1].Length
-        //                //0, 0, 0
-        //                //));
-        //            result.ScanState = ScanningState.Fallen;
-        //            return result;
-        //        }
-
-
         //        //если терминал (конечное значение, уровня 0)
         //        if (ModelTextRules.PrimaryPhraseTypes[template.PhTemplate[i]])
         //        {
-        //            if (Phrases[0].PhType == template.PhTemplate[i])
+        //            if (CopyPhrases[0].PhType == template.PhTemplate[i])
         //            {
-        //                ListNewPhrase[i] = Phrases[0];
-        //                result.ConcattedLexemes++;
-        //                Phrases.RemoveAt(0);
-        //                if (result.ScanState == ScanningState.Initial) //для первого
-        //                    result.ScanState = ScanningState.WithoutErrors;
-        //                //part_finded = true;
-        //                continue;
+        //                //есть совпадение                        
+        //                ListNewPhrase.Add(CopyPhrases[0]);
+        //                CopyPhrases.RemoveAt(0);
         //            }
-        //            else
+        //            else 
         //            {
-        //                //
-        //                List<Phrase> PhrasesCopy = new List<Phrase>();
-        //                foreach (Phrase ph in Phrases)
-        //                {
-        //                    PhrasesCopy.Add(ph);
-        //                }
-
-        //                if (TryToReplace(PhrasesCopy, i, template))
-        //                {
-
-        //                    result.Finded_Errors = new List<Error>();
-        //                    result.Finded_Errors.Add(
-        //                        new ReplacingError(template.PhType, Phrases[0].Start, Phrases[0].Length, Phrases[0].Line));
-
-        //                    //result.Finded_Errors = new List<Error>();
-        //                    //!!!result.Finded_Errors.Add(new Error(ErrorType.Replacing,
-        //                    //    ModelTextRules.ErrorTypes[ErrorType.Replacing] + template.PhTemplate[i].ToString(),
-        //                    //    Phrases[0].Line, Phrases[0].Start, Phrases[0].Length));
-
-        //                    ListNewPhrase[i] = Phrases[0];
-        //                    result.ConcattedLexemes++;
-        //                    Phrases.RemoveAt(0);
-        //                    result.ScanState = ScanningState.WithErrors;
-        //                    continue;
-        //                }
-        //                //
-
-        //                result.BackPhrase = null;
-
-        //                //////*****
-        //                //int ii;
-        //                //for (ii = 0; ii < ListNewPhrase.Length; ii++)
-        //                //{
-        //                //    if (ListNewPhrase[ii] == null)
-        //                //    {
-        //                //        break;
-        //                //    }
-        //                //}
-        //                //Phrase[] ErrListNewPhrase = new Phrase[ii];
-        //                //for (int ei = 0; ei < ErrListNewPhrase.Length; ei++)
-        //                //{
-        //                //    ErrListNewPhrase[ei] = ListNewPhrase[ei];
-        //                //}
-        //                //result.BackPhrase = new Phrase(template.PhType, ErrListNewPhrase);
-        //                //////*****
-
-        //                result.Finded_Errors = new List<Error>();
-        //                result.Finded_Errors.Add(
-        //                    new ExpectedPhraseError(template.PhTemplate[i], Phrases[0].Start, Phrases[0].Length, Phrases[0].Line));
-        //                //result.Finded_Errors = new List<Error>();
-        //                //!!!result.Finded_Errors.Add(new Error(ErrorType.ExpectedPhrase,
-        //                //    ModelTextRules.ErrorTypes[ErrorType.ExpectedPhrase] + "111" + template.PhTemplate[i].ToString(),
-        //                //    Phrases[0].Line, Phrases[0].Start, Phrases[0].Length));
-        //                result.ScanState = ScanningState.Fallen;
-        //                return result;
+        //                //есть ошибка
+        //                throw new PhraseNotFound(CopyPhrases[0].Start, CopyPhrases[0].Length, CopyPhrases[0].Line, template.PhTemplate[i]);
         //            }
         //        }
         //        //если нетерминал (составное значение)
         //        else
         //        {
-        //            //bool part_finded = false;
-        //            Response BestRequest = new Response();
-        //            BestRequest.ScanState = ScanningState.Initial;
-        //            BestRequest.Finded_Errors = new List<Error>();
-
-        //            if (Phrases.Count == 0)
+        //            try
         //            {
-        //                result.BackPhrase = null;
-        //                //////*****
-        //                //int ii;
-        //                //for (ii = 0; ii < ListNewPhrase.Length; ii++)
-        //                //{
-        //                //    if (ListNewPhrase[ii] == null)
-        //                //    {
-        //                //        break;
-        //                //    }
-        //                //}
-        //                //Phrase[] ErrListNewPhrase = new Phrase[ii];
-        //                //for (int ei = 0; ei < ErrListNewPhrase.Length; ei++)
-        //                //{
-        //                //    ErrListNewPhrase[ei] = ListNewPhrase[ei];
-        //                //}
-        //                //Request.BackPhrase = new Phrase(template.PhType, ErrListNewPhrase);
-        //                //////*****
+        //                PhraseTypeTemplate inner_temp = FindTemplate(template.PhTemplate[i], CopyPhrases[0]);
+        //                List<Phrase> NewPhrases = new List<Phrase>();
+        //                NewPhrases = ApplyTemplate(inner_temp, CopyPhrases);
+        //                CopyPhrases = NewPhrases;
+        //                ListNewPhrase.Add(CopyPhrases[0]);
+        //                CopyPhrases.RemoveAt(0);
 
-        //                result.Finded_Errors = new List<Error>();
-        //                result.Finded_Errors.Add(
-        //                    new ExpectedPhraseError(template.PhType,0,0,0));
-        //                //result.Finded_Errors = new List<Error>();
-        //                //!!!result.Finded_Errors.Add(new Error(ErrorType.ExpectedPhrase,
-        //                //    ModelTextRules.ErrorTypes[ErrorType.ExpectedPhrase] + template.PhType.ToString(),
-        //                //    //ListNewPhrase[i-1].Line,ListNewPhrase[i-1].Start,ListNewPhrase[i-1].Length
-        //                //    0, 0, 0
-        //                //    ));
-        //                result.ScanState = ScanningState.Fallen;
-        //                return result;
         //            }
-
-        //            foreach (PhraseTypeTemplate temp_part in ModelTextRules.SyntacticalTemplates)
+        //            catch (PhraseNotFound e)
         //            {
-        //                Response Request = new Response();
-        //                if (temp_part.PhType == template.PhTemplate[i])  //if (temp_part.PhType == PhraseType.Var)
-        //                {
-        //                    List<Phrase> PhrasesCopy = new List<Phrase>();
-        //                    foreach (Phrase ph in Phrases)
-        //                    {
-        //                        PhrasesCopy.Add(ph);
-        //                    }
+        //                throw new PhraseNotFound(e, template.PhType);
+        //            }                   
+        //        }        
+        //    }
+        //    //создаем новую фразу
+        //    foreach (Phrase ph in ListNewPhrase)
+        //    {
+        //        if ((ph.Value != null) && (ph.Value.Count == 0))
+        //        {
+        //            Phrase last = ListNewPhrase.ElementAt(ListNewPhrase.IndexOf(ph) - 1);
+        //            ph.Start = last.Start+last.Length;
+        //        }
+        //    }            
+        //    Phrase[] ArrayNewPhrase = new Phrase[ListNewPhrase.Count];
+        //    ListNewPhrase.CopyTo(ArrayNewPhrase);
+        //    Phrase NewPhrase = new Phrase(template.PhType, ArrayNewPhrase);
 
-        //                    Request = FindTemplate(temp_part, PhrasesCopy);
-
-        //                    bool br_circle = false;
-        //                    switch (Request.ScanState)
-        //                    {
-        //                        case ScanningState.WithoutErrors:
-        //                            //part_finded = true;
-        //                            br_circle = true;
-        //                            break;
-        //                        case ScanningState.Fallen:
-        //                            //result.Finded_Errors = Request.Finded_Errors;
-        //                            break;
-        //                        case ScanningState.WithErrors:
-
-        //                            //part_finded = true;
-        //                            break;
-        //                    }
-
-        //                    if (BestRequest.ScanState == ScanningState.Initial) //для первого
-        //                    {
-        //                        BestRequest = Request;
-        //                    }
-
-        //                    if ((int)Request.ScanState < (int)BestRequest.ScanState)
-        //                    {
-        //                        if ((BestRequest.ScanState == ScanningState.WithErrors) && (BestRequest.ConcattedLexemes > Request.ConcattedLexemes))
-        //                        { }
-        //                        else
-        //                        {
-        //                            BestRequest = Request;
-        //                            //if (Request.ScanState == ScanningState.Initial)
-        //                            //{
-        //                            //    foreach (Error err in Request.Finded_Errors)
-        //                            //        BestRequest.Finded_Errors.Add(err);
-        //                            //}
-        //                            //BestRequest.BackPhrase = Request.BackPhrase;
-        //                            //BestRequest.ConcattedLexemes = Request.ConcattedLexemes;
-        //                            //BestRequest.ScanState = Request.ScanState;
-        //                        }
-        //                        if (br_circle) break;
-
-        //                    }
-        //                    if ((Request.ScanState == BestRequest.ScanState) && (Request.ScanState == ScanningState.WithErrors))
-        //                    {
-        //                        if (Request.Finded_Errors.Count < BestRequest.Finded_Errors.Count)
-        //                        {
-        //                            if (BestRequest.ConcattedLexemes > Request.ConcattedLexemes)
-        //                            { }
-        //                            else
-        //                            {
-        //                                BestRequest = Request;
-        //                            }
-        //                        }
-        //                    }
-        //                }
+        //    //добавляем новую
+        //    CopyPhrases.Insert(0, NewPhrase);
+        //    return CopyPhrases;
+        //}
+        
+        //PhraseTypeTemplate FindTemplate(PhraseType ph_type, Phrase first_ph)
+        //{
+        //    Error err = new Error();            
+        //    foreach (PhraseTypeTemplate temp in ModelTextRules.SyntacticalTemplates)
+        //    {
+                
+        //        if (temp.PhType == ph_type)
+        //        {
+        //            if (temp.ConcatedPhrases == 0)
+        //            {
+        //                return temp;
         //            }
-        //            //if (part_finded == false) //если не нашли шаблон
-        //            if (BestRequest.ScanState == ScanningState.Fallen)
+        //            if (temp.PhTemplate[0] == first_ph.PhType)
         //            {
-        //                result.BackPhrase = null;
-
-        //                //////*****
-        //                //int ii;
-        //                //for (ii = 0; ii < ListNewPhrase.Length; ii++)
-        //                //{
-        //                //    if (ListNewPhrase[ii] == null)
-        //                //    {
-        //                //        break;
-        //                //    }
-        //                //}
-        //                //Phrase[] ErrListNewPhrase = new Phrase[ii];
-        //                //for (int ei = 0; ei < ErrListNewPhrase.Length; ei++)
-        //                //{
-        //                //    ErrListNewPhrase[ei] = ListNewPhrase[ei];
-        //                //}
-        //                //result.BackPhrase = new Phrase(template.PhType, ErrListNewPhrase);
-        //                //////*****
-
-        //                if (result.Finded_Errors == null)
+        //                return temp;
+        //            }
+        //            else
+        //            {                        
+        //                try
         //                {
-        //                    if (Phrases.Count == 0) { }
+        //                    //если терминал
+        //                    if (ModelTextRules.PrimaryPhraseTypes[temp.PhTemplate[0]])
+        //                    {
+        //                        throw new PhraseNotFound(first_ph.Start,first_ph.Length,first_ph.Line, temp.PhTemplate[0]);
+        //                    }
+        //                    //если нетерминал
         //                    else
         //                    {
-        //                        result.Finded_Errors = new List<Error>();
-        //                        result.Finded_Errors.Add(
-        //                            new ExpectedPhraseError(template.PhTemplate[i], Phrases[0].Start, Phrases[0].Length, Phrases[0].Line));
-        //                        //result.Finded_Errors = new List<Error>();
-        //                        //!!!result.Finded_Errors.Add(new Error(ErrorType.ExpectedPhrase,
-        //                        //    ModelTextRules.ErrorTypes[ErrorType.ExpectedPhrase] + template.PhTemplate[i].ToString(),
-        //                        //    Phrases[0].Line, Phrases[0].Start, Phrases[0].Length));
-        //                    }
+        //                        FindTemplate(temp.PhTemplate[0], first_ph);
+        //                        return temp; 
+        //                    }                          
         //                }
-        //                else
+        //                catch (PhraseNotFound e)
         //                {
-        //                    result.Finded_Errors = BestRequest.Finded_Errors;
+        //                    err = e;
+        //                    continue;
         //                }
-        //                result.ScanState = ScanningState.Fallen;
-        //                return result;
         //            }
-
-        //            //вставляем наиболее подходящий
-        //            ListNewPhrase[i] = BestRequest.BackPhrase;
-        //            result.ConcattedLexemes += BestRequest.ConcattedLexemes;
-
-        //            if (BestRequest.ScanState == ScanningState.Initial) //если лучший пустой, то он безошибочный
-        //            {
-        //                BestRequest.ScanState = ScanningState.WithoutErrors;
-        //            }
-
-        //            if (result.ScanState == ScanningState.Initial) //для первого
-        //            {
-        //                result.ScanState = BestRequest.ScanState;
-        //            }
-
-        //            if ((int)BestRequest.ScanState > (int)result.ScanState) //если стал хуже
-        //            {
-        //                result.ScanState = BestRequest.ScanState;
-        //            }
-
-        //            foreach (Error err in BestRequest.Finded_Errors)
-        //            {
-        //                result.Finded_Errors.Add(err);
-        //            }
-        //            Phrases.RemoveRange(0, BestRequest.ConcattedLexemes);
         //        }
         //    }
-        //    result.BackPhrase = new Phrase(template.PhType, ListNewPhrase);
-
-        //    //if (result.ScanState == ScanningState.Initial) //если пустой шаблон
-        //    //{
-        //    //    result.ScanState = ScanningState.WithoutErrors;
-        //    //}
-        //    Phrases = null;
-        //    return result;
+        //    throw new PhraseNotFound(err, ph_type);
         //}
 
         List<Phrase> ApplyTemplate(PhraseTypeTemplate template, List<Phrase> Phrases)
-        {
-            //копирование списка фраз
-            List<Phrase> CopyPhrases = new List<Phrase>();
-            CopyPhrases.AddRange(Phrases);
-
-            List<Phrase> ListNewPhrase = new List<Phrase>();
-            for (int i = 0; i < template.ConcatedPhrases; i++)
-            {
-                //если терминал (конечное значение, уровня 0)
-                if (ModelTextRules.PrimaryPhraseTypes[template.PhTemplate[i]])
-                {
-                    if (CopyPhrases[0].PhType == template.PhTemplate[i])
-                    {
-                        //есть совпадение                        
-                        ListNewPhrase.Add(CopyPhrases[0]);
-                        CopyPhrases.RemoveAt(0);
-                    }
-                    else 
-                    {
-                        //есть ошибка
-                        throw new PhraseNotFound(CopyPhrases[0].Start, CopyPhrases[0].Length, CopyPhrases[0].Line, template.PhTemplate[i]);
-                    }
-                }
-                //если нетерминал (составное значение)
-                else
-                {
-                    try
-                    {
-                        PhraseTypeTemplate inner_temp = FindTemplate(template.PhTemplate[i], CopyPhrases[0]);
-                        List<Phrase> NewPhrases = new List<Phrase>();
-                        NewPhrases = ApplyTemplate(inner_temp, CopyPhrases);
-                        CopyPhrases = NewPhrases;
-                        ListNewPhrase.Add(CopyPhrases[0]);
-                        CopyPhrases.RemoveAt(0);
-
-                    }
-                    catch (PhraseNotFound e)
-                    {
-                        throw new PhraseNotFound(e, template.PhType);
-                    }                   
-                }        
-            }
-            //создаем новую фразу
-            foreach (Phrase ph in ListNewPhrase)
-            {
-                if ((ph.Value != null) && (ph.Value.Count == 0))
-                {
-                    Phrase last = ListNewPhrase.ElementAt(ListNewPhrase.IndexOf(ph) - 1);
-                    ph.Start = last.Start+last.Length;
-                }
-            }            
-            Phrase[] ArrayNewPhrase = new Phrase[ListNewPhrase.Count];
-            ListNewPhrase.CopyTo(ArrayNewPhrase);
-            Phrase NewPhrase = new Phrase(template.PhType, ArrayNewPhrase);
-
-            //добавляем новую
-            CopyPhrases.Insert(0, NewPhrase);
-            return CopyPhrases;
-        }
-
-        PhraseTypeTemplate FindTemplate(PhraseType ph_type, Phrase first_ph)
-        {
-            Error err = new Error();            
-            foreach (PhraseTypeTemplate temp in ModelTextRules.SyntacticalTemplates)
-            {
-                
-                if (temp.PhType == ph_type)
-                {
-                    if (temp.ConcatedPhrases == 0)
-                    {
-                        return temp;
-                    }
-                    if (temp.PhTemplate[0] == first_ph.PhType)
-                    {
-                        return temp;
-                    }
-                    else
-                    {                        
-                        try
-                        {
-                            //если терминал
-                            if (ModelTextRules.PrimaryPhraseTypes[temp.PhTemplate[0]])
-                            {
-                                throw new PhraseNotFound(first_ph.Start,first_ph.Length,first_ph.Line, temp.PhTemplate[0]);
-                            }
-                            //если нетерминал
-                            else
-                            {
-                                FindTemplate(temp.PhTemplate[0], first_ph);
-                                return temp; 
-                            }                          
-                        }
-                        catch (PhraseNotFound e)
-                        {
-                            err = e;
-                            continue;
-                        }
-                    }
-                }
-            }
-            throw new PhraseNotFound(err, ph_type);
-        }
-
-        List<Phrase> ApplyTemplate1(PhraseTypeTemplate template, List<Phrase> Phrases)
         {
             //копирование списка фраз
             List<Phrase> CopyPhrases = new List<Phrase>();
@@ -1064,7 +724,7 @@ namespace SLT.TextAnalysis
                 else
                 {
                     int err_stack_deep = this.ErrorStack.Count;
-                    PhraseTypeTemplate inner_temp = FindTemplate1(template.PhTemplate[i], CopyPhrases[0]);
+                    PhraseTypeTemplate inner_temp = FindTemplate(template.PhTemplate[i], CopyPhrases[0]);
                     if (inner_temp == null)
                     {
                         this.ErrorStack.Add(new PhraseNotFound(ErrorStack.Last(), template.PhType));
@@ -1078,7 +738,7 @@ namespace SLT.TextAnalysis
                         }
                     }
                     //List<Phrase> NewPhrases = new List<Phrase>();
-                    CopyPhrases = ApplyTemplate1(inner_temp, CopyPhrases);
+                    CopyPhrases = ApplyTemplate(inner_temp, CopyPhrases);
                     if (CopyPhrases == null)
                     {
                         this.ErrorStack.Add(new PhraseNotFound(ErrorStack.Last(), template.PhType));
@@ -1113,7 +773,7 @@ namespace SLT.TextAnalysis
             return CopyPhrases;
         }
 
-        PhraseTypeTemplate FindTemplate1(PhraseType ph_type, Phrase first_ph)
+        PhraseTypeTemplate FindTemplate(PhraseType ph_type, Phrase first_ph)
         {
             Error err = new Error();
             int err_stack_deep = this.ErrorStack.Count;
@@ -1139,164 +799,38 @@ namespace SLT.TextAnalysis
                         if (ModelTextRules.PrimaryPhraseTypes[temp.PhTemplate[0]])
                         {
                             err = new PhraseNotFound(first_ph.Start, first_ph.Length, first_ph.Line, temp.PhTemplate[0]);
-                            continue;
-                            //throw new PhraseNotFound(first_ph.Start, first_ph.Length, first_ph.Line, temp.PhTemplate[0]);
+                            continue;                            
                         }
                         //если нетерминал
                         else
-                        {
-                            //int err_stack_deep = this.ErrorStack.Count;
-                            PhraseTypeTemplate inner_temp = FindTemplate1(temp.PhTemplate[0], first_ph);
+                        {                            
+                            PhraseTypeTemplate inner_temp = FindTemplate(temp.PhTemplate[0], first_ph);
                             if (inner_temp == null)
                             {
-                                //if (this.ErrorStack.Count > 1)
-                                //{
-                                //    this.ErrorStack.Remove(err);
-                                //}
                                 err = this.ErrorStack.Last();
                                 continue;
                             }
                             else
                             {
-                                //if (this.ErrorStack.Count > 0)
-                                //{
-                                //    this.ErrorStack.RemoveRange(err_stack_deep, this.ErrorStack.Count - err_stack_deep);
-                                //}
                                 return temp;
                             }
-                            //if (FindTemplate1(temp.PhTemplate[0], first_ph) == null)
-                            //{
-                            //    err = this.ErrorStack.Last();
-                            //    continue;
-                            //}
-                            //return temp;
                         }
                     }
                 }
-            }
-            //throw new PhraseNotFound(err, ph_type);
+            }            
             this.ErrorStack.Add(new PhraseNotFound(err, ph_type));
             return null;
-        }
-
-        //bool TryToReplace(List<Phrase> Phrases, int corrected_index, PhraseTypeTemplate temp)
-        //{
-        //    if ((Phrases[0].PhType == PhraseType.EoL)
-        //        ||
-        //        (Phrases[0].PhType == PhraseType.Round_Bracket_Open) ||
-        //        (Phrases[0].PhType == PhraseType.Round_Bracket_Close) ||
-        //        (Phrases[0].PhType == PhraseType.Comma) ||
-        //        (Phrases[0].PhType == PhraseType.TypeSeparator) ||
-        //        (Phrases[0].PhType == PhraseType.ArithmeticOperator_3lvl) ||
-        //        (Phrases[0].PhType == PhraseType.ArithmeticOperator_2lvl) ||
-        //        (Phrases[0].PhType == PhraseType.ArithmeticOperator_1lvl) ||
-        //        (Phrases[0].PhType == PhraseType.ComparisonOperator) ||
-        //        (Phrases[0].PhType == PhraseType.LogicOperator) ||
-        //        (Phrases[0].PhType == PhraseType.ArithmeticFunction_Word) ||
-        //        (Phrases[0].PhType == PhraseType.SetOperator_Word) ||
-        //        (Phrases[0].PhType == PhraseType.LabelSeparator)
-        //        )
-        //    {
-        //        return false;
-        //    }
-
-
-        //    Phrases.RemoveAt(0);
-        //    Phrases.Insert(0, new Phrase(temp.PhTemplate[corrected_index]));
-
-        //    int to_concat = 0;
-        //    return CheckCorrect(Phrases, corrected_index, temp, ref to_concat);
-
-        //    //for (int i = corrected_index; i < temp.ConcatedPhrases; i++)
-        //    //{
-        //    //    if (PrimaryPhraseTypes[temp.PhTemplate[i]])
-        //    //    {
-        //    //        if (PhrasesCopy[i].PhType != temp.PhTemplate[i])
-        //    //        {
-        //    //            return false;
-        //    //        }
-        //    //    }
-        //    //    else 
-        //    //    {
-        //    //        TryToReplace
-        //    //    }
-        //    //}
-        //    //return true;
-        //}
-
-        //bool CheckCorrect(List<Phrase> Phrases, int start_index, PhraseTypeTemplate template, ref int concatted_lex)
-        //{
-        //    concatted_lex = 0;
-        //    for (int i = start_index; i < template.ConcatedPhrases; i++)
-        //    {
-        //        if (Phrases.Count == 0)
-        //            return false;
-        //        //терминал
-        //        if (ModelTextRules.PrimaryPhraseTypes[template.PhTemplate[i]])
-        //        {
-        //            if (Phrases[0].PhType == template.PhTemplate[i])
-        //            {
-        //                Phrases.RemoveAt(0);
-        //                concatted_lex++;
-        //            }
-        //            else
-        //            {
-        //                return false;
-        //            }
-        //        }
-        //        //нетерминал
-        //        else
-        //        {
-        //            bool part_finded = false;
-        //            //Response response = new Response();
-        //            PhraseTypeTemplate best_temp = ModelTextRules.SyntacticalTemplates[0];
-        //            foreach (PhraseTypeTemplate temp_part in ModelTextRules.SyntacticalTemplates)
-        //            {
-        //                if (temp_part.PhType == template.PhTemplate[i]) //if (temp_part.PhType == PhraseType.ActivateOperator )
-        //                {
-        //                    List<Phrase> PhrasesCopy = new List<Phrase>();
-        //                    foreach (Phrase ph in Phrases)
-        //                    {
-        //                        PhrasesCopy.Add(ph);
-        //                    }
-        //                    //Response res_resp = FindTemplate(template, PhrasesCopy);
-        //                    //if ((res_resp.ScanState == ScanningState.WithoutErrors) /*|| (res_resp.ScanState == ScanningState.WithoutErrors)*/)
-        //                    //response =FindTemplate(temp_part, PhrasesCopy);
-        //                    //if (response.ScanState== ScanningState.WithoutErrors)
-        //                    int internal_concatted_lex = 0;
-        //                    if (CheckCorrect(PhrasesCopy, 0, temp_part, ref  internal_concatted_lex))
-        //                    {
-        //                        best_temp = temp_part;
-        //                        part_finded = true;
-        //                        Phrases.RemoveRange(0, internal_concatted_lex);
-        //                        concatted_lex += internal_concatted_lex;
-        //                        break;
-        //                    }
-        //                }
-        //            }
-        //            if (part_finded == false)
-        //            {
-        //                return false;
-        //            }
-        //            //else
-        //            //{
-
-        //            //}
-        //        }
-        //    }
-        //    return true;
-        //}
+        }        
 
         Phrase SyntacticalAnalysis(List<Phrase> Phrases)
-        {
-            //this.Phrases = new List<Phrase>();
+        {            
             List<Error> Errors = new List<Error>();
             this.ErrorStack = new List<Error>();
             Phrase result;
             try
             {
                 //вход в рекурсивный спуск 
-                List<Phrase> result_list = ApplyTemplate1(ModelTextRules.SyntacticalTemplates[0], Phrases);
+                List<Phrase> result_list = ApplyTemplate(ModelTextRules.SyntacticalTemplates[0], Phrases);
                 if (result_list == null)
                 {
                     PhraseNotFound inner_err = (PhraseNotFound)this.ErrorStack[0];
@@ -1314,15 +848,9 @@ namespace SLT.TextAnalysis
                 {
                     result = result_list[0];
                 }
-            //    if (Errors.Count > 0)
-            //    {
-            //        throw new ErrorList(Errors);
-            //    }
+
             }
-            //catch (ErrorList e)
-            //{
-            //    throw new SyntacticalError(e);
-            //}
+
             catch (SyntacticalError e)
             {
                 throw new SyntacticalError(e);
@@ -1333,8 +861,7 @@ namespace SLT.TextAnalysis
         Phrase MadeStruct(Phrase InitialPhrase)
         {
             int i = 0;
-            while (i < InitialPhrase.Value.Count)
-            //for (int i = 0; i < InitialPhrase.Value.Count; i++)// (Phrase ph in InitialPhrase.Value)
+            while (i < InitialPhrase.Value.Count)            
             {
                 if (InitialPhrase.Value[i] is Lexeme)
                 {
@@ -1346,13 +873,6 @@ namespace SLT.TextAnalysis
                     InitialPhrase.Value[i] = MadeStruct(InitialPhrase.Value[i]);
                     if ((InitialPhrase.Value[i].PhType == InitialPhrase.PhType) ||
                         (InitialPhrase.Value[i].PhType.ToString().Contains("Another")))
-                    //if ((InitialPhrase.Value[i].PhType == InitialPhrase.PhType)||
-                    //    (InitialPhrase.Value[i].PhType == PhraseType.AnotherVars)||
-                    //    (InitialPhrase.Value[i].PhType == PhraseType.AnotherDescriptionLine)||
-                    //    (InitialPhrase.Value[i].PhType == PhraseType.AnotherArithmeticExpression_1lvl)||
-                    //    (InitialPhrase.Value[i].PhType == PhraseType.AnotherArithmeticExpression_2lvl)||
-                    //    (InitialPhrase.Value[i].PhType == PhraseType.AnotherArithmeticExpression_3lvl)||
-                    //    (InitialPhrase.Value[i].PhType == PhraseType.AnotherParameters))
                     {
 
                         if ((InitialPhrase.Value[i].PhType != PhraseType.ArithmeticExpression_1lvl) &&
@@ -1368,19 +888,9 @@ namespace SLT.TextAnalysis
                             InitialPhrase.Value.RemoveAt(index);
                         }
                     }
-                    //if (InitialPhrase.Value[i].Value.Count == 0)
-                    //{
-                    //    InitialPhrase.Value.RemoveAt(i);
-                    //    i--;
-                    //}
                 }
                 i++;
             }
-
-            //if (Errors.Count > 0)
-            //{
-            //    throw new ErrorList(Errors);
-            //} 
 
             return InitialPhrase;
         }
@@ -1398,9 +908,9 @@ namespace SLT.TextAnalysis
             return name_s;
         }
 
-        public List<SLT.Objects.Object> CreateObjectsFromDesciptionLine(Phrase desc_line, string unit_name)
+        public List<SLT.Object> CreateObjectsFromDesciptionLine(Phrase desc_line, string unit_name)
         {
-            List<SLT.Objects.Object> list = new List<Objects.Object>();
+            List<SLT.Object> list = new List<SLT.Object>();
 
             Phrase[] desc_line_value_copy = new Phrase[desc_line.Value.Count];
             desc_line.Value.CopyTo(desc_line_value_copy);
@@ -1428,12 +938,6 @@ namespace SLT.TextAnalysis
                         }
                         vars_dictionary.Add(name, val);
                         continue;
-                        //if (var_ph.Value.Exists(p => p.PhType == PhraseType.Name))
-                        //{
-                        //    string name = this.EjectStringName(var_ph);
-                        //    vars_dictionary.Add(name, null);
-                        //    continue;
-                        //}
                     }
                 }
 
@@ -1453,11 +957,11 @@ namespace SLT.TextAnalysis
 
                 foreach (var v in vars_dictionary)
                 {
-                    Objects.Object new_obj = new Objects.Scalar("", "");//заглушка
+                    SLT.Object new_obj = new SLT.Scalar("", "");//заглушка
                     //для скаляра
                     if (vartype_ph.Value.Exists(ph => ph.PhType == PhraseType.ScalarVarType_Word))
                     {
-                        new_obj = new Objects.Scalar(v.Key, varunit);
+                        new_obj = new SLT.Scalar(v.Key, varunit);
                         if (v.Value != null)
                         {
                             //если выражение
@@ -1470,14 +974,14 @@ namespace SLT.TextAnalysis
                     if (vartype_ph.Value.Exists(ph => ph.PhType == PhraseType.VectorVarType_Word))
                     {
                         Phrase description_line_ph = vartype_ph.Value.Find(ph => ph.PhType == PhraseType.DescriptionLine);
-                        new_obj = new Objects.Vector(v.Key, varunit, CreateObjectsFromDesciptionLine(description_line_ph,""));
+                        new_obj = new SLT.Vector(v.Key, varunit, CreateObjectsFromDesciptionLine(description_line_ph,""));
                     }
                     //для ссылки
                     if (vartype_ph.Value.Exists(ph => ph.PhType == PhraseType.LinkVarType_Word))
                     {
                         if (v.Value == null)
                         {
-                            new_obj = new Objects.Link(v.Key, varunit);
+                            new_obj = new SLT.Link(v.Key, varunit);
                             //list.Add(new_obj);
                         }
                         else
@@ -1522,7 +1026,7 @@ namespace SLT.TextAnalysis
         {
             Operator result_oper = new Operator();
 
-            Structure.Action action;
+            Action action;
             Phrase destination_ph;
             KeyValuePair<string, string> destination_str;
             bool firstly = true;
@@ -1530,7 +1034,7 @@ namespace SLT.TextAnalysis
             {
                 case PhraseType.AssignOperator:
                     result_oper.Name = OperatorName.Assign;
-                    action = new Structure.Action();
+                    action = new Action();
                     action.Name = ActionName.Assign;
                     Phrase concrete_var = concret_operator_ph.Value[1];
                     action.Parameters.Add(concrete_var);//var
@@ -1540,7 +1044,7 @@ namespace SLT.TextAnalysis
 
                 case PhraseType.TransferOperator:
                     result_oper.Name = OperatorName.Transfer;
-                    action = new Structure.Action();
+                    action = new Action();
                     action.Name = ActionName.Write_to_CT;
                     action.Parameters.Add(true);//condition
                     action.Parameters.Add(true); //true - self initiatior
@@ -1555,7 +1059,7 @@ namespace SLT.TextAnalysis
 
                 case PhraseType.CreateOperator:
                     result_oper.Name = OperatorName.Create;
-                    action = new Structure.Action();
+                    action = new Action();
                     action.Name = ActionName.Create;
                     action.Parameters.Add(EjectStringName(concret_operator_ph));//name
                     action.Parameters.Add(concret_operator_ph.Value.Find(ph => ph.PhType == PhraseType.VarType));//type
@@ -1564,7 +1068,7 @@ namespace SLT.TextAnalysis
 
                 case PhraseType.ActivateOperator:
                     result_oper.Name = OperatorName.Activate;
-                    action = new Structure.Action();
+                    action = new Action();
                     action.Name = ActionName.Write_to_CT;
                     action.Parameters.Add(true);//condition
                     action.Parameters.Add(EjectStringName(concret_operator_ph)); //link name
@@ -1580,14 +1084,14 @@ namespace SLT.TextAnalysis
 
                 case  PhraseType.PassivateOperator:                    
                     result_oper.Name = OperatorName.Passivate;
-                    action = new Structure.Action();
+                    action = new Action();
                     action.Name = ActionName.Assign;
                     action.Parameters.Add(concret_operator_ph.Value[3]); //var (link name)
                     action.Parameters.Add(new Phrase(PhraseType.Initiator_Word));//value (true - initiator)
                     result_oper.AddAction(action);
 
                     //result_oper.Name = OperatorName.Terminate;
-                    action = new Structure.Action();
+                    action = new Action();
                     action.Name = ActionName.Delete;
                     action.Parameters.Add(true); //self initiator
                     result_oper.AddAction(action);
@@ -1595,7 +1099,7 @@ namespace SLT.TextAnalysis
 
                 case PhraseType.TerminateOperator:
                     result_oper.Name = OperatorName.Terminate;
-                    action = new Structure.Action();
+                    action = new Action();
                     action.Name = ActionName.Terminate;
                     action.Parameters.Add(true); //self initiator
                     result_oper.AddAction(action);
@@ -1603,7 +1107,7 @@ namespace SLT.TextAnalysis
 
                 case PhraseType.DeleteOperator:
                     result_oper.Name = OperatorName.Delete;
-                    action = new Structure.Action();
+                    action = new Action();
                     action.Name = ActionName.Delete;
                     action.Parameters.Add(EjectStringName(concret_operator_ph));
                     result_oper.AddAction(action);
@@ -1620,7 +1124,7 @@ namespace SLT.TextAnalysis
                         {
                             continue;
                         }
-                        action = new Structure.Action();
+                        action = new Action();
                         action.Name = ActionName.Write_to_CT;
                         Phrase logic_exp = if_condition_ph.Value.Find(ph => ph.PhType == PhraseType.LogicExpression);
                         if (logic_exp != null)
@@ -1654,7 +1158,7 @@ namespace SLT.TextAnalysis
                 case PhraseType.WaitOperator:
                     //начало ждать
                     Phrase wait_condition_ph = concret_operator_ph.Value.Find(ph => ph.PhType == PhraseType.WaitCondition);
-                    action = new Structure.Action();
+                    action = new Action();
                     if (wait_condition_ph.Value.Exists(ph => ph.PhType == PhraseType.WaitTime))
                     {
                         result_oper.Name = OperatorName.SimpleWait;                        
@@ -1705,7 +1209,7 @@ namespace SLT.TextAnalysis
                             { 
                                 break; 
                             }
-                            action = new Structure.Action();
+                            action = new Action();
                             wait_condition_ph = complex_wait_condition_ph.Value[i+1];
                             if (wait_condition_ph.Value.Exists(ph => ph.PhType == PhraseType.WaitTime))
                             {                                                                
@@ -1738,55 +1242,12 @@ namespace SLT.TextAnalysis
                             action.Parameters.Add(true);
                             result_oper.AddAction(action);
                         }
-                        //result_oper.AddAction(action);
-
-
-                        
-                        //Phrase wait_conditions_ph = concret_operator_ph.Value.Find(ph => ph.PhType == PhraseType.WaitConditions);
-                        //foreach (Phrase wait_condition_ph in wait_conditions_ph.Value)
-                        //{
-                        //    if (wait_condition_ph.PhType == PhraseType.EoL)
-                        //    {
-                        //        break;
-                        //    }
-                        //    action = new Structure.Action();
-                        //    if (wait_condition_ph.Value.Exists(ph => ph.PhType == PhraseType.WaitTime))
-                        //    {                               
-                        //        action.Name = ActionName.Write_to_FTT;
-                        //        Phrase wait_time_ph = wait_condition_ph.Value.Find(ph => ph.PhType == PhraseType.WaitTime);
-                        //        Phrase wait_time_value_ph = wait_time_ph.Value.Find(ph => ph.PhType == PhraseType.ArithmeticExpression_3lvl);
-                        //        action.Parameters.Add(wait_time_value_ph);
-                        //    }
-                        //    if (wait_condition_ph.Value.Exists(ph => ph.PhType == PhraseType.WaitUntil))
-                        //    {
-                        //        action.Name = ActionName.Write_to_CT;
-                        //        Phrase wait_until_ph = wait_condition_ph.Value.Find(ph => ph.PhType == PhraseType.WaitUntil);
-                        //        Phrase logic_exp = wait_until_ph.Value.Find(ph => ph.PhType == PhraseType.LogicExpression);
-                        //        action.Parameters.Add(logic_exp);
-                        //        action.Parameters.Add(true);
-                        //        action.Parameters.Add(false);
-                        //    }
-                        //    Phrase transfer_oper_in_wait_ph = wait_condition_ph.Value.Find(ph => ph.PhType == PhraseType.TransferOperator);
-                        //    destination_ph = transfer_oper_in_wait_ph.Value.Find(ph => ph.PhType == PhraseType.Destination);
-                        //    destination_str = EjectStringDestination(destination_ph);
-                        //    action.Parameters.Add(destination_str.Key);
-                        //    action.Parameters.Add(destination_str.Value);
-                        //    if (firstly)
-                        //    {
-                        //        action.Parameters.Add(false); //islast
-                        //        firstly = false;
-                        //    }
-                        //    else
-                        //    {
-                        //        action.Parameters.Add(true); //islast
-                        //    }
-                        //    result_oper.AddAction(action);
-                        //}
                     }
                     break;
                 //конец ждать
             }
-            result_oper.Position = new Selection(concret_operator_ph.Start, concret_operator_ph.Length);
+            result_oper.Start = concret_operator_ph.Start;
+            result_oper.Length = concret_operator_ph.Length;
             return result_oper;
         }
 

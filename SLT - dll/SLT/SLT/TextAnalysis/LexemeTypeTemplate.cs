@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace SLT.TextAnalysis
+namespace SLT
 {
-    public class LexemeTypeTemplate
+    class LexemeTypeTemplate
     {
         public LexemeType LType;
         public LexemeType[] LTemplate;

@@ -3,19 +3,17 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace SLT.Structure
+namespace SLT
 {
-    public class Label
-    {
-        //public int ID;
+    class Label
+    {        
         public Subprogram Subprogram;
         public string Name;
         public string Unit;
         public bool Visible;
 
         public Label(Subprogram subp, string name, string unit, bool visible)
-        {
-            //this.ID = id;
+        {            
             this.Subprogram = subp;
             this.Name = name;
             this.Unit = unit;

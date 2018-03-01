@@ -3,12 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-using SLT.Structure;
-using SLT.Objects;
-
-namespace SLT.Dynamics
+namespace SLT
 {
-    public class Queue
+    class Queue
     {
         public enum DelayType
         {
@@ -29,7 +26,6 @@ namespace SLT.Dynamics
         public Subprogram Place;
         public List<QueueItem> Items;
 
-        //[FlagsAttribute]
         public enum ArrowType
         {
             None = 0,

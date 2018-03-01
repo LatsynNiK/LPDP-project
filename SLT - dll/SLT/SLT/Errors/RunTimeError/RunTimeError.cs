@@ -5,7 +5,7 @@ using System.Text;
 
 namespace SLT
 {
-    public class RunTimeError:UserError
+    class RunTimeError:UserError
     {
         public RunTimeError() { }
         public RunTimeError(int start, int len, int line) :
